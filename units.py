@@ -47,3 +47,28 @@ class Knight(BaseUnit):
 
     def attack(self, target):
         super().attack(target)
+
+
+class UnitFactory(ABC):
+    def __init__(self):
+        pass
+
+    @abstractmethod
+    def create(self):
+        pass
+
+
+class BanditFactory(UnitFactory):
+    def __init__(self):
+        super().__init__()
+
+    def create(self):
+        return Bandit()
+
+
+class KnightFactory(UnitFactory):
+    def __init__(self):
+        super().__init__()
+
+    def create(self):
+        return Knight()
