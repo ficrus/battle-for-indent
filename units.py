@@ -72,3 +72,35 @@ class KnightFactory(UnitFactory):
 
     def create(self):
         return Knight()
+
+
+class Army(ABC):
+    def __init__(self):
+        self.fraction = ""
+        self.units = []
+
+    @abstractmethod
+    def hire(self, unit):
+        unit.fraction = self.fraction
+
+        self.units.append(unit)
+
+
+class SpacersArmy(Army):
+    def __init__(self):
+        super().__init__()
+
+        self.fraction = "spacers"
+
+    def hire(self, unit):
+        super().hire(unit)
+
+
+class TabbersArmy(Army):
+    def __init__(self):
+        super().__init__()
+
+        self.fraction = "tabbers"
+
+    def hire(self, unit):
+        super().hire(unit)
