@@ -34,7 +34,6 @@ class Knight(BaseUnit):
         super().attack(target)
 
 
-
 class Bandit(BaseUnit):
     def __init__(self):
         print("Bandit created")
