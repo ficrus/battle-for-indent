@@ -4,6 +4,7 @@ from abc import ABC, abstractmethod
 class BaseUnit(ABC):
     def __init__(self):
         self.fraction = ""
+        self.job = ""
         self.hp = 0
         self.physical_damage = 0
         self.magical_damage = 0
@@ -19,9 +20,9 @@ class BaseUnit(ABC):
 
 class Knight(BaseUnit):
     def __init__(self):
-        print('Knight created')
         super().__init__()
 
+        self.job = "knight"
         self.hp = 100
         self.physical_damage = 5
         self.magical_damage = 0
@@ -36,9 +37,9 @@ class Knight(BaseUnit):
 
 class Bandit(BaseUnit):
     def __init__(self):
-        print("Bandit created")
         super().__init__()
 
+        self.job = "bandit"
         self.hp = 30
         self.physical_damage = 2
         self.magical_damage = 0
