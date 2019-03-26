@@ -1,5 +1,5 @@
-from Army import Army
-from UnitFactories import *
+from army import Army
+from unit_factories import *
 
 
 class Game:
