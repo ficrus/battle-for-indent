@@ -30,7 +30,7 @@ class Knight(BaseUnit):
         self.move_speed = 4
         self.attack_speed = 1
 
-    def attack(self, target):
+    def attack(self, target: BaseUnit):
         super().attack(target)
 
 
@@ -47,5 +47,5 @@ class Bandit(BaseUnit):
         self.move_speed = 10
         self.attack_speed = 6
 
-    def attack(self, target):
+    def attack(self, target: BaseUnit):
         super().attack(target)

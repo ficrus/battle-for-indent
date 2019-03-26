@@ -15,7 +15,7 @@ class KnightFactory(UnitFactory):
         print('Knight Factory Created')
         super().__init__()
 
-    def create(self):
+    def create(self) -> BaseUnit:
         print('KnightFactory creates knight')
         return Knight()
 
@@ -25,6 +25,6 @@ class BanditFactory(UnitFactory):
         print('Bandit Factory Created')
         super().__init__()
 
-    def create(self):
+    def create(self) -> BaseUnit:
         print('BanditFactory creates bandit')
         return Bandit()

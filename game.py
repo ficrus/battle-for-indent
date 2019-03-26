@@ -1,12 +1,13 @@
 from army import Army
 from unit_factories import *
+from army_factories import ArmyFactory
 
 
 class Game:
     def __init__(self):
         print('Game is created')
 
-    def create_army(self, army_factory):
+    def create_army(self, army_factory: ArmyFactory):
         army = Army()
         knight_factory = KnightFactory()
         bandit_factory = BanditFactory()

@@ -1,4 +1,5 @@
 from abc import ABC
+from units import BaseUnit
 
 
 class Army(ABC):
@@ -9,6 +10,6 @@ class Army(ABC):
     def action(self):
         pass
 
-    def add_unit(self, unit):
+    def add_unit(self, unit: BaseUnit):
         self.units.append(unit)
         print('Unit is added to the Army')
