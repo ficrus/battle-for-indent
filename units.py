@@ -19,7 +19,6 @@ class BaseUnit(ABC):
 
 class Knight(BaseUnit):
     def __init__(self):
-        print('Knight created')
         super().__init__()
 
         self.hp = 100
@@ -36,7 +35,6 @@ class Knight(BaseUnit):
 
 class Bandit(BaseUnit):
     def __init__(self):
-        print("Bandit created")
         super().__init__()
 
         self.hp = 30
