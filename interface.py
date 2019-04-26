@@ -93,7 +93,7 @@ class GUICastle(GUILeaf):
 
 
 if __name__ == "__main__":
-    gui = GUIComposite()
+    gui_ = GUIComposite()
 
     unit_bar = GUIComposite()
     unit_bar.add(GUIUnitButton("knight"))
@@ -108,9 +108,9 @@ if __name__ == "__main__":
     game_map.add(GUICastle("tabbers"))
     game_map.add(GUICastle("spacers"))
 
-    gui.add(unit_bar)
-    gui.add(info_bar)
-    gui.add(game_map)
+    gui_.add(unit_bar)
+    gui_.add(info_bar)
+    gui_.add(game_map)
 
     # gui.demonstrate()
-    gui.draw()
+    gui_.draw()
