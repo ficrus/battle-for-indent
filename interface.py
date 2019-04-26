@@ -52,7 +52,7 @@ class GUIComposite(GUIComponent):
             print(i)
             if i.is_composite():
                 i.demonstrate()
-    
+
     def draw(self):
         for child in self._children:
             child.draw()
@@ -61,17 +61,19 @@ class GUIComposite(GUIComponent):
 class GUIUnitButton(GUILeaf):
     def __init__(self, unit_job: str) -> None:
         self.unit_job = unit_job
-    
+
     def draw(self):
-        pass
+        self.portrait = "eeeee"
+        print("Draw unit button for {0}".format(self.unit_job))
 
 
 class GUIHealthBar(GUILeaf):
     def __init__(self, fraction: str) -> None:
         self.fraction = fraction
-    
+
     def draw(self):
-        pass
+        self.hp = 100
+        print("Draw hp bar for {0}".format(self.fraction))
 
 
 class GUIPauseButton(GUILeaf):
@@ -79,7 +81,15 @@ class GUIPauseButton(GUILeaf):
         pass
 
     def draw(self):
-        pass
+        print("Draw pause button")
+
+
+class GUICastle(GUILeaf):
+    def __init__(self, fraction):
+        self.fraction = fraction
+    
+    def draw(self):
+        print("Draw Castle for {0}".format(self.fraction))
 
 
 if __name__ == "__main__":
@@ -94,7 +104,13 @@ if __name__ == "__main__":
     info_bar.add(GUIHealthBar("tabbers"))
     info_bar.add(GUIHealthBar("spacers"))
 
+    game_map = GUIComposite()
+    game_map.add(GUICastle("tabbers"))
+    game_map.add(GUICastle("spacers"))
+
     gui.add(unit_bar)
     gui.add(info_bar)
+    gui.add(game_map)
 
-    gui.demonstrate()
+    # gui.demonstrate()
+    gui.draw()
