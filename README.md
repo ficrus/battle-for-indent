@@ -1,4 +1,4 @@
-# Battle for Indent
+# Battle for Indent [![Build Status](https://travis-ci.com/ficrus/battle-for-indent.svg?branch=dev)](https://travis-ci.com/ficrus/battle-for-indent)
 
 ## Об игре
 
