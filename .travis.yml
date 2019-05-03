@@ -6,3 +6,8 @@ branches:
 
 script:
   python3 -m pytest
+
+notifications:
+  email:
+    on_success: always
+    on_failure: always
