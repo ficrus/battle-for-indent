@@ -1,0 +1,8 @@
+language: python
+
+branches:
+  only:
+    - dev
+
+script:
+  python3 -m pytest
