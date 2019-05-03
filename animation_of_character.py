@@ -12,8 +12,8 @@ class Example(arcade.Window):
     def __init__(self):
         super().__init__(SCREEN_WIDTH, SCREEN_HEIGHT, update_rate=1/60)
 
-        self.player = KnightSprite(0.5/2)
-        self.zombie = ZombieSprite(0.45/2)
+        self.player = KnightSprite(scale=0.25)
+        self.zombie = ZombieSprite(scale=0.22)
 
         # Don't show the mouse cursor
         # self.set_mouse_visible(False)
