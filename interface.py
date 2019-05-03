@@ -33,7 +33,6 @@ class GUILeaf(GUIComponent):
     def get_leaves(self) -> list:
         return []
 
-    @abstractmethod
     def draw(self):
         pass
 
