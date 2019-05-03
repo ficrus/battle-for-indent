@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+import arcade
 
 
 class GUIComponent(ABC):
@@ -20,11 +21,18 @@ class GUIComponent(ABC):
         return False
 
     @abstractmethod
+    def get_leaves(self) -> list:
+        pass
+
+    @abstractmethod
     def draw(self):
         pass
 
 
 class GUILeaf(GUIComponent):
+    def get_leaves(self) -> list:
+        return []
+
     @abstractmethod
     def draw(self):
         pass
@@ -46,6 +54,9 @@ class GUIComposite(GUIComponent):
 
     def is_composite(self) -> bool:
         return True
+
+    def get_leaves(self) -> list:
+        return self._children + sum([child.get_leaves() for child in self._children], [])
 
     def demonstrate(self) -> None:
         for i in self._children:
@@ -87,10 +98,91 @@ class GUIPauseButton(GUILeaf):
 class GUICastle(GUILeaf):
     def __init__(self, fraction):
         self.fraction = fraction
-    
+
     def draw(self):
         print("Draw Castle for {0}".format(self.fraction))
 
+
+class GUIButton(GUILeaf):
+    def __init__(self,
+                 center_x, center_y,
+                 width, height,
+                 text,
+                 font_size=18,
+                 font_face="Arial",
+                 face_color=arcade.color.LIGHT_GRAY,
+                 highlight_color=arcade.color.WHITE,
+                 shadow_color=arcade.color.GRAY,
+                 button_height=2):
+        self.center_x = center_x
+        self.center_y = center_y
+        self.width = width
+        self.height = height
+        self.text = text
+        self.font_size = font_size
+        self.font_face = font_face
+        self.pressed = False
+        self.face_color = face_color
+        self.highlight_color = highlight_color
+        self.shadow_color = shadow_color
+        self.button_height = button_height
+
+    def draw(self):
+        arcade.draw_rectangle_filled(self.center_x, self.center_y, self.width,
+                                     self.height, self.face_color)
+
+        if not self.pressed:
+            color = self.shadow_color
+        else:
+            color = self.highlight_color
+
+        arcade.draw_line(self.center_x - self.width / 2, self.center_y - self.height / 2,
+                         self.center_x + self.width / 2, self.center_y - self.height / 2,
+                         color, self.button_height)
+
+        arcade.draw_line(self.center_x + self.width / 2, self.center_y - self.height / 2,
+                         self.center_x + self.width / 2, self.center_y + self.height / 2,
+                         color, self.button_height)
+
+        if not self.pressed:
+            color = self.highlight_color
+        else:
+            color = self.shadow_color
+
+        arcade.draw_line(self.center_x - self.width / 2, self.center_y + self.height / 2,
+                         self.center_x + self.width / 2, self.center_y + self.height / 2,
+                         color, self.button_height)
+
+        arcade.draw_line(self.center_x - self.width / 2, self.center_y - self.height / 2,
+                         self.center_x - self.width / 2, self.center_y + self.height / 2,
+                         color, self.button_height)
+
+        x = self.center_x
+        y = self.center_y
+        if not self.pressed:
+            x -= self.button_height
+            y += self.button_height
+
+        arcade.draw_text(self.text, x, y,
+                         arcade.color.BLACK, font_size=self.font_size,
+                         width=self.width, align="center",
+                         anchor_x="center", anchor_y="center")
+
+    def on_press(self):
+        self.pressed = True
+
+    def on_release(self):
+        self.pressed = False
+
+
+class GUIMenuButton(GUIButton):
+    def __init__(self, center_x, center_y, width, height, text, action_function):
+        self.action_function = action_function
+        super().__init__(center_x, center_y, width, height, text)
+
+    def on_release(self):
+        super().on_release()
+        self.action_function()
 
 if __name__ == "__main__":
     gui_ = GUIComposite()
