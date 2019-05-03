@@ -1,10 +1,6 @@
 
 language: python
 
-branches:
-  only:
-    - dev-eaglemango
-
 before_install:
   - sudo apt-get install freeglut3-dev
 
