@@ -1,5 +1,9 @@
 language: python
 
+dist: xenial
+services:
+  - xvfb
+
 before_install:
   - sudo apt-get install freeglut3-dev
 
