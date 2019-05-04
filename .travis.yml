@@ -1,14 +1,13 @@
 
 language: python
-
-env:
-  - DISPLAY=:99.0
-
 before_install:
   - sudo apt-get install freeglut3-dev
   - sh -e /etc/init.d/xvfb start
+  - "export DISPLAY=:99.0"
+  - "sh -e /etc/init.d/xvfb start"
 
 install:
+  - "pip install --upgrade http://pyglet.googlecode.com/archive/tip.zip"
   - pip install -r requirements.txt
 
 script:
