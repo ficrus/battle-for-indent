@@ -7,8 +7,8 @@ before_install:
   - "sh -e /etc/init.d/xvfb start"
 
 install:
-  - "pip install --upgrade http://pyglet.googlecode.com/archive/tip.zip"
   - pip install -r requirements.txt
+  - pip install -e hg+https://pyglet.googlecode.com/hg/@2813:0aa8bfe3313a#egg=pyglet
 
 script:
   python3 -m pytest
