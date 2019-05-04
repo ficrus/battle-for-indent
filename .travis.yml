@@ -1,10 +1,14 @@
-language: python
 
+language: python
 
 before_install:
   - sudo apt-get install freeglut3-dev
 
-script: xvfb-run make pytest
+services:
+  - xvfb
+
+script:
+  python3 -m pytest
 
 notifications:
   email:
