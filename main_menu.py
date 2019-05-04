@@ -2,6 +2,7 @@ import arcade
 import random
 import os
 import interface
+from event_handling import *
 
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 600
@@ -37,10 +38,11 @@ class MyGame(arcade.Window):
         arcade.set_background_color(arcade.color.GRAY_BLUE)
 
         self.pause = False
-        self.button_list = None
+        self.listeners = None
 
     def setup(self):
         self.gui = interface.GUIComposite()
+        self.listeners = ListenersSupport()
 
         game_buttons = interface.GUIComposite()
         self.gui.add(game_buttons)
@@ -64,14 +66,14 @@ class MyGame(arcade.Window):
         arcade.start_render()
         
         self.gui.draw()
-
-        self.button_list = [button for button in self.gui.get_leaves() if isinstance(button, interface.GUIButton)]
+        button_list = [button for button in self.gui.get_leaves() if isinstance(button, interface.GUIButton)]
+        self.listeners.add_listener(ButtonListener(button_list))
 
     def on_mouse_press(self, x, y, button, key_modifiers):
-        check_mouse_press_for_buttons(x, y, self.button_list)
+        self.listeners.on_event(PressEvent(x, y))
 
     def on_mouse_release(self, x, y, button, key_modifiers):
-        check_mouse_release_for_buttons(x, y, self.button_list)
+        self.listeners.on_event(ReleaseEvent(x, y))
 
     def start_new_game(self):
         print("New game started!")
