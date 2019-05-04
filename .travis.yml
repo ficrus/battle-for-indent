@@ -1,18 +1,13 @@
+
 language: python
-python:
-  - "3.6"
+
+before_install:
+  - sudo apt-get install freeglut3-dev
+
+script:
+  python3 -m pytest
 
 notifications:
   email:
     on_success: always
     on_failure: always
-
-
-branches:
-  only:
-    - dev-artyomnurgaliev
-install:
-  - pip install -r requirements.txt
-
-script:
-  python3 animation_of_character.py
