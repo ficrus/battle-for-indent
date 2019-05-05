@@ -8,19 +8,19 @@ RUN_TIME = 20
 
 
 class PressChecker:
-    def __init__(self, state):
+    def __init__(self, state, x, y, width, height, num):
         self.state = state
-        self.xs = list(np.random.rand(COUNT) * 150 + 35)
-        self.ys = list(np.random.rand(COUNT) * 180 + 300)
-        self.time = list(np.random.rand(COUNT) * RUN_TIME)
-        print(self.time)
-        self.pressed = list([False] * COUNT)
-        self.released = list([False] * COUNT)
+        self.xs = list(np.random.rand(num) * width + x)
+        self.ys = list(np.random.rand(num) * height + y)
+        self.time = list(np.random.rand(num) * RUN_TIME)
+        self.pressed = list([False] * num)
+        self.released = list([False] * num)
+        self.num = num
         self.count = 0
         self.button_pressed = list([False]*len(self.state.button_list))
 
     def raise_press(self):
-        for i in range(COUNT):
+        for i in range(self.num):
             if self.time[i] <= self.state.TIME and self.pressed[i] is False:
                 self.state.on_mouse_press(self.xs[i], self.ys[i], 0, None)
                 self.pressed[i] = True
@@ -52,7 +52,10 @@ class TestState(MainMenuState):
         super().__init__(game, width, height, title)
         self.count = 0
         self.TIME = 0
-        self.press_checker = PressChecker(self)
+        self.press_checker = PressChecker(self, 35, 300, 150, 180, COUNT)
+
+    def set_press_checker(self, press_checker):
+        self.press_checker = press_checker
 
     def update(self, delta_time: float):
         self.TIME += delta_time
@@ -78,3 +81,12 @@ def test_presses_and_releases_on_buttons():
     game_ = Game()
     game_.set_state(TestState(game_, SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE))
     arcade.run()
+
+
+def test_presses_and_releases_everywere():
+    game_ = Game()
+    state = TestState(game_, SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE)
+    state.set_press_checker(PressChecker(state, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, COUNT))
+    game_.set_state(state)
+    arcade.run()
+
