@@ -8,7 +8,7 @@ before_script:
   - "sh -e /etc/init.d/xvfb start"
   - sleep 3 # give xvfb some time to start
   - pip install setuptools
-  - apt-get install python-pyglet
+  - pip install python-pyglet
 install:
   - pip install --upgrade pytest
   - pip install -r requirements.txt
