@@ -1,18 +1,18 @@
 import interface
 
-composite = interface.GUIComposite()
-another_composite = interface.GUIComposite()
+composite = interface.Composite()
+another_composite = interface.Composite()
 
-leaf = interface.GUILeaf()
-another_leaf = interface.GUILeaf()
-2
+leaf = interface.Leaf()
+another_leaf = interface.Leaf()
+
 
 def test_inheritance():
-    assert isinstance(composite, interface.GUIComponent) is True
-    assert isinstance(another_composite, interface.GUIComponent) is True
+    assert isinstance(composite, interface.Component) is True
+    assert isinstance(another_composite, interface.Component) is True
 
-    assert isinstance(leaf, interface.GUIComponent) is True
-    assert isinstance(another_leaf, interface.GUIComponent) is True
+    assert isinstance(leaf, interface.Component) is True
+    assert isinstance(another_leaf, interface.Component) is True
 
 
 def test_difference():
