@@ -1,16 +1,17 @@
 """
-Тестируется способность отрисовать анимацию 2 рыцарей
+Тестируется способность отрисовать анимацию 40 рыцарей (320 объектов) одновременно
 """
+
 from base_animation import *
 
 
 def test_simple_animation():
-    window = SimpleAnimationTest(count_knights=2)
+    window = LoadAnimationTest(count_knights=40)
     window.setup()
     arcade.run()
 
 
-class SimpleAnimationTest(AnimationTest):
+class LoadAnimationTest(AnimationTest):
     def __init__(self, count_knights):
         super().__init__(count_knights)
 
@@ -36,3 +37,4 @@ class SimpleAnimationTest(AnimationTest):
                             player.move_right = True
             if self.TIME > 8:
                 arcade.quick_run(1)
+

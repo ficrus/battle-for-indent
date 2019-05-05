@@ -154,27 +154,29 @@ class UnitSprite(ObjectSprite):
             change_angle(1, self.player_left_arm, self.player_body)
 
     def update(self, delta_time):
-        if self.move_left:
-            self.change_x(-MOVEMENT_SPEED * delta_time)
-        if self.move_right:
-            self.change_x(MOVEMENT_SPEED * delta_time)
-        if self.move_right or self.move_left:
-            turning_movement(self.player_left_leg, self.player_body, delta_time, self.player_left_leg.turning_speed,
-                             self.player_left_leg.lb, self.player_left_leg.rb)
-            turning_movement(self.player_right_leg, self.player_body, delta_time, self.player_right_leg.turning_speed,
-                             self.player_right_leg.lb, self.player_right_leg.rb)
-            turning_movement(self.player_left_arm, self.player_body, delta_time, self.player_left_arm.turning_speed,
-                             self.player_left_arm.lb, self.player_left_arm.rb)
-            turning_movement(self.player_right_arm, self.player_body, delta_time, self.player_right_arm.turning_speed,
-                             self.player_right_arm.lb, self.player_right_arm.rb)
-            turning_movement(self.player_head, self.player_body, delta_time, self.player_head.turning_speed,
-                             self.player_head.lb, self.player_head.rb)
-        elif self.attack:
-            self.player_left_arm.clockwise_rotation = False
-            self.attack = False
-            self.start_attack = True
-        if self.start_attack:
-            self.make_attack(delta_time)
+        if not self.start_attack:
+            if self.move_left:
+                self.change_x(-MOVEMENT_SPEED * delta_time)
+            if self.move_right:
+                self.change_x(MOVEMENT_SPEED * delta_time)
+            if self.move_right or self.move_left:
+                turning_movement(self.player_left_leg, self.player_body, delta_time, self.player_left_leg.turning_speed,
+                                 self.player_left_leg.lb, self.player_left_leg.rb)
+                turning_movement(self.player_right_leg, self.player_body, delta_time, self.player_right_leg.turning_speed,
+                                 self.player_right_leg.lb, self.player_right_leg.rb)
+                turning_movement(self.player_left_arm, self.player_body, delta_time, self.player_left_arm.turning_speed,
+                                 self.player_left_arm.lb, self.player_left_arm.rb)
+                turning_movement(self.player_right_arm, self.player_body, delta_time, self.player_right_arm.turning_speed,
+                                 self.player_right_arm.lb, self.player_right_arm.rb)
+                turning_movement(self.player_head, self.player_body, delta_time, self.player_head.turning_speed,
+                                 self.player_head.lb, self.player_head.rb)
+        if not self.move_right or self.move_left:
+            if self.attack:
+                self.player_left_arm.clockwise_rotation = False
+                self.attack = False
+                self.start_attack = True
+            if self.start_attack:
+                self.make_attack(delta_time)
 
 
 class ZombieSprite(UnitSprite):

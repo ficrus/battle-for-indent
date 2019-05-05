@@ -14,26 +14,24 @@ def test_simple_animation():
 class SimpleAnimationTest(AnimationTest):
     def __init__(self, count_knights):
         super().__init__(count_knights)
+        self.cnt = 0
+    def setup(self):
+        super().setup()
+        for player in self.players:
+            player.move_right = False
 
     def update(self, delta_time):
             self.TIME += delta_time
-            if self.TIME < 8:
+            if self.TIME < 7:
                 pass
             else:
                 assert (self.fps.get_fps() > 15)
+                if self.cnt < 1:
+                    for player in self.players:
+                        if not player.start_attack:
+                            player.attack = True
+                            self.cnt += 1
                 for player in self.players:
                     player.update(delta_time * 60)
-                    if player.move_right:
-                        if player.center_x < SCREEN_WIDTH - 500:
-                            pass
-                        else:
-                            player.move_right = False
-                            player.move_left = True
-                    if player.move_left:
-                        if player.center_x > 200:
-                            pass
-                        else:
-                            player.move_left = False
-                            player.move_right = True
-            if self.TIME > 15:
+            if self.TIME > 10:
                 arcade.quick_run(1)

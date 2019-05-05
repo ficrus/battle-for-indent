@@ -1,18 +1,31 @@
 """
-Тестируется способность отрисовать анимацию 2 рыцарей
+Тестируется способность отрисовать анимацию 30 рыцарей и 30 зомби одновременно
 """
+
 from base_animation import *
+from sprite import ZombieSprite
 
 
 def test_simple_animation():
-    window = SimpleAnimationTest(count_knights=2)
+    window = ZombieandKnightAnimationTest(count_knights=30, count_zombies=30)
     window.setup()
     arcade.run()
 
 
-class SimpleAnimationTest(AnimationTest):
-    def __init__(self, count_knights):
+class ZombieandKnightAnimationTest(AnimationTest):
+    def __init__(self, count_knights, count_zombies):
         super().__init__(count_knights)
+        for i in range(count_zombies):
+            self.players.append(ZombieSprite(scale=0.25))
+
+    def setup(self):
+        for player in self.players:
+            if type(player).__name__ == 'KnightSprite':
+                player.setup(int(random.random()*250), 400 + int(random.random()*250))
+                player.move_right = True
+            else:
+                player.setup(SCREEN_WIDTH - 550 + int(random.random() * 250), 400 + int(random.random() * 250))
+                player.move_left = True
 
     def update(self, delta_time):
             self.TIME += delta_time
