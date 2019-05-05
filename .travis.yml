@@ -1,8 +1,11 @@
 
 language: python
+
+before_install:
+  - sudo apt-get install freeglut3-dev
+
 install:
-  - pip install pytest-xvfb
-  - pip install -r requirements.txt
+  - pip install -r requirements
 
 script:
   python3 -m pytest
