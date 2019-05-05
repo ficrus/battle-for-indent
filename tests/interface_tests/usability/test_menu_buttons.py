@@ -1,15 +1,17 @@
 """
-Тестируется реакция нескольких объектов на нажатия одновременно
+Тестируется реакция нескольких объектов на нажатия одновременно,
+ в том числе и когда объекты пересекаются в момент нажатия
 """
 
 import numpy as np
 from game import *
 
 
-COUNT = 10
-SQRT_BUTTON_NUM = 6
+COUNT = 2000
+BUTTON_NUM = 4
 PAUSE = 1
 RUN_TIME = 20
+BUTTON_SETTINGS = {"lower_w": SCREEN_WIDTH/16, "lower_h": SCREEN_HEIGHT/16, "upper_w": SCREEN_WIDTH*3/16, "upper_h": SCREEN_HEIGHT*3/16, "max_speed": 20}
 
 
 class PressChecker:
@@ -82,10 +84,25 @@ class TestState(MainMenuState):
         self.count += 1
 
 
+class MovingButton(MenuButton):
+    def __init__(self, center_x, center_y, width, height, text, action_function, speed_x=0, speed_y=0):
+        super().__init__(center_x, center_y, width, height, text, action_function)
+        self.speed_x = speed_x
+        self.speed_y = speed_y
 
-class StressTestState(TestState):
-    def __init__(self, game, width, height, title, sqrt_num_buttons):
-        self.sqrt_num_buttons = sqrt_num_buttons
+    def update(self, timedelta):
+        self.center_x += self.speed_x * timedelta
+        self.center_y += self.speed_y * timedelta
+        if self.center_x + self.width/2 >= SCREEN_WIDTH or self.center_x - self.width/2 <= 0:
+            self.speed_x = - self.speed_x
+        if self.center_y + self.height/2 >= SCREEN_HEIGHT or self.center_y - self.height/2 <= 0:
+            self.speed_y = - self.speed_y
+
+
+class UTestState(TestState):
+    def __init__(self, game, width, height, title, num_buttons, button_settings):
+        self.num_buttons = num_buttons
+        self.button_settings = button_settings
         super().__init__(game, width, height, title)
 
     def setup(self):
@@ -94,21 +111,28 @@ class StressTestState(TestState):
 
         game_buttons = Composite()
         self.gui.add(game_buttons)
-        for i in range(self.sqrt_num_buttons):
-            for j in range(self.sqrt_num_buttons):
-                width = int(SCREEN_WIDTH/SQRT_BUTTON_NUM)
-                height = int(SCREEN_HEIGHT/SQRT_BUTTON_NUM)
-                button = MenuButton(i*width + width/2,
-                                    j*height + height/2,
-                                    width, height, str(i + j * SQRT_BUTTON_NUM), self.start_new_game)
-                game_buttons.add(button)
-        self.button_list = [button for button in self.gui.get_leaves() if isinstance(button, Button)]
+        for i in range(self.num_buttons):
+            width = int(np.random.sample()*self.button_settings["upper_w"]+self.button_settings["lower_w"])
+            height = int(np.random.sample() * self.button_settings["upper_h"] + self.button_settings["lower_h"])
+            button = MovingButton(int(np.random.sample()*(SCREEN_WIDTH - width) + width/2),
+                                  int(np.random.sample()*(SCREEN_HEIGHT - height) + height/2),
+                                  width, height, "aaaaa", self.start_new_game,
+                                  int(-self.button_settings["max_speed"] + self.button_settings["max_speed"]*np.random.sample()*2),
+                                  int(-self.button_settings["max_speed"] + self.button_settings["max_speed"]*np.random.sample()*2))
+            game_buttons.add(button)
+
+        self.button_list = [button for button in self.gui.get_leaves() if isinstance(button, MovingButton)]
         self.listeners.add_listener(ButtonListener(self.button_list))
+
+    def update(self, delta_time: float):
+        super().update(delta_time)
+        for button in self.button_list:
+            button.update(delta_time)
 
 
 def test_presses_and_releases_everywhere():
     game_ = Game()
-    state = StressTestState(game_, SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE, SQRT_BUTTON_NUM)
+    state = UTestState(game_, SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE, BUTTON_NUM, BUTTON_SETTINGS)
     state.set_press_checker(PressChecker(state, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, COUNT))
     game_.set_state(state)
     arcade.run()
