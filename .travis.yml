@@ -3,15 +3,11 @@ language: python
 python:
   - "3.6"
 
-before_install:
-  - sudo apt-get update -qq
-
 before_script:
   - "export DISPLAY=:99.0"
   - "sh -e /etc/init.d/xvfb start"
   - sleep 3 # give xvfb some time to start
-  - sudo apt-get install python3-gi python3-gi-cairo python-gst-1.0
-  - pip install coverage coveralls setuptools
+  - pip install setuptools
 
 install:
   - pip install -r requirements.txt
