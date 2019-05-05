@@ -11,8 +11,14 @@ SCREEN_TITLE = "Battle for Indent :: Main Menu"
 
 class Game:
     def __init__(self):
-        self.state = MainMenuState(self, SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE)
+        self.state = None
         print('Game is created')
+
+    def set_state(self, state=None):
+        if state is None:
+            self.state = MainMenuState(self, SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE)
+        else:
+            self.state = state
 
     def change_state(self, state):
         self.state = state
@@ -77,12 +83,13 @@ class MainMenuState(State, arcade.Window):
         exit_button = MenuButton(110, 300, 150, 50, "Exit", self.exit_game)
         service_buttons.add(exit_button)
 
+        self.button_list = [button for button in self.gui.get_leaves() if isinstance(button, Button)]
+        self.listeners.add_listener(ButtonListener(self.button_list))
+
     def on_draw(self):
         arcade.start_render()
 
         self.gui.draw()
-        button_list = [button for button in self.gui.get_leaves() if isinstance(button, Button)]
-        self.listeners.add_listener(ButtonListener(button_list))
 
     def on_mouse_press(self, x, y, button, key_modifiers):
         self.listeners.on_event(PressEvent(x, y))
@@ -118,6 +125,7 @@ class PauseState(State):
 
 def main():
     game_ = Game()
+    game_.set_state()
     game_.create_army()
     arcade.run()
 
