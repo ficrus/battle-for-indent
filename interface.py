@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 import arcade
 
 
-class GUIComponent(ABC):
+class Component(ABC):
     @property
     def parent(self):
         return self._parent
@@ -29,7 +29,7 @@ class GUIComponent(ABC):
         pass
 
 
-class GUILeaf(GUIComponent):
+class Leaf(Component):
     def get_leaves(self) -> list:
         return []
 
@@ -37,16 +37,16 @@ class GUILeaf(GUIComponent):
         pass
 
 
-class GUIComposite(GUIComponent):
+class Composite(Component):
     def __init__(self) -> None:
         self._children = []
 
-    def add(self, component: GUIComponent) -> None:
+    def add(self, component: Component) -> None:
         self._children.append(component)
 
         component.parent = self
 
-    def remove(self, component: GUIComponent):
+    def remove(self, component: Component):
         self._children.remove(component)
 
         component.parent = None
@@ -68,7 +68,7 @@ class GUIComposite(GUIComponent):
             child.draw()
 
 
-class GUIUnitButton(GUILeaf):
+class UnitButton(Leaf):
     def __init__(self, unit_job: str) -> None:
         self.unit_job = unit_job
 
@@ -77,7 +77,8 @@ class GUIUnitButton(GUILeaf):
         print("Draw unit button for {0}".format(self.unit_job))
 
 
-class GUIHealthBar(GUILeaf):
+# Это желательно вынести в другой файл, так как реализует не наполнение state, а наполнение игры
+class HealthBar(Leaf):
     def __init__(self, fraction: str) -> None:
         self.fraction = fraction
 
@@ -86,7 +87,7 @@ class GUIHealthBar(GUILeaf):
         print("Draw hp bar for {0}".format(self.fraction))
 
 
-class GUIPauseButton(GUILeaf):
+class PauseButton(Leaf):
     def __init__(self) -> None:
         pass
 
@@ -94,7 +95,8 @@ class GUIPauseButton(GUILeaf):
         print("Draw pause button")
 
 
-class GUICastle(GUILeaf):
+# Это желательно вынести в другой файл, так как реализует не наполнение state, а наполнение игры
+class Castle(Leaf):
     def __init__(self, fraction):
         self.fraction = fraction
 
@@ -102,7 +104,7 @@ class GUICastle(GUILeaf):
         print("Draw Castle for {0}".format(self.fraction))
 
 
-class GUIButton(GUILeaf):
+class Button(Leaf):
     def __init__(self,
                  center_x, center_y,
                  width, height,
@@ -174,7 +176,7 @@ class GUIButton(GUILeaf):
         self.pressed = False
 
 
-class GUIMenuButton(GUIButton):
+class MenuButton(Button):
     def __init__(self, center_x, center_y, width, height, text, action_function):
         self.action_function = action_function
         super().__init__(center_x, center_y, width, height, text)
@@ -184,20 +186,20 @@ class GUIMenuButton(GUIButton):
         self.action_function()
 
 if __name__ == "__main__":
-    gui_ = GUIComposite()
+    gui_ = Composite()
 
-    unit_bar = GUIComposite()
-    unit_bar.add(GUIUnitButton("knight"))
-    unit_bar.add(GUIUnitButton("bandit"))
+    unit_bar = Composite()
+    unit_bar.add(UnitButton("knight"))
+    unit_bar.add(UnitButton("bandit"))
 
-    info_bar = GUIComposite()
-    info_bar.add(GUIPauseButton())
-    info_bar.add(GUIHealthBar("tabbers"))
-    info_bar.add(GUIHealthBar("spacers"))
+    info_bar = Composite()
+    info_bar.add(PauseButton())
+    info_bar.add(HealthBar("tabbers"))
+    info_bar.add(HealthBar("spacers"))
 
-    game_map = GUIComposite()
-    game_map.add(GUICastle("tabbers"))
-    game_map.add(GUICastle("spacers"))
+    game_map = Composite()
+    game_map.add(Castle("tabbers"))
+    game_map.add(Castle("spacers"))
 
     gui_.add(unit_bar)
     gui_.add(info_bar)

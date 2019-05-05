@@ -5,19 +5,19 @@
 
 import interface
 
-composite = interface.GUIComposite()
+composite = interface.Composite()
 
 
 def build_composite(root, depth):
     if depth < 1:
         for i in range(10):
-            sub_composite = interface.GUIComposite()
+            sub_composite = interface.Composite()
             root.add(sub_composite)
 
             build_composite(sub_composite, depth + 1)
     else:
         for i in range(10):
-            root.add(interface.GUILeaf())
+            root.add(interface.Leaf())
 
 
 def test_build():
@@ -30,7 +30,7 @@ def test_build():
 
 
 def test_leaf_count():
-    assert len([leaf for leaf in composite.get_leaves() if isinstance(leaf, interface.GUILeaf)]) == 10 ** 2
+    assert len([leaf for leaf in composite.get_leaves() if isinstance(leaf, interface.Leaf)]) == 10 ** 2
 
 
 def test_draw():
