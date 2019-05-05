@@ -6,5 +6,4 @@ pyglet==1.4.0b1
 pyglet-ffmpeg2==0.1.12
 pytest
 setuptools
-pytest-cov
 pytest-mock
