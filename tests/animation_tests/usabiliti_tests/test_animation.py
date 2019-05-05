@@ -25,11 +25,17 @@ class UsabilityAnimationTest(AnimationTest):
             if type(player).__name__ == 'KnightSprite':
                 player.setup(int(random.random()*250), 400 + int(random.random()*250))
                 player.move_right = True
-                # self.knight_list.append(player)
+                for obj in player.object_parts:
+                    self.knight_list.append(obj.sprite)
             else:
                 player.setup(SCREEN_WIDTH - 550 + int(random.random() * 250), 400 + int(random.random() * 250))
                 player.move_left = True
-                # self.zombie_list.append(player)
+                for obj in player.object_parts:
+                    self.zombie_list.append(obj.sprite)
+
+    def on_draw(self):
+        super().on_draw()
+        arcade.draw_text("collisions: "+str(self.cnt_hits), 20, SCREEN_HEIGHT - 120, arcade.color.BLACK, 16)
 
     def update(self, delta_time):
             self.cnt_hits = 0
@@ -37,15 +43,14 @@ class UsabilityAnimationTest(AnimationTest):
             if self.TIME < 3:
                 pass
             else:
-                assert (self.fps.get_fps() > 35)
+                assert (self.fps.get_fps() > 15)
                 for player in self.players:
                     if type(player).__name__ == 'KnightSprite':
-                        # player.hit_list = arcade.check_for_collision_with_list(player, self.zombie_list)
-                        pass
+                        for obj in player.object_parts:
+                            self.cnt_hits += len(arcade.check_for_collision_with_list(obj.sprite,  self.zombie_list))
                     else:
-                        # player.hit_list = arcade.check_for_collision_with_list(player, self.knight_list)
-                        pass
-                    # self.cnt_hits += len(player.hit_list)
+                        for obj in player.object_parts:
+                            self.cnt_hits += len(arcade.check_for_collision_with_list(obj.sprite, self.knight_list))
 
                     if player.move_right:
                         if player.center_x < SCREEN_WIDTH - 500:
@@ -61,6 +66,7 @@ class UsabilityAnimationTest(AnimationTest):
                             player.move_right = True
 
                     player.update(delta_time * 60)
-                arcade.draw_text(str(self.cnt_hits), 20, SCREEN_HEIGHT - 80, arcade.color.BLACK, 16)
+                assert(self.cnt_hits < 2000)
+
             if self.TIME > 8:
                 arcade.quick_run(1)
