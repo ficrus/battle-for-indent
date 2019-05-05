@@ -7,7 +7,6 @@ before_script:
   - "export DISPLAY=:99.0"
   - "sh -e /etc/init.d/xvfb start"
   - sleep 3 # give xvfb some time to start
-  - pip install setuptools
 install:
   - pip install -r requirements.txt
 
