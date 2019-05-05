@@ -90,3 +90,10 @@ def test_presses_and_releases_everywere():
     game_.set_state(state)
     arcade.run()
 
+
+def test_presses_and_releases_on_one_button():
+    game_ = Game()
+    state = TestState(game_, SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE)
+    state.set_press_checker(PressChecker(state, 35, 465, 150, 50, COUNT))
+    game_.set_state(state)
+    arcade.run()
