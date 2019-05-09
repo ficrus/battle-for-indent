@@ -136,6 +136,7 @@ class MainMenuState:
 
     def exit_game(self):
         print("Goodbye!")
+        exit(0)
 
 
 class Screen(arcade.Window):
