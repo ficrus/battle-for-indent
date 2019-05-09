@@ -4,7 +4,7 @@ python:
   - "3.6"
 
 before_script:
-  - "export DISPLAY=:99.0"
+  - "export DISPLAY=:0.0"
   - sudo apt-get update
   - sudo apt-get install build-essential
   - sudo apt-get install freeglut3-dev
