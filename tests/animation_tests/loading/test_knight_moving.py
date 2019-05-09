@@ -8,7 +8,7 @@ from base_animation import *
 def test_simple_animation():
     window = LoadAnimationTest(count_knights=40)
     window.setup()
-    arcade.run()
+    arcade.quick_run(10)
 
 
 class LoadAnimationTest(AnimationTest):
@@ -35,6 +35,3 @@ class LoadAnimationTest(AnimationTest):
                         else:
                             player.move_left = False
                             player.move_right = True
-            if self.TIME > 8:
-                arcade.quick_run(1)
-

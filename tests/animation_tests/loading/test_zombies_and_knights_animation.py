@@ -9,7 +9,7 @@ from sprite import ZombieSprite
 def test_simple_animation():
     window = ZombieandKnightAnimationTest(count_knights=30, count_zombies=30)
     window.setup()
-    arcade.run()
+    arcade.quick_run(10)
 
 
 class ZombieandKnightAnimationTest(AnimationTest):
@@ -47,5 +47,3 @@ class ZombieandKnightAnimationTest(AnimationTest):
                         else:
                             player.move_left = False
                             player.move_right = True
-            if self.TIME > 8:
-                arcade.quick_run(1)
