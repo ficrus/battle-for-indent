@@ -7,7 +7,7 @@ from base_animation import *
 def test_simple_animation():
     window = SimpleAnimationTest(count_knights=2)
     window.setup()
-    arcade.quick_run(10)
+    arcade.run()
 
 
 class SimpleAnimationTest(AnimationTest):
@@ -34,3 +34,5 @@ class SimpleAnimationTest(AnimationTest):
                         else:
                             player.move_left = False
                             player.move_right = True
+            if self.TIME > 10:
+                arcade.quick_run(0)
