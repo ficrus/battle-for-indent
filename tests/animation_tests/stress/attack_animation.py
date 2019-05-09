@@ -15,6 +15,7 @@ class SimpleAnimationTest(AnimationTest):
     def __init__(self, count_knights):
         super().__init__(count_knights)
         self.cnt = 0
+
     def setup(self):
         super().setup()
         for player in self.players:
@@ -26,11 +27,16 @@ class SimpleAnimationTest(AnimationTest):
                 pass
             else:
                 assert (self.fps.get_fps() > 15)
-                if self.cnt < 1:
+                if self.cnt < 3:
+                    b = False
                     for player in self.players:
+
                         if not player.start_attack:
+                            if not b:
+                                b = True
                             player.attack = True
-                            self.cnt += 1
+                    if b:
+                        self.cnt += 1
                 for player in self.players:
                     player.update(delta_time * 60)
             if self.TIME > 10:
