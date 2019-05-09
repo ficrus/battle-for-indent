@@ -8,7 +8,7 @@ from sprite import ZombieSprite
 def test_simple_animation():
     window = UsabilityAnimationTest(count_knights=10, count_zombies=10)
     window.setup()
-    arcade.run()
+    arcade.quick_run(10)
 
 
 class UsabilityAnimationTest(AnimationTest):
@@ -67,6 +67,3 @@ class UsabilityAnimationTest(AnimationTest):
 
                     player.update(delta_time * 60)
                 assert(self.cnt_hits < 2000)
-
-            if self.TIME > 8:
-                arcade.quick_run(1)

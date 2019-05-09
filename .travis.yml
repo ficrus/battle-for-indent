@@ -4,9 +4,11 @@ python:
   - "3.6"
 
 before_script:
-  - "export DISPLAY=:99.0"
-  - "sh -e /etc/init.d/xvfb start"
-  - sleep 3 # give xvfb some time to start
+  - sudo apt-get update
+  - sudo apt-get install build-essential
+  - sudo apt-get install freeglut3-dev
+  - "Xvfb :1 -screen 0 1024x768x24 -ac +extension GLX +render -noreset &> xvfb.log &"
+  - "export DISPLAY=:1"
   - pip install setuptools
 
 install:
@@ -24,10 +26,6 @@ deploy:
 
 after_success:
   - coveralls
-
-
-
-
 
 notifications:
   email:
