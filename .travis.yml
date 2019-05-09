@@ -4,6 +4,7 @@ python:
   - "3.6"
 
 before_script:
+  - apt install freeglut-devel
   - pip install setuptools
 
 install:
