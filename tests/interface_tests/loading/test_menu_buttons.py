@@ -52,8 +52,8 @@ class PressChecker:
 
 
 class TestState(MainMenuState):
-    def __init__(self, game, width, height, title):
-        super().__init__(game, width, height, title)
+    def __init__(self, window):
+        super().__init__(window)
         self.count = 0
         self.TIME = 0
         self.press_checker = PressChecker(self, 35, 300, 150, 180, COUNT)
@@ -82,22 +82,22 @@ class TestState(MainMenuState):
 
 
 def test_presses_and_releases_on_buttons():
-    game_ = Game()
-    game_.set_state(TestState(game_, SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE))
+    window = Window(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE)
+    window.set_state(TestState(window))
     arcade.run()
 
 
 def test_presses_and_releases_everywere():
-    game_ = Game()
-    state = TestState(game_, SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE)
+    window = Window(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE)
+    state = TestState(window)
     state.set_press_checker(PressChecker(state, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, COUNT))
-    game_.set_state(state)
+    window.set_state(state)
     arcade.run()
 
 
 def test_presses_and_releases_on_one_button():
-    game_ = Game()
-    state = TestState(game_, SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE)
+    window = Window(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE)
+    state = TestState(window)
     state.set_press_checker(PressChecker(state, 35, 465, 150, 50, COUNT))
-    game_.set_state(state)
+    window.set_state(state)
     arcade.run()

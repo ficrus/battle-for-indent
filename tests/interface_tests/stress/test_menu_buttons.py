@@ -53,8 +53,8 @@ class PressChecker:
 
 
 class TestState(MainMenuState):
-    def __init__(self, game, width, height, title):
-        super().__init__(game, width, height, title)
+    def __init__(self, window):
+        super().__init__(window)
         self.count = 0
         self.TIME = 0
         self.press_checker = PressChecker(self, 35, 300, 150, 180, COUNT)
@@ -82,11 +82,10 @@ class TestState(MainMenuState):
         self.count += 1
 
 
-
 class StressTestState(TestState):
-    def __init__(self, game, width, height, title, sqrt_num_buttons):
+    def __init__(self, window, sqrt_num_buttons):
         self.sqrt_num_buttons = sqrt_num_buttons
-        super().__init__(game, width, height, title)
+        super().__init__(window)
 
     def setup(self):
         self.gui = Composite()
@@ -107,9 +106,9 @@ class StressTestState(TestState):
 
 
 def test_presses_and_releases_everywhere():
-    game_ = Game()
-    state = StressTestState(game_, SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE, SQRT_BUTTON_NUM)
+    window = Window(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE)
+    state = StressTestState(window, SQRT_BUTTON_NUM)
     state.set_press_checker(PressChecker(state, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, COUNT))
-    game_.set_state(state)
+    window.set_state(state)
     arcade.run()
 

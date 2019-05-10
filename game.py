@@ -14,15 +14,6 @@ class Game:
         self.state = None
         print('Game is created')
 
-    def set_state(self, state=None):
-        if state is None:
-            self.state = MainMenuState(self, SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE)
-        else:
-            self.state = state
-
-    def change_state(self, state):
-        self.state = state
-
     def create_army(self):
         army = Army()
         knight_factory = KnightFactory()
@@ -32,10 +23,44 @@ class Game:
         print('Game created Army ')
 
 
-class State(arcade.Window):
-    def __init__(self, game: Game, width, height, title) -> None:
+class Window(arcade.Window):
+    def __init__(self, width, height, title):
         super().__init__(width, height, title)
-        self.game = game
+        file_path = os.path.dirname(os.path.abspath(__file__))
+        os.chdir(file_path)
+
+        arcade.set_background_color(arcade.color.GRAY_BLUE)
+        self.state = None
+
+    def set_state(self, state=None):
+        if state is None:
+            self.state = MainMenuState(self)
+        else:
+            self.state = state
+
+    def change_state(self, state):
+        self.state = state
+
+    def on_draw(self):
+        arcade.start_render()
+        self.state.on_draw()
+
+    def on_mouse_press(self, x, y, button, key_modifiers):
+        self.state.on_mouse_press(x, y, button, key_modifiers)
+
+    def on_mouse_release(self, x, y, button, key_modifiers):
+        self.state.on_mouse_release(x, y, button, key_modifiers)
+
+    def update(self, delta_time: float):
+        self.state.update(delta_time)
+
+
+class State:
+    def __init__(self, window: Window):
+        self.window = window
+
+    def update(self, delta_time: float):
+        pass
 
     def on_draw(self):
         pass
@@ -47,15 +72,9 @@ class State(arcade.Window):
         pass
 
 
-class MainMenuState(State, arcade.Window):
-    def __init__(self, game, width, height, title):
-        super().__init__(game, width, height, title)
-
-        file_path = os.path.dirname(os.path.abspath(__file__))
-        os.chdir(file_path)
-
-        arcade.set_background_color(arcade.color.GRAY_BLUE)
-
+class MainMenuState(State):
+    def __init__(self, window: Window):
+        super().__init__(window)
         self.pause = False
         self.listeners = None
         self.gui = None
@@ -87,8 +106,6 @@ class MainMenuState(State, arcade.Window):
         self.listeners.add_listener(ButtonListener(self.button_list))
 
     def on_draw(self):
-        arcade.start_render()
-
         self.gui.draw()
 
     def on_mouse_press(self, x, y, button, key_modifiers):
@@ -124,9 +141,8 @@ class PauseState(State):
 
 
 def main():
-    game_ = Game()
-    game_.set_state()
-    game_.create_army()
+    window = Window(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE)
+    window.set_state(MainMenuState(window))
     arcade.run()
 
 
