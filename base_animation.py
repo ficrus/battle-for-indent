@@ -8,10 +8,10 @@ from animation_of_character import SCREEN_WIDTH, SCREEN_HEIGHT
 
 class AnimationTest(arcade.Window):
 
-    def __init__(self, COUNT_KNIGHTS):
+    def __init__(self, count_knights):
         super().__init__(SCREEN_WIDTH, SCREEN_HEIGHT, update_rate=1/60)
         self.players = []
-        for i in range(COUNT_KNIGHTS):
+        for i in range(count_knights):
             self.players.append(KnightSprite(scale=0.25))
 
         # Don't show the mouse cursor
