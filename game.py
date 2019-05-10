@@ -1,4 +1,3 @@
-from __future__ import annotations
 from army import Army
 from unit_factories import *
 from interface import *
@@ -16,8 +15,8 @@ SCREEN_TITLE = "Battle for Indent :: Main Menu"
 
 class Game:
     def __init__(self):
+        self.state = None
         print('Game is created')
-        self.screen = Screen(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE, update_rate=1 / 60, window=MainMenuState)
 
     def create_army(self):
         army = Army()
@@ -28,55 +27,70 @@ class Game:
         print('Game created Army ')
 
 
-class Example:
-    def __init__(self):
-        self.player = KnightSprite(scale=0.25)
-        self.zombie = ZombieSprite(scale=0.22)
+class Window(arcade.Window):
+    def __init__(self, width, height, title):
+        super().__init__(width, height, title)
+        file_path = os.path.dirname(os.path.abspath(__file__))
+        os.chdir(file_path)
 
-        # Don't show the mouse cursor
-        # self.set_mouse_visible(False)
-        arcade.set_background_color(arcade.color.AMAZON)
-        self.setup()
+        arcade.set_background_color(arcade.color.GRAY_BLUE)
+        self.state = None
 
-    def setup(self):
-        self.player.setup(300, 300)
-        self.zombie.setup(500, 300)
+    def set_state(self, state=None):
+        if state is None:
+            self.state = MainMenuState(self)
+        else:
+            self.state = state
+
+    def change_state(self, state):
+        self.state = state
 
     def on_draw(self):
         arcade.start_render()
-        self.player.on_draw()
-        self.zombie.on_draw()
+        self.state.on_draw()
 
-    def on_mouse_motion(self, x, y, dx, dy):
+    def on_mouse_press(self, x, y, button, key_modifiers):
+        self.state.on_mouse_press(x, y, button, key_modifiers)
+
+    def on_mouse_release(self, x, y, button, key_modifiers):
+        self.state.on_mouse_release(x, y, button, key_modifiers)
+
+    def update(self, delta_time: float):
+        self.state.update(delta_time)
+
+    def on_key_press(self, symbol: int, modifiers: int):
+        self.state.on_key_press(symbol, modifiers)
+
+    def on_key_release(self, symbol: int, modifiers: int):
+        self.state.on_key_release(symbol, modifiers)
+
+
+class State:
+    def __init__(self, window: Window):
+        self.window = window
+
+    def update(self, delta_time: float):
         pass
 
-    def on_mouse_press(self, x: float, y: float, button: int, modifiers: int):
+    def on_draw(self):
         pass
 
-    def on_key_press(self, key, modifiers):
-        if key == arcade.key.LEFT:
-            self.zombie.move_left = True
-        elif key == arcade.key.RIGHT:
-            self.zombie.move_right = True
-        elif key == arcade.key.W:
-            self.zombie.attack = True
+    def on_mouse_press(self, x, y, button, key_modifiers):
+        pass
 
-    def on_key_release(self, key, modifiers):
-        if key == arcade.key.LEFT:
-            self.zombie.move_left = False
-        if key == arcade.key.RIGHT:
-            self.zombie.move_right = False
-        if key == arcade.key.W:
-            self.zombie.attack = False
+    def on_mouse_release(self, x, y, button, key_modifiers):
+        pass
 
-    def on_update(self, delta_time):
-        self.player.update(delta_time * 60)
-        self.zombie.update(delta_time * 60)
+    def on_key_press(self, symbol: int, modifiers: int):
+        pass
+
+    def on_key_release(self, symbol: int, modifiers: int):
+        pass
 
 
-class MainMenuState:
-    def __init__(self):
-        arcade.set_background_color(arcade.color.GRAY_BLUE)
+class MainMenuState(State):
+    def __init__(self, window: Window):
+        super().__init__(window)
         self.pause = False
         self.listeners = None
         self.gui = None
@@ -105,12 +119,11 @@ class MainMenuState:
         exit_button = MenuButton(110, 300, 150, 50, "Exit", self.exit_game)
         service_buttons.add(exit_button)
 
-    def on_draw(self):
-        arcade.start_render()
+        self.button_list = [button for button in self.gui.get_leaves() if isinstance(button, Button)]
+        self.listeners.add_listener(ButtonListener(self.button_list))
 
+    def on_draw(self):
         self.gui.draw()
-        button_list = [button for button in self.gui.get_leaves() if isinstance(button, Button)]
-        self.listeners.add_listener(ButtonListener(button_list))
 
     def on_mouse_press(self, x, y, button, key_modifiers):
         self.listeners.on_event(PressEvent(x, y))
@@ -129,7 +142,7 @@ class MainMenuState:
 
     def start_new_game(self):
         print("New game started!")
-        self.parent.change_window(Example)
+
         # позже будет game.change_state(BattleFieldState())
 
     def continue_game(self):
@@ -137,16 +150,16 @@ class MainMenuState:
 
     def open_options(self):
         print("Options opened!")
-        self.parent.change_window(OptionsState)
+        self.window.change_state(OptionsState(self.window))
 
     def exit_game(self):
         print("Goodbye!")
         exit(0)
 
 
-class OptionsState:
-    def __init__(self):
-        arcade.set_background_color(arcade.color.GRAY_BLUE)
+class OptionsState(State):
+    def __init__(self, window):
+        super().__init__(window)
         self.pause = False
         self.listeners = None
         self.gui = None
@@ -157,8 +170,6 @@ class OptionsState:
             self.restore(pickle.load(options))
 
         self.setup()
-        
-        
 
     def setup(self):
         self.gui = Composite()
@@ -183,8 +194,6 @@ class OptionsState:
         service_buttons.add(return_button)
 
     def on_draw(self):
-        arcade.start_render()
-
         self.gui.draw()
         button_list = [button for button in self.gui.get_leaves() if isinstance(button, Button)]
         self.listeners.add_listener(ButtonListener(button_list))
@@ -196,12 +205,6 @@ class OptionsState:
         self.listeners.on_event(ReleaseEvent(x, y))
 
     def on_update(self, delta_time: float):
-        pass
-
-    def on_key_press(self, symbol, modifiers):
-        pass
-
-    def on_key_release(self, symbol, modifiers):
         pass
 
     def do_nothing(self):
@@ -220,7 +223,7 @@ class OptionsState:
         self.save_on_disk(self.save())
 
     def return_to_menu(self) -> None:
-        self.parent.change_window(MainMenuState)
+        self.window.change_state(MainMenuState(self.window))
 
     def save(self) -> memento.OptionsMemento:
         return memento.OptionsMemento(self._state)
@@ -231,38 +234,6 @@ class OptionsState:
 
     def restore(self, memento: memento.OptionsMemento) -> None:
         self._state = memento.get_state()
-
-
-class Screen(arcade.Window):
-    def __init__(self, width, height, title, update_rate=1 / 60, window=MainMenuState):
-        super().__init__(width, height, title=title, update_rate=update_rate)
-        self.window = window()
-        self.window.parent = self
-
-    def setup(self):
-        self.window.setup()
-
-    def on_draw(self):
-        self.window.on_draw()
-
-    def on_update(self, delta_time: float):
-        self.window.on_update(delta_time)
-
-    def on_key_press(self, symbol, modifiers):
-        self.window.on_key_press(symbol, modifiers)
-
-    def on_key_release(self, symbol, modifiers):
-        self.window.on_key_release(symbol, modifiers)
-
-    def on_mouse_press(self, x, y, button, key_modifiers):
-        self.window.on_mouse_press(x, y, button, key_modifiers)
-
-    def on_mouse_release(self, x, y, button, key_modifiers):
-        self.window.on_mouse_release(x, y, button, key_modifiers)
-
-    def change_window(self, window):
-        self.window = window()
-        self.window.parent = self
 
 
 class BattlefieldState:
@@ -278,8 +249,8 @@ class PauseState:
 
 
 def main():
-    game_ = Game()
-    game_.create_army()
+    window = Window(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE)
+    window.set_state(MainMenuState(window))
     arcade.run()
 
 
