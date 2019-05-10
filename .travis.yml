@@ -1,14 +1,34 @@
-
 language: python
 
-before_install:
+python:
+  - "3.6"
+
+before_script:
+  - sudo apt-get update
+  - sudo apt-get install build-essential
   - sudo apt-get install freeglut3-dev
+  - "Xvfb :1 -screen 0 1024x768x24 -ac +extension GLX +render -noreset &> xvfb.log &"
+  - "export DISPLAY=:1"
+  - pip install setuptools
+
+install:
+  - pip install --upgrade pytest
+  - pip install -r requirements.txt
 
 script:
   python3 -m pytest
 
+deploy:
+   provider: pypi
+   user: $USERNAME
+   password: $PASSWORD
+#   distributions: "bdist_wheel"
+
+after_success:
+  - coveralls
+
 notifications:
   email:
-    on_success: always
-    on_failure: always
+    on_success: never
+    on_failure: never
 
