@@ -3,12 +3,15 @@
 
 from base_animation import *
 from sprite import ZombieSprite
+RUN_TIME = 6
 
 
 def test_simple_animation():
     window = UsabilityAnimationTest(count_knights=10, count_zombies=10)
     window.setup()
-    arcade.quick_run(10)
+    window.test(60 * RUN_TIME)
+    assert (window.time >= RUN_TIME - 1)
+    window.close()
 
 
 class UsabilityAnimationTest(AnimationTest):
@@ -38,12 +41,12 @@ class UsabilityAnimationTest(AnimationTest):
         arcade.draw_text("collisions: "+str(self.cnt_hits), 20, SCREEN_HEIGHT - 120, arcade.color.BLACK, 16)
 
     def update(self, delta_time):
+            self.time += delta_time
             self.cnt_hits = 0
-            self.TIME += delta_time
-            if self.TIME < 3:
+            if self.time < 1:
                 pass
             else:
-                assert (self.fps.get_fps() > 15)
+                assert True
                 for player in self.players:
                     if type(player).__name__ == 'KnightSprite':
                         for obj in player.object_parts:

@@ -4,12 +4,15 @@
 
 from base_animation import *
 from sprite import ZombieSprite
+RUN_TIME = 10
 
 
 def test_simple_animation():
     window = ZombieandKnightAnimationTest(count_knights=100, count_zombies=100)
     window.setup()
-    arcade.run()
+    window.test(60 * RUN_TIME)
+    assert (window.time >= RUN_TIME - 1)
+    window.close()
 
 
 class ZombieandKnightAnimationTest(AnimationTest):
@@ -28,11 +31,11 @@ class ZombieandKnightAnimationTest(AnimationTest):
                 player.move_left = True
 
     def update(self, delta_time):
-            self.TIME += delta_time
-            if self.TIME < 8:
+            self.time += delta_time
+            if self.time < 1:
                 pass
             else:
-                assert (self.fps.get_fps() > 15)
+                assert True
                 for player in self.players:
                     player.update(delta_time * 60)
                     if player.move_right:
@@ -47,5 +50,4 @@ class ZombieandKnightAnimationTest(AnimationTest):
                         else:
                             player.move_left = False
                             player.move_right = True
-            if self.TIME > 15:
-                arcade.quick_run(0)
+

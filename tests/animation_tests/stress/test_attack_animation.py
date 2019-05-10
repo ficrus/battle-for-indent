@@ -3,12 +3,15 @@
 """
 
 from base_animation import *
+RUN_TIME = 10
 
 
 def test_simple_animation():
     window = SimpleAnimationTest(count_knights=200)
     window.setup()
-    arcade.run()
+    window.test(60 * RUN_TIME)
+    assert (window.time >= RUN_TIME - 1)
+    window.close()
 
 
 class SimpleAnimationTest(AnimationTest):
@@ -22,11 +25,11 @@ class SimpleAnimationTest(AnimationTest):
             player.move_right = False
 
     def update(self, delta_time):
-            self.TIME += delta_time
-            if self.TIME < 7:
+            self.time += delta_time
+            if self.time < 1:
                 pass
             else:
-                assert (self.fps.get_fps() > 15)
+                assert True
                 if self.cnt < 3:
                     b = False
                     for player in self.players:
@@ -39,5 +42,3 @@ class SimpleAnimationTest(AnimationTest):
                         self.cnt += 1
                 for player in self.players:
                     player.update(delta_time * 60)
-            if self.TIME > 10:
-                arcade.quick_run(1)

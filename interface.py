@@ -185,6 +185,7 @@ class MenuButton(Button):
         super().on_release()
         self.action_function()
 
+
 if __name__ == "__main__":
     gui_ = Composite()
 
