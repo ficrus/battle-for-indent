@@ -1,4 +1,3 @@
-from __future__ import annotations
 from army import Army
 from unit_factories import *
 from interface import *
@@ -18,7 +17,6 @@ class Game:
     def __init__(self):
         self.state = None
         print('Game is created')
-
 
     def create_army(self):
         army = Army()
@@ -132,7 +130,7 @@ class MainMenuState(State):
 
     def start_new_game(self):
         print("New game started!")
-        self.parent.change_window(Example)
+        #self.parent.change_window(Example)
         # позже будет game.change_state(BattleFieldState())
 
     def continue_game(self):
