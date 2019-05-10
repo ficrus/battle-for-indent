@@ -7,9 +7,9 @@ from game import *
 
 
 COUNT = 10
-SQRT_BUTTON_NUM = 6
+SQRT_BUTTON_NUM = 2
 PAUSE = 1
-RUN_TIME = 20
+RUN_TIME = 2
 
 
 class PressChecker:
@@ -66,8 +66,6 @@ class TestState(MainMenuState):
         self.TIME += delta_time
         self.press_checker.raise_press()
         self.press_checker.check()
-        if self.TIME > RUN_TIME:
-            arcade.quick_run(1)
 
     def start_new_game(self):
         self.count += 1
@@ -110,5 +108,5 @@ def test_presses_and_releases_everywhere():
     state = StressTestState(window, SQRT_BUTTON_NUM)
     state.set_press_checker(PressChecker(state, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, COUNT))
     window.set_state(state)
-    arcade.run()
+    window.test(60 * RUN_TIME)
 

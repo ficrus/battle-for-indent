@@ -8,7 +8,7 @@ from game import *
 
 COUNT = 200
 PAUSE = 1
-RUN_TIME = 20
+RUN_TIME = 2
 
 
 class PressChecker:
@@ -65,8 +65,6 @@ class TestState(MainMenuState):
         self.TIME += delta_time
         self.press_checker.raise_press()
         self.press_checker.check()
-        if self.TIME > RUN_TIME:
-            arcade.quick_run(1)
 
     def start_new_game(self):
         self.count += 1
@@ -84,7 +82,7 @@ class TestState(MainMenuState):
 def test_presses_and_releases_on_buttons():
     window = Window(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE)
     window.set_state(TestState(window))
-    arcade.run()
+    window.test(60 * RUN_TIME)
 
 
 def test_presses_and_releases_everywere():
@@ -92,7 +90,7 @@ def test_presses_and_releases_everywere():
     state = TestState(window)
     state.set_press_checker(PressChecker(state, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, COUNT))
     window.set_state(state)
-    arcade.run()
+    window.test(60 * RUN_TIME)
 
 
 def test_presses_and_releases_on_one_button():
@@ -100,4 +98,4 @@ def test_presses_and_releases_on_one_button():
     state = TestState(window)
     state.set_press_checker(PressChecker(state, 35, 465, 150, 50, COUNT))
     window.set_state(state)
-    arcade.run()
+    window.test(60 * RUN_TIME)

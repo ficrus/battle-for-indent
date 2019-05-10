@@ -58,6 +58,12 @@ class Window(arcade.Window):
     def update(self, delta_time: float):
         self.state.update(delta_time)
 
+    def on_key_press(self, symbol: int, modifiers: int):
+        self.state.on_key_press(symbol, modifiers)
+
+    def on_key_release(self, symbol: int, modifiers: int):
+        self.state.on_key_release(symbol, modifiers)
+
 
 class State:
     def __init__(self, window: Window):
@@ -73,6 +79,12 @@ class State:
         pass
 
     def on_mouse_release(self, x, y, button, key_modifiers):
+        pass
+
+    def on_key_press(self, symbol: int, modifiers: int):
+        pass
+
+    def on_key_release(self, symbol: int, modifiers: int):
         pass
 
 
@@ -130,7 +142,7 @@ class MainMenuState(State):
 
     def start_new_game(self):
         print("New game started!")
-        #self.parent.change_window(Example)
+
         # позже будет game.change_state(BattleFieldState())
 
     def continue_game(self):
@@ -138,7 +150,7 @@ class MainMenuState(State):
 
     def open_options(self):
         print("Options opened!")
-        self.parent.change_window(OptionsState)
+        self.window.change_state(OptionsState(self.window))
 
     def exit_game(self):
         print("Goodbye!")
@@ -146,7 +158,8 @@ class MainMenuState(State):
 
 
 class OptionsState(State):
-    def __init__(self):
+    def __init__(self, window):
+        super().__init__(window)
         self.pause = False
         self.listeners = None
         self.gui = None
@@ -157,8 +170,6 @@ class OptionsState(State):
             self.restore(pickle.load(options))
 
         self.setup()
-        
-        
 
     def setup(self):
         self.gui = Composite()
@@ -196,12 +207,6 @@ class OptionsState(State):
     def on_update(self, delta_time: float):
         pass
 
-    def on_key_press(self, symbol, modifiers):
-        pass
-
-    def on_key_release(self, symbol, modifiers):
-        pass
-
     def do_nothing(self):
         pass
 
@@ -218,7 +223,7 @@ class OptionsState(State):
         self.save_on_disk(self.save())
 
     def return_to_menu(self) -> None:
-        self.parent.change_window(MainMenuState)
+        self.window.change_state(MainMenuState(self.window))
 
     def save(self) -> memento.OptionsMemento:
         return memento.OptionsMemento(self._state)

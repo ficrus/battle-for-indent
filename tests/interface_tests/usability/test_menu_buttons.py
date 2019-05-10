@@ -10,7 +10,7 @@ from game import *
 COUNT = 2000
 BUTTON_NUM = 4
 PAUSE = 1
-RUN_TIME = 20
+RUN_TIME = 10
 BUTTON_SETTINGS = {"lower_w": SCREEN_WIDTH/16, "lower_h": SCREEN_HEIGHT/16, "upper_w": SCREEN_WIDTH*3/16, "upper_h": SCREEN_HEIGHT*3/16, "max_speed": 20}
 
 
@@ -135,5 +135,5 @@ def test_presses_and_releases_everywhere():
     state = UTestState(window, BUTTON_NUM, BUTTON_SETTINGS)
     state.set_press_checker(PressChecker(state, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, COUNT))
     window.set_state(state)
-    arcade.run()
+    window.test(60 * RUN_TIME)
 
