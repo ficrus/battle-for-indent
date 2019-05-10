@@ -10,7 +10,7 @@ import memento
 
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 600
-SCREEN_TITLE = "Battle for Indent :: Main Menu"
+SCREEN_TITLE = "Battle for Indent"
 
 
 class Game:
@@ -212,18 +212,23 @@ class OptionsState(State):
 
     def option1(self):
         self._state[0] = not self._state[0]
-        self.save_on_disk(self.save())
+        self.update_options()
 
     def option2(self):
         self._state[1] = not self._state[1]
-        self.save_on_disk(self.save())
+        self.update_options()
 
     def option3(self):
         self._state[2] = not self._state[2]
-        self.save_on_disk(self.save())
+        self.update_options()
 
     def return_to_menu(self) -> None:
         self.window.change_state(MainMenuState(self.window))
+
+    def update_options(self) -> None:
+        self.save_on_disk(self.save())
+
+        self.window.change_state(OptionsState(self.window))
 
     def save(self) -> memento.OptionsMemento:
         return memento.OptionsMemento(self._state)
@@ -236,15 +241,19 @@ class OptionsState(State):
         self._state = memento.get_state()
 
 
-class BattlefieldState:
+class TutorialState(State):
     pass
 
 
-class UnitSelectState:
+class BattlefieldState(State):
     pass
 
 
-class PauseState:
+class UnitSelectState(State):
+    pass
+
+
+class PauseState(State):
     pass
 
 
