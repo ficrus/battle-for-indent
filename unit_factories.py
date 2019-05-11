@@ -21,8 +21,7 @@ class KnightFactory(UnitFactory):
         print('KnightFactory creates knight')
         return Knight()
 
-
-class BanditFactory(UnitFactory):
+class ZombieFactory(UnitFactory):
     def create(self) -> BaseUnit:
-        print('BanditFactory creates bandit')
-        return Bandit()
+        print('ZombieFactory creates  zombie')
+        return Zombie()

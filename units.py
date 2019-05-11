@@ -5,6 +5,8 @@ class BaseUnit(ABC):
     def __init__(self):
         self.fraction = ""
         self.job = ""
+        self.decription = ""
+        self.power = 0
         self.hp = 0
         self.physical_damage = 0
         self.magical_damage = 0
@@ -22,7 +24,9 @@ class Knight(BaseUnit):
     def __init__(self):
         super().__init__()
 
-        self.job = "knight"
+        self.job = "Knight"
+        self.decription = "Strong and self-confident knight"
+        self.power = 10
         self.hp = 100
         self.physical_damage = 5
         self.magical_damage = 0
@@ -40,6 +44,8 @@ class Paladin(BaseUnit):
         super().__init__()
 
         self.job = "Paladin"
+        self.decription = "Master of spear and base magic"
+        self.power = 20
         self.hp = 100
         self.physical_damage = 5
         self.magical_damage = 0
@@ -52,11 +58,13 @@ class Paladin(BaseUnit):
         super().attack(target)
 
 
-class Bandit(BaseUnit):
+class Zombie(BaseUnit):
     def __init__(self):
         super().__init__()
 
-        self.job = "bandit"
+        self.job = "Zombie"
+        self.decription = "It's not a bandit at all"
+        self.power = 10
         self.hp = 30
         self.physical_damage = 2
         self.magical_damage = 0
