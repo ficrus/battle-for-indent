@@ -8,8 +8,8 @@ import pickle
 import memento
 
 
-SCREEN_WIDTH = 800
-SCREEN_HEIGHT = 600
+SCREEN_WIDTH = 1920
+SCREEN_HEIGHT = 1080
 SCREEN_TITLE = "Battle for Indent"
 
 
@@ -29,7 +29,7 @@ class Game:
 
 class Window(arcade.Window):
     def __init__(self, width, height, title):
-        super().__init__(width, height, title)
+        super().__init__(width, height, title, fullscreen=True)
         file_path = os.path.dirname(os.path.abspath(__file__))
         os.chdir(file_path)
 
