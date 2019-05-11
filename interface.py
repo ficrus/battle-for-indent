@@ -29,7 +29,7 @@ class Component(ABC):
         pass
 
     @abstractmethod
-    def update(self):
+    def update(self, delta_time: float):
         pass
 
 
