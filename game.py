@@ -183,7 +183,7 @@ class MainMenuState(State):
 
     def start_new_game(self):
         print("New game started!")
-        self.window.change_state(BattlefieldState(self.window, {"Zombie": 7, "Knight": 5, "Paladin": 3}))
+        self.window.change_state(TutorialState(self.window))
 
     def continue_game(self):
         print("Game continued!")
@@ -469,7 +469,8 @@ class UnitSelectState(State):
         self.update_unit_select()
 
     def start_game(self) -> None:
-        self.window.change_state(BattlefieldState(self.window))
+        unit_dict = {UnitClass().job: self._info.unit_count[UnitClass] for UnitClass in self._info.unit_count}
+        self.window.change_state(BattlefieldState(self.window, unit_dict))
 
     def unit_select(self) -> None:
         self.window.change_state(UnitSelectState(self.window))
