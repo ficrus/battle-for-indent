@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 import arcade
+from options_manager import OptionsManager
 SCREEN_WIDTH = 1920
 SCREEN_HEIGHT = 1080
 IMAGE_NAMES = {"Zombie": "images/zombie/zhead.png", "Knight": "images/knight/head.png", "Paladin": "images/knight/head.png"}
@@ -311,8 +312,9 @@ class MenuButton(Button):
     def on_release(self):
         super().on_release()
 
-        click_sound = arcade.load_sound("./sounds/click-sound.wav")
-        arcade.play_sound(click_sound)
+        if OptionsManager().is_sounds_enabled:
+            click_sound = arcade.load_sound("./sounds/click-sound.wav")
+            arcade.play_sound(click_sound)
 
         if self.argument is None:
             self.action_function()
