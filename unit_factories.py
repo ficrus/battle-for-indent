@@ -18,12 +18,12 @@ class UnitFactory(metaclass=Singleton):
 
 
 class KnightFactory(UnitFactory):
-    def create(self, x=0, y=0) -> BaseUnit:
+    def create(self, x=0, y=0, scale=0.16) -> BaseUnit:
         print('KnightFactory creates knight')
-        return Knight(sprite=KnightSprite, x=x, y=y)
+        return Knight(sprite=KnightSprite, x=x, y=y, scale=scale)
 
 
 class BanditFactory(UnitFactory):
-    def create(self, x=0, y=0) -> BaseUnit:
+    def create(self, x=0, y=0, scale=0.14) -> BaseUnit:
         print('BanditFactory creates bandit')
-        return Bandit(sprite=ZombieSprite, x=x, y=y)
+        return Bandit(sprite=ZombieSprite, x=x, y=y, scale=scale)

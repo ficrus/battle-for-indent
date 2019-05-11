@@ -1,9 +1,7 @@
 from math import *
 from abc import ABC, abstractmethod
-
+from decorator import *
 import arcade
-
-MOVEMENT_SPEED = 3
 
 
 class Part:
@@ -122,8 +120,9 @@ def change_angle(angle: int, obj: Part, relobj=None):
 
 class UnitSprite(ObjectSprite):
     @abstractmethod
-    def __init__(self, scale=1):
+    def __init__(self, scale=1, move_speed=0):
         super().__init__(scale=scale)
+        self.move_speed = move_speed
         self.player_body = None
         self.player_left_leg = None
         self.player_right_leg = None
@@ -135,10 +134,15 @@ class UnitSprite(ObjectSprite):
         self.start_attack = False
         self.move_right = False
         self.move_left = False
+        self.movement_class = MovementSprite()
+        self.attack_class = AttackSprite()
+
+    def set_speed_decorator(self, decorator, alpha):
+        self.movement_class = decorator(self.movement_class, alpha)
+        self.attack_class = decorator(self.attack_class, alpha)
 
     @abstractmethod
     def setup(self, x, y):
-
         super().setup(x, y)
 
         self.center_x = self.player_body.sprite.center_x
@@ -146,37 +150,11 @@ class UnitSprite(ObjectSprite):
         self.player_right_arm.clockwise_rotation = True
         self.player_right_leg.clockwise_rotation = True
 
-    def make_attack(self, delta_time):
-        turning_movement(self.player_left_arm, self.player_body, delta_time,
-                         self.player_left_arm.turning_speed_during_attack, self.player_left_arm.lb - 1, 50)
-        if self.player_left_arm.sprite.angle <= self.player_left_arm.lb - 1:
-            self.start_attack = False
-            change_angle(1, self.player_left_arm, self.player_body)
-
     def update(self, delta_time):
         if not self.start_attack:
-            if self.move_left:
-                self.change_x(-MOVEMENT_SPEED * delta_time)
-            if self.move_right:
-                self.change_x(MOVEMENT_SPEED * delta_time)
-            if self.move_right or self.move_left:
-                turning_movement(self.player_left_leg, self.player_body, delta_time, self.player_left_leg.turning_speed,
-                                 self.player_left_leg.lb, self.player_left_leg.rb)
-                turning_movement(self.player_right_leg, self.player_body, delta_time, self.player_right_leg.turning_speed,
-                                 self.player_right_leg.lb, self.player_right_leg.rb)
-                turning_movement(self.player_left_arm, self.player_body, delta_time, self.player_left_arm.turning_speed,
-                                 self.player_left_arm.lb, self.player_left_arm.rb)
-                turning_movement(self.player_right_arm, self.player_body, delta_time, self.player_right_arm.turning_speed,
-                                 self.player_right_arm.lb, self.player_right_arm.rb)
-                turning_movement(self.player_head, self.player_body, delta_time, self.player_head.turning_speed,
-                                 self.player_head.lb, self.player_head.rb)
+            self.movement_class.act(unit=self, delta_time=delta_time)
         if not self.move_right or self.move_left:
-            if self.attack:
-                self.player_left_arm.clockwise_rotation = False
-                self.attack = False
-                self.start_attack = True
-            if self.start_attack:
-                self.make_attack(delta_time)
+            self.attack_class.act(unit=self, delta_time=delta_time)
 
 
 class ZombieSprite(UnitSprite):
