@@ -16,8 +16,8 @@ class BaseUnit(Leaf):
         self.magical_damage = 0
         self.physical_resist = 0
         self.magical_resist = 0
-        self.setup(x, y)
         self.move_speed = 0
+        self.setup(x, y)
 
     def setup(self, x, y):
         if self.sprite is not None:
@@ -52,13 +52,15 @@ class Knight(BaseUnit):
         self.physical_resist = 1
         self.magical_resist = 0
         self.move_speed = 4
+        if self.sprite is not None:
+            self.sprite.move_speed = self.move_speed
 
     def attack(self, target: BaseUnit):
         super().attack(target)
 
 
 class Paladin(BaseUnit):
-    def __init__(self, sprite=None, x=0, y=0, scale=1, move_speed=6):
+    def __init__(self, sprite=None, x=0, y=0, scale=1):
         super().__init__(sprite=sprite, x=x, y=y, scale=scale)
 
         self.job = "Paladin"
@@ -70,6 +72,8 @@ class Paladin(BaseUnit):
         self.physical_resist = 1
         self.magical_resist = 0
         self.move_speed = 5
+        if self.sprite is not None:
+            self.sprite.move_speed = self.move_speed
 
     def attack(self, target: BaseUnit):
         super().attack(target)
@@ -88,6 +92,8 @@ class Zombie(BaseUnit):
         self.physical_resist = 0
         self.magical_resist = 0
         self.move_speed = 6
+        if self.sprite is not None:
+            self.sprite.move_speed = self.move_speed
 
     def attack(self, target: BaseUnit):
         super().attack(target)
