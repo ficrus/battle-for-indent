@@ -595,9 +595,11 @@ class PauseState(State):
     def return_to_menu(self) -> None:
         self.window.change_state(MainMenuState(self.window))
 
+
 def play_menu_music(*args):
     music = arcade.load_sound("./sounds/main-menu-theme.wav")
     arcade.play_sound(music)
+
 
 def main():
     window = Window(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE)

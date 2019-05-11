@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 from interface import Leaf
+import arcade
 
 
 class BaseUnit(Leaf):
@@ -12,6 +13,7 @@ class BaseUnit(Leaf):
         self.description = ""
         self.power = 0
         self.hp = 0
+        self.max_hp = 0
         self.physical_damage = 0
         self.magical_damage = 0
         self.physical_resist = 0
@@ -25,8 +27,24 @@ class BaseUnit(Leaf):
             self.sprite.move_speed = self.move_speed
 
     def draw(self):
-        if self.sprite is not None:
-            self.sprite.on_draw()
+        if self.hp > 0:
+            if self.sprite is not None:
+                self.sprite.on_draw()
+            if self.hp > self.max_hp*0.5:
+                arcade.draw_rectangle_filled(self.sprite.center_x,
+                                             self.sprite.center_y + 70,
+                                             width=self.hp/self.max_hp * 50, height=self.max_hp/10, color=arcade.color.LIGHT_GREEN)
+            elif self.hp > self.max_hp*0.25:
+                arcade.draw_rectangle_filled(self.sprite.center_x,
+                                             self.sprite.center_y + 70,
+                                             width=self.hp/self.max_hp * 50, height=self.max_hp/10, color=arcade.color.LIGHT_YELLOW)
+            else:
+                arcade.draw_rectangle_filled(self.sprite.center_x,
+                                             self.sprite.center_y + 70,
+                                             width=self.hp/self.max_hp * 50, height=self.max_hp/10, color=arcade.color.LIGHT_RED_OCHRE)
+            arcade.draw_rectangle_outline(self.sprite.center_x,
+                                          self.sprite.center_y + 70,
+                                          width=52, height=self.max_hp/10 + 2, color=arcade.color.DARK_GREEN)
 
     def update(self, delta_time):
         if self.sprite is not None:
@@ -47,6 +65,7 @@ class Knight(BaseUnit):
         self.description = "Strong and self-confident knight"
         self.power = 10
         self.hp = 100
+        self.max_hp = self.hp
         self.physical_damage = 5
         self.magical_damage = 0
         self.physical_resist = 1
@@ -67,6 +86,7 @@ class Paladin(BaseUnit):
         self.description = "Master of spear and base magic"
         self.power = 20
         self.hp = 100
+        self.max_hp = self.hp
         self.physical_damage = 5
         self.magical_damage = 0
         self.physical_resist = 1
@@ -87,6 +107,7 @@ class Zombie(BaseUnit):
         self.description = "It's not a bandit at all"
         self.power = 10
         self.hp = 30
+        self.max_hp = self.hp
         self.physical_damage = 2
         self.magical_damage = 0
         self.physical_resist = 0
