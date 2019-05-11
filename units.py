@@ -9,7 +9,7 @@ class BaseUnit(Leaf):
             self.sprite = sprite(scale=scale, move_speed=move_speed)
         self.fraction = ""
         self.job = ""
-        self.decription = ""
+        self.description = ""
         self.power = 0
         self.hp = 0
         self.physical_damage = 0
@@ -41,8 +41,9 @@ class Knight(BaseUnit):
 
     def __init__(self, sprite=None, x=0, y=0, scale=0.16, move_speed=4):
         super().__init__(sprite=sprite, x=x, y=y, scale=scale, move_speed=move_speed)
+
         self.job = "Knight"
-        self.decription = "Strong and self-confident knight"
+        self.description = "Strong and self-confident knight"
         self.power = 10
         self.hp = 100
         self.physical_damage = 5
@@ -59,7 +60,7 @@ class Paladin(BaseUnit):
         super().__init__(sprite=sprite, x=x, y=y, scale=scale, move_speed=move_speed)
 
         self.job = "Paladin"
-        self.decription = "Master of spear and base magic"
+        self.description = "Master of spear and base magic"
         self.power = 20
         self.hp = 100
         self.physical_damage = 5
@@ -70,12 +71,13 @@ class Paladin(BaseUnit):
     def attack(self, target: BaseUnit):
         super().attack(target)
 
-class Bandit(BaseUnit):
+
+class Zombie(BaseUnit):
     def __init__(self, sprite=None, x=0, y=0, scale=0.15, move_speed=5):
         super().__init__(sprite=sprite, x=x, y=y, scale=scale, move_speed=move_speed)
 
         self.job = "Zombie"
-        self.decription = "It's not a bandit at all"
+        self.description = "It's not a bandit at all"
         self.power = 10
         self.hp = 30
         self.physical_damage = 2
@@ -85,3 +87,22 @@ class Bandit(BaseUnit):
 
     def attack(self, target: BaseUnit):
         super().attack(target)
+
+
+def get_decription(UnitClass: BaseUnit) -> str:
+    full_dectiption = """
+    This is {u.job}
+    {u.description}
+
+    Stats:
+        Power Cost: {u.power}
+        HP: {u.hp}
+        Physical Damage: {u.physical_damage}
+        Magical Damage: {u.magical_damage}
+        Physical Resist: {u.physical_resist}
+        Magical Resist: {u.magical_resist}
+        Move Speed: {u.move_speed}
+        Attack Speed: {u.attack_speed}
+    """.format(u=UnitClass())
+
+    return full_dectiption
