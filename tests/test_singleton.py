@@ -3,7 +3,7 @@ import unit_factories
 
 knight_factory = unit_factories.KnightFactory()
 second_knight_factory = unit_factories.KnightFactory()
-bandit_factory = unit_factories.BanditFactory()
+zombie_factory = unit_factories.ZombieFactory()
 
 
 def test_similar_factories():
@@ -11,4 +11,4 @@ def test_similar_factories():
 
 
 def test_different_factories():
-    assert (knight_factory is bandit_factory) is False
+    assert (knight_factory is zombie_factory) is False

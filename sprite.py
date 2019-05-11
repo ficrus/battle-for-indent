@@ -2,7 +2,6 @@ from math import *
 from abc import ABC, abstractmethod
 import arcade
 
-
 class Part:
     def __init__(self, sprite, scale, mirrored=False):
         if mirrored:
