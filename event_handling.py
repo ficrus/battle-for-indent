@@ -1,3 +1,8 @@
+from game import *
+from interface import RoadSelection
+FACTORY = {"KnightFactory": KnightFactory(), "ZombieFactory": ZombieFactory()}
+
+
 class Event:
     def __init__(self):
         self.type = "none"
@@ -17,6 +22,13 @@ class ReleaseEvent(Event):
         self.type = "release"
         self.x = x
         self.y = y
+
+
+class KeyPressEvent(Event):
+    def __init__(self, symbol):
+        super().__init__()
+        self.type = "key_press"
+        self.symbol = symbol
 
 
 class Listener:
@@ -49,6 +61,34 @@ class ButtonListener(Listener):
         for button in self.button_list:
             if button.pressed:
                 button.on_release()
+
+
+class KeyListener(Listener):
+    def __init__(self, road_selection: RoadSelection, indicators_list, game: Game):
+        super().__init__()
+        self.game = game
+        self.road_selection = road_selection
+        self.indicators_list = indicators_list
+        self.listening_for.append("key_press")
+
+    def key_press(self, key_press_event: KeyPressEvent):
+        if self.road_selection.selected_road == 0:
+            if key_press_event.symbol == 49 or key_press_event.symbol == 50 or key_press_event.symbol == 51:
+                self.road_selection.selected_road = key_press_event.symbol - 48
+                print(self.road_selection.selected_road)
+        else:
+            if key_press_event.symbol == 65307:
+                self.road_selection.selected_road = 0
+
+            if self.road_selection.selected_road != 0:
+                for i in self.indicators_list:
+                    if i.key == key_press_event.symbol - 48:
+                        if i.on_choose():
+                            factory = FACTORY[i.unit_type + "Factory"]
+                            self.game.armies[0].add_unit(
+                                factory.create(x=300, y=SCREEN_HEIGHT *
+                                                        (self.road_selection.selected_road-1)/3 + SCREEN_HEIGHT*2/10))
+                            self.road_selection.selected_road = 0
 
 
 class ListenersSupport:
