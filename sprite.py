@@ -3,7 +3,7 @@ from abc import ABC, abstractmethod
 
 import arcade
 
-MOVEMENT_SPEED = 3
+MOVEMENT_SPEED = 4
 
 
 class Part:
