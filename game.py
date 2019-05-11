@@ -42,7 +42,7 @@ class Game:
         self.armies.append(Army())
 
         knight_factory = KnightFactory()
-        bandit_factory = BanditFactory()
+        zombie_factory = ZombieFactory()
 
         """Временное решение"""
 
@@ -50,10 +50,10 @@ class Game:
         self.armies[0].add_unit(knight_factory.create(x=330, y=300))
         self.armies[0].add_unit(knight_factory.create(x=360, y=300))
         self.armies[0].add_unit(knight_factory.create(x=390, y=300))
-        self.armies[1].add_unit(bandit_factory.create(x=500, y=300))
-        self.armies[1].add_unit(bandit_factory.create(x=530, y=300))
-        self.armies[1].add_unit(bandit_factory.create(x=560, y=300))
-        self.armies[1].add_unit(bandit_factory.create(x=590, y=300))
+        self.armies[1].add_unit(zombie_factory.create(x=500, y=300))
+        self.armies[1].add_unit(zombie_factory.create(x=530, y=300))
+        self.armies[1].add_unit(zombie_factory.create(x=560, y=300))
+        self.armies[1].add_unit(zombie_factory.create(x=590, y=300))
 
         for army in self.armies:
             self.gui.add(army.units)
@@ -331,9 +331,10 @@ class UnitSelectInfo:
     def __init__(self) -> None:
         self.current_power = 0
         self.max_power = 100
+
         self.unit_info = {
-            units.Knight: 0,
-            units.Zombie: 0
+            units.Knight: {"count": 0},
+            units.Zombie: {"count": 0}
         }
 
 
@@ -346,9 +347,9 @@ class UnitSelectState(State):
         self.parent = None
 
         if info is None:
-            self._info = None
+            self._info = UnitSelectInfo()
         else:
-            self._state = info
+            self._info = info
 
         self.setup()
 
@@ -389,10 +390,10 @@ class UnitSelectState(State):
         service_buttons = Composite()
         self.gui.add(service_buttons)
 
-        start_game_button = MenuButton(110, 360, 150, 50, "Start Game", self.return_to_tutorial)
+        start_game_button = MenuButton(110, 360, 150, 50, "Start Game", self.start_game)
         service_buttons.add(start_game_button)
 
-        return_button = MenuButton(110, 300, 150, 50, "Return", self.return_to_tutorial)
+        return_button = MenuButton(110, 300, 150, 50, "Return", self.return_to_menu)
         service_buttons.add(return_button)
 
         self.button_list = [button for button in self.gui.get_leaves() if isinstance(button, Button)]
@@ -421,11 +422,14 @@ class UnitSelectState(State):
     def do_nothing(self) -> None:
         pass
 
+    def start_game(self) -> None:
+        self.window.change_state(BattlefieldState(self.window))
+
     def unit_select(self) -> None:
         self.window.change_state(UnitSelectState(self.window))
 
-    def return_to_tutorial(self) -> None:
-        self.window.change_state(TutorialState(self.window))
+    def return_to_menu(self) -> None:
+        self.window.change_state(MainMenuState(self.window))
 
 
 class BattlefieldState(State):
