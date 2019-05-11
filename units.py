@@ -3,10 +3,10 @@ from interface import Leaf
 
 
 class BaseUnit(Leaf):
-    def __init__(self, sprite=None, x=0, y=0):
+    def __init__(self, sprite=None, x=0, y=0, scale=1):
         self.sprite = None
         if sprite is not None:
-            self.sprite = sprite()
+            self.sprite = sprite(scale)
         self.fraction = ""
         self.job = ""
         self.hp = 0
@@ -22,7 +22,7 @@ class BaseUnit(Leaf):
         if self.sprite is not None:
             self.sprite.setup(x, y)
 
-    def on_draw(self):
+    def draw(self):
         if self.sprite is not None:
             self.sprite.on_draw()
 
@@ -38,8 +38,8 @@ class BaseUnit(Leaf):
 
 
 class Knight(BaseUnit):
-    def __init__(self, sprite=None, x=0, y=0):
-        super().__init__(sprite=sprite, x=x, y=y)
+    def __init__(self, sprite=None, x=0, y=0, scale=0.16):
+        super().__init__(sprite=sprite, x=x, y=y, scale=scale)
         self.job = "knight"
         self.hp = 100
         self.physical_damage = 5
@@ -54,8 +54,8 @@ class Knight(BaseUnit):
 
 
 class Paladin(BaseUnit):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, sprite=None, x=0, y=0, scale=1):
+        super().__init__(sprite=sprite, x=x, y=y, scale=scale)
 
         self.job = "Paladin"
         self.hp = 100
@@ -71,8 +71,8 @@ class Paladin(BaseUnit):
 
 
 class Bandit(BaseUnit):
-    def __init__(self, sprite=None, x=0, y=0):
-        super().__init__(sprite=sprite, x=x, y=y)
+    def __init__(self, sprite=None, x=0, y=0, scale=0.15):
+        super().__init__(sprite=sprite, x=x, y=y, scale=scale)
 
         self.job = "bandit"
         self.hp = 30
