@@ -196,6 +196,9 @@ class MenuButton(Button):
     def on_release(self):
         super().on_release()
 
+        click_sound = arcade.load_sound("./sounds/click-sound.wav")
+        arcade.play_sound(click_sound)
+
         if self.argument is None:
             self.action_function()
         else:
