@@ -10,7 +10,7 @@ import memento
 
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 600
-SCREEN_TITLE = "Battle for Indent :: Main Menu"
+SCREEN_TITLE = "Battle for Indent"
 
 
 class Game:
@@ -142,6 +142,7 @@ class MainMenuState(State):
 
     def start_new_game(self):
         print("New game started!")
+        self.window.change_state(PauseState(self.window))
 
         # позже будет game.change_state(BattleFieldState())
 
@@ -212,18 +213,23 @@ class OptionsState(State):
 
     def option1(self):
         self._state[0] = not self._state[0]
-        self.save_on_disk(self.save())
+        self.update_options()
 
     def option2(self):
         self._state[1] = not self._state[1]
-        self.save_on_disk(self.save())
+        self.update_options()
 
     def option3(self):
         self._state[2] = not self._state[2]
-        self.save_on_disk(self.save())
+        self.update_options()
 
     def return_to_menu(self) -> None:
         self.window.change_state(MainMenuState(self.window))
+
+    def update_options(self) -> None:
+        self.save_on_disk(self.save())
+
+        self.window.change_state(OptionsState(self.window))
 
     def save(self) -> memento.OptionsMemento:
         return memento.OptionsMemento(self._state)
@@ -236,16 +242,71 @@ class OptionsState(State):
         self._state = memento.get_state()
 
 
-class BattlefieldState:
+class TutorialState(State):
     pass
 
 
-class UnitSelectState:
+class UnitSelectState(State):
     pass
 
 
-class PauseState:
+class BattlefieldState(State):
     pass
+
+
+class PauseState(State):
+    def __init__(self, window):
+        super().__init__(window)
+        self.pause = False
+        self.listeners = None
+        self.gui = None
+        self.parent = None
+        self.setup()
+
+    def setup(self):
+        self.gui = Composite()
+        self.listeners = ListenersSupport()
+
+        game_buttons = Composite()
+        self.gui.add(game_buttons)
+
+        continue_button = MenuButton(110, 480, 150, 50, "Continue", self.continue_game)
+        game_buttons.add(continue_button)
+
+        restart_button = MenuButton(110, 420, 150, 50, "Restart", self.restart_game)
+        game_buttons.add(restart_button)
+
+        service_buttons = Composite()
+        self.gui.add(service_buttons)
+    
+        return_button = MenuButton(110, 360, 150, 50, "Return", self.return_to_menu)
+        service_buttons.add(return_button)
+
+    def on_draw(self):
+        self.gui.draw()
+        button_list = [button for button in self.gui.get_leaves() if isinstance(button, Button)]
+        self.listeners.add_listener(ButtonListener(button_list))
+
+    def on_mouse_press(self, x, y, button, key_modifiers):
+        self.listeners.on_event(PressEvent(x, y))
+
+    def on_mouse_release(self, x, y, button, key_modifiers):
+        self.listeners.on_event(ReleaseEvent(x, y))
+
+    def on_update(self, delta_time: float):
+        pass
+
+    def do_nothing(self):
+        pass
+
+    def continue_game(self):
+        self.window.change_state(BattlefieldState(self.window))
+
+    def restart_game(self):
+        self.window.change_state(UnitSelectState(self.window))
+
+    def return_to_menu(self) -> None:
+        self.window.change_state(MainMenuState(self.window))
 
 
 def main():
