@@ -4,9 +4,8 @@ from interface import *
 from event_handling import *
 import os
 from sprite import KnightSprite, ZombieSprite
-import pickle
-import memento
 import units
+from options_manager import OptionsManager
 
 
 SCREEN_TITLE = "Battle for Indent"
@@ -204,27 +203,25 @@ class OptionsState(State):
         self.listeners = None
         self.gui = None
         self.parent = None
-        self._state = None
-
-        with open("./save_data/options", "rb") as options:
-            self.restore(pickle.load(options))
 
         self.setup()
 
     def setup(self):
+        om = OptionsManager()
+
         self.gui = Composite()
         self.listeners = ListenersSupport()
 
         option_buttons = Composite()
         self.gui.add(option_buttons)
 
-        option1_button = MenuButton(110, 480, 150, 50, "Option 1 {0}".format(self._state[0]), self.option1)
+        option1_button = MenuButton(110, 480, 150, 50, "{}".format(["Off", "On"][om.is_music_enabled]), self.change_music)
         option_buttons.add(option1_button)
 
-        option2_button = MenuButton(110, 420, 150, 50, "Option 2 {0}".format(self._state[1]), self.option2)
+        option2_button = MenuButton(110, 420, 150, 50, "{}".format(["Off", "On"][om.is_sounds_enabled]), self.change_sound)
         option_buttons.add(option2_button)
 
-        option3_button = MenuButton(110, 360, 150, 50, "Option 3 {0}".format(self._state[2]), self.option3)
+        option3_button = MenuButton(110, 360, 150, 50, "{}".format(["Off", "!!!PARTY!!!"][om.is_easter_egg_enabled]), self.change_egg)
         option_buttons.add(option3_button)
 
         service_buttons = Composite()
@@ -238,6 +235,7 @@ class OptionsState(State):
         button_list = [button for button in self.gui.get_leaves() if isinstance(button, Button)]
         self.listeners.add_listener(ButtonListener(button_list))
 
+
     def on_mouse_press(self, x, y, button, key_modifiers):
         self.listeners.on_event(PressEvent(x, y))
 
@@ -250,35 +248,29 @@ class OptionsState(State):
     def do_nothing(self):
         pass
 
-    def option1(self):
-        self._state[0] = not self._state[0]
+    def update_options(self):
+        self.window.change_state(OptionsState(self.window))
+
+    def change_music(self):
+        om = OptionsManager()
+        om.change_music()
+
         self.update_options()
 
-    def option2(self):
-        self._state[1] = not self._state[1]
+    def change_sound(self):
+        om = OptionsManager()
+        om.change_sounds()
+
         self.update_options()
 
-    def option3(self):
-        self._state[2] = not self._state[2]
+    def change_egg(self):
+        om = OptionsManager()
+        om.change_egg()
+
         self.update_options()
 
     def return_to_menu(self) -> None:
         self.window.change_state(MainMenuState(self.window))
-
-    def update_options(self) -> None:
-        self.save_on_disk(self.save())
-
-        self.window.change_state(OptionsState(self.window))
-
-    def save(self) -> memento.OptionsMemento:
-        return memento.OptionsMemento(self._state)
-
-    def save_on_disk(self, memento: memento.OptionsMemento) -> None:
-        with open("./save_data/options", "wb") as options:
-            pickle.dump(memento, options)
-
-    def restore(self, memento: memento.OptionsMemento) -> None:
-        self._state = memento.get_state()
 
 
 class TutorialState(State):
@@ -599,16 +591,21 @@ class PauseState(State):
     def return_to_menu(self) -> None:
         self.window.change_state(MainMenuState(self.window))
 
-def play_menu_music(*args):
-    music = arcade.load_sound("./sounds/main-menu-theme.wav")
-    arcade.play_sound(music)
+
+def play_music_once(*args):
+    if OptionsManager().is_music_enabled:
+        music = arcade.load_sound("./sounds/main-menu-theme.wav")
+        arcade.play_sound(music)
+
+def play_music():
+    play_music_once()
+    arcade.schedule(play_music_once, 22)
 
 def main():
     window = Window(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE)
     window.set_state(MainMenuState(window))
 
-    play_menu_music()
-    arcade.schedule(play_menu_music, 22)
+    play_music()
 
     arcade.run()
 
