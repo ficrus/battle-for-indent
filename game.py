@@ -15,8 +15,10 @@ SCREEN_TITLE = "Battle for Indent"
 
 class Game:
     def __init__(self):
-        self.state = None
-        print('Game is created')
+        self.gui = None
+        self.first_army = None
+        self.second_army = None
+
 
     def create_army(self):
         army = Army()
@@ -24,7 +26,9 @@ class Game:
         bandit_factory = BanditFactory()
         army.add_unit(knight_factory.create())
         army.add_unit(bandit_factory.create())
-        print('Game created Army ')
+
+
+
 
 
 class Window(arcade.Window):
