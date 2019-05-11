@@ -28,12 +28,19 @@ class Component(ABC):
     def draw(self):
         pass
 
+    @abstractmethod
+    def update(self):
+        pass
+
 
 class Leaf(Component):
     def get_leaves(self) -> list:
         return []
 
     def draw(self):
+        pass
+
+    def update(self, delta_time: float):
         pass
 
 
@@ -66,6 +73,10 @@ class Composite(Component):
     def draw(self):
         for child in self._children:
             child.draw()
+    
+    def update(self, delta_time: float) -> None:
+        for child in self._children:
+            child.update(delta_time)
 
 
 class UnitButton(Leaf):
