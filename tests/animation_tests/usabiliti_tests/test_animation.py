@@ -1,7 +1,7 @@
 """Тестируется количество перекрываний рыцарями и зомби друг друга (от этого зависит,
 может ли игрок ажекватно оценивать силы своей армии"""
 
-from base_animation import *
+from tests.animation_tests.base_animation import *
 from sprite import ZombieSprite
 RUN_TIME = 6
 
