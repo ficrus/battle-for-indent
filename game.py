@@ -9,8 +9,6 @@ import memento
 import units
 
 
-SCREEN_WIDTH = 1920
-SCREEN_HEIGHT = 1080
 SCREEN_TITLE = "Battle for Indent"
 TUTORIAL_TEXT = """
 Welcome to Battle for Indent!
@@ -185,7 +183,7 @@ class MainMenuState(State):
 
     def start_new_game(self):
         print("New game started!")
-        self.window.change_state(TutorialState(self.window))
+        self.window.change_state(BattlefieldState(self.window, {"Zombie": 7, "Knight": 5, "Paladin": 3}))
 
     def continue_game(self):
         print("Game continued!")
@@ -246,7 +244,7 @@ class OptionsState(State):
     def on_mouse_release(self, x, y, button, key_modifiers):
         self.listeners.on_event(ReleaseEvent(x, y))
 
-    def on_update(self, delta_time: float):
+    def update(self, delta_time: float):
         pass
 
     def do_nothing(self):
@@ -322,7 +320,7 @@ class TutorialState(State):
     def on_mouse_release(self, x, y, button, key_modifiers):
         self.listeners.on_event(ReleaseEvent(x, y))
 
-    def on_update(self, delta_time: float):
+    def update(self, delta_time: float):
         pass
 
     def on_key_press(self, symbol, modifiers):
@@ -426,7 +424,7 @@ class UnitSelectState(State):
     def on_mouse_release(self, x, y, button, key_modifiers):
         self.listeners.on_event(ReleaseEvent(x, y))
 
-    def on_update(self, delta_time: float):
+    def update(self, delta_time: float):
         pass
 
     def on_key_press(self, symbol, modifiers):
@@ -481,15 +479,15 @@ class UnitSelectState(State):
 
 
 class BattlefieldState(State):
-    def __init__(self, window: Window):
+    def __init__(self, window: Window, unit_dict):
         super().__init__(window)
+        self.unit_dict = unit_dict
         self.pause = False
         self.listeners = None
         self.gui = None
         self.parent = None
         self.game = Game()
         self.setup()
-
 
     def setup(self):
         self.gui = Composite()
@@ -502,11 +500,30 @@ class BattlefieldState(State):
 
         pause_button = MenuButton(110, 480, 150, 50, " || ", self.pause_game)
         buttons.add(pause_button)
+        button_list = [button for button in self.gui.get_leaves() if isinstance(button, Button)]
+        self.listeners.add_listener(ButtonListener(button_list))
+        cooldown_indicators = Composite()
+        self.gui.add(cooldown_indicators)
+
+        x = 100
+        y = 100
+        width = 100
+        height = 100
+        key = 1
+        cooldown_indicators_list = []
+        for k, value in self.unit_dict.items():
+            cooldown_indicator = CooldownIndicator(x, y, width, height, k, value, 10, key)
+            cooldown_indicators.add(cooldown_indicator)
+            x += width + 10
+            key += 1
+            cooldown_indicators_list.append(cooldown_indicator)
+        road_selection = RoadSelection()
+        self.gui.add(road_selection)
+        key_listener = KeyListener(road_selection, cooldown_indicators_list, self.game)
+        self.listeners.add_listener(key_listener)
 
     def on_draw(self):
         self.gui.draw()
-        button_list = [button for button in self.gui.get_leaves() if isinstance(button, Button)]
-        self.listeners.add_listener(ButtonListener(button_list))
 
     def on_mouse_press(self, x, y, button, key_modifiers):
         self.listeners.on_event(PressEvent(x, y))
@@ -514,8 +531,11 @@ class BattlefieldState(State):
     def on_mouse_release(self, x, y, button, key_modifiers):
         self.listeners.on_event(ReleaseEvent(x, y))
 
-    def on_update(self, delta_time: float):
-        pass
+    def on_key_press(self, symbol: int, modifiers: int):
+        self.listeners.on_event(KeyPressEvent(symbol))
+
+    def update(self, delta_time: float):
+        self.gui.update(delta_time)
 
     def pause_game(self):
         self.window.change_state(PauseState(self.window))
@@ -567,7 +587,7 @@ class PauseState(State):
         pass
 
     def continue_game(self):
-        self.window.change_state(BattlefieldState(self.window))
+        self.window.change_state(BattlefieldState(self.window, {"Zombie": 7, "Knight": 5, "Paladin": 3}))
 
     def restart_game(self):
         self.window.change_state(UnitSelectState(self.window))
@@ -575,10 +595,17 @@ class PauseState(State):
     def return_to_menu(self) -> None:
         self.window.change_state(MainMenuState(self.window))
 
+def play_menu_music(*args):
+    music = arcade.load_sound("./sounds/main-menu-theme.wav")
+    arcade.play_sound(music)
 
 def main():
     window = Window(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE)
     window.set_state(MainMenuState(window))
+
+    play_menu_music()
+    arcade.schedule(play_menu_music, 22)
+
     arcade.run()
 
 
