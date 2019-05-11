@@ -165,6 +165,11 @@ class MainMenuState(State):
     def on_draw(self):
         self.gui.draw()
 
+        arcade.draw_text("Start new game (with tutorial)\n", 200, 455, arcade.color.BLACK, 15)
+        arcade.draw_text("Continue your game (if you have one)\n", 200, 395, arcade.color.BLACK, 15)
+        arcade.draw_text("Change game options\n", 200, 335, arcade.color.BLACK, 15)
+        arcade.draw_text("Exit game (please, no)\n", 200, 275, arcade.color.BLACK, 15)
+
     def on_mouse_press(self, x, y, button, key_modifiers):
         self.listeners.on_event(PressEvent(x, y))
 
@@ -235,6 +240,10 @@ class OptionsState(State):
         button_list = [button for button in self.gui.get_leaves() if isinstance(button, Button)]
         self.listeners.add_listener(ButtonListener(button_list))
 
+        arcade.draw_text("Background music (It may take some time to apply changes)\n", 200, 455, arcade.color.BLACK, 15)
+        arcade.draw_text("Game sounds\n", 200, 395, arcade.color.BLACK, 15)
+        arcade.draw_text("Use it if you aren't very serious\n", 200, 335, arcade.color.BLACK, 15)
+        arcade.draw_text("Back to Main Menu\n", 200, 275, arcade.color.BLACK, 15)
 
     def on_mouse_press(self, x, y, button, key_modifiers):
         self.listeners.on_event(PressEvent(x, y))
@@ -412,6 +421,9 @@ class UnitSelectState(State):
 
 
         arcade.draw_text(UNIT_SELECT_TEXT.format(self._info.current_power, self._info.max_power), 200, 600, arcade.color.BLACK, 15)
+
+        arcade.draw_text("Start game with these units\n", 200, 335, arcade.color.BLACK, 15)
+        arcade.draw_text("Back to Main Menu\n", 200, 275, arcade.color.BLACK, 15)
 
     def on_mouse_press(self, x, y, button, key_modifiers):
         self.listeners.on_event(PressEvent(x, y))
