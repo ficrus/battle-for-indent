@@ -2,7 +2,7 @@
 Тестируется способность отрисовать анимацию 40 рыцарей (320 объектов) одновременно
 """
 
-from base_animation import *
+from tests.animation_tests.base_animation import *
 RUN_TIME = 6
 
 
