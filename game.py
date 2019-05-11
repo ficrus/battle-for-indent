@@ -414,7 +414,10 @@ class UnitSelectState(State):
         self.gui.draw()
 
         if (self._info.described_unit) is not None:
-            arcade.draw_text(units.get_decription(self._info.described_unit), 450, 275, arcade.color.BLACK, 15)
+            sprite = arcade.Sprite("./lib/textures/{}.png".format(self._info.described_unit.__name__.lower()), center_x=550, center_y=375)
+            sprite.draw()
+            arcade.draw_text(units.get_decription(self._info.described_unit), 700, 275, arcade.color.BLACK, 15)
+
 
         arcade.draw_text(UNIT_SELECT_TEXT.format(self._info.current_power, self._info.max_power), 200, 600, arcade.color.BLACK, 15)
 
