@@ -52,7 +52,7 @@ class PressChecker:
         assert self.state.count == self.count
 
 
-class TestState(MainMenuState):
+class TesState(MainMenuState):
     def __init__(self, window):
         super().__init__(window)
         self.count = 0
@@ -80,7 +80,7 @@ class TestState(MainMenuState):
         self.count += 1
 
 
-class StressTestState(TestState):
+class StressTestState(TesState):
     def __init__(self, window, sqrt_num_buttons):
         self.sqrt_num_buttons = sqrt_num_buttons
         super().__init__(window)
@@ -109,4 +109,5 @@ def test_presses_and_releases_everywhere():
     state.set_press_checker(PressChecker(state, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, COUNT))
     window.set_state(state)
     window.test(60 * RUN_TIME)
+    window.close()
 

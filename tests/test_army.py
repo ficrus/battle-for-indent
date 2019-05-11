@@ -3,14 +3,14 @@ import unit_factories
 
 knight_factory = unit_factories.KnightFactory()
 knight = knight_factory.create()
-bandit_factory = unit_factories.BanditFactory()
-bandit = bandit_factory.create()
+zombie_factory = unit_factories.ZombieFactory()
+zombie = zombie_factory.create()
 army1 = Army()
 army2 = Army()
 army2.add_unit(knight)
 army3 = Army()
 army3.add_unit(knight)
-army3.add_unit(bandit)
+army3.add_unit(zombie)
 
 
 def test_empty():
