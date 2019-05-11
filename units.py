@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from interface import Leaf
 
 
-class BaseUnit(ABC, Leaf):
+class BaseUnit(Leaf):
     def __init__(self, sprite=None, x=0, y=0):
         self.sprite = None
         if sprite is not None:
@@ -17,19 +17,19 @@ class BaseUnit(ABC, Leaf):
         self.move_speed = 0
         self.attack_speed = 0
         self.setup(x, y)
-        
+
     def setup(self, x, y):
         if self.sprite is not None:
             self.sprite.setup(x, y)
-            
+
     def on_draw(self):
         if self.sprite is not None:
             self.sprite.on_draw()
-        
+
     def update(self, delta_time):
         if self.sprite is not None:
-            self.sprite.update(delta_time)            
-    
+            self.sprite.update(delta_time)
+
     @abstractmethod
     def attack(self, target):
         target.hp -= self.physical_damage
