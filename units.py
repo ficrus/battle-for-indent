@@ -21,40 +21,46 @@ class BaseUnit(Leaf):
         self.move_speed = 0
         self.setup(x, y)
 
+    @abstractmethod
+    def accept(self, visitor) -> None:
+        pass
+
     def setup(self, x, y):
         if self.sprite is not None:
             self.sprite.setup(x, y)
             self.sprite.move_speed = self.move_speed
 
     def draw(self):
-        if self.hp > 0:
             if self.sprite is not None:
                 self.sprite.on_draw()
-            if self.hp > self.max_hp*0.5:
+            if self.hp > self.max_hp * 0.5:
                 arcade.draw_rectangle_filled(self.sprite.center_x,
-                                             self.sprite.center_y + 70,
-                                             width=self.hp/self.max_hp * 50, height=self.max_hp/10, color=arcade.color.LIGHT_GREEN)
-            elif self.hp > self.max_hp*0.25:
+                                             self.sprite.center_y + 100,
+                                             width=self.hp / self.max_hp * 50, height=self.max_hp / 10,
+                                             color=arcade.color.LIGHT_GREEN)
+            elif self.hp > self.max_hp * 0.25:
                 arcade.draw_rectangle_filled(self.sprite.center_x,
-                                             self.sprite.center_y + 70,
-                                             width=self.hp/self.max_hp * 50, height=self.max_hp/10, color=arcade.color.LIGHT_YELLOW)
-            else:
+                                             self.sprite.center_y + 100,
+                                             width=self.hp / self.max_hp * 50, height=self.max_hp / 10,
+                                             color=arcade.color.LIGHT_YELLOW)
+            elif self.hp > 0:
                 arcade.draw_rectangle_filled(self.sprite.center_x,
-                                             self.sprite.center_y + 70,
-                                             width=self.hp/self.max_hp * 50, height=self.max_hp/10, color=arcade.color.LIGHT_RED_OCHRE)
+                                             self.sprite.center_y + 100,
+                                             width=self.hp / self.max_hp * 50, height=self.max_hp / 10,
+                                             color=arcade.color.LIGHT_RED_OCHRE)
+
             arcade.draw_rectangle_outline(self.sprite.center_x,
-                                          self.sprite.center_y + 70,
-                                          width=52, height=self.max_hp/10 + 2, color=arcade.color.DARK_GREEN)
+                                          self.sprite.center_y + 100,
+                                          width=52, height=self.max_hp / 10 + 2, color=arcade.color.DARK_GREEN)
 
     def update(self, delta_time):
         if self.sprite is not None:
             self.sprite.update(delta_time)
 
-    @abstractmethod
-    def attack(self, target):
+    def attack(self, target, target_army=None):
         target.hp -= self.physical_damage
-        if self.sprite is not None:
-            self.sprite.attack = True
+        if target.hp <= 0:
+            target_army.units.remove(target)
 
 
 class Knight(BaseUnit):
@@ -70,12 +76,15 @@ class Knight(BaseUnit):
         self.magical_damage = 0
         self.physical_resist = 1
         self.magical_resist = 0
-        self.move_speed = 4
+        self.move_speed = 40
         if self.sprite is not None:
             self.sprite.move_speed = self.move_speed
 
-    def attack(self, target: BaseUnit):
-        super().attack(target)
+    def attack(self, target, target_army=None):
+        super().attack(target, target_army)
+
+    def accept(self, visitor) -> None:
+        visitor.visit_knight(self)
 
 
 class Paladin(BaseUnit):
@@ -91,12 +100,15 @@ class Paladin(BaseUnit):
         self.magical_damage = 0
         self.physical_resist = 1
         self.magical_resist = 0
-        self.move_speed = 5
+        self.move_speed = 50
         if self.sprite is not None:
             self.sprite.move_speed = self.move_speed
 
-    def attack(self, target: BaseUnit):
-        super().attack(target)
+    def attack(self, target, target_army=None):
+        super().attack(target, target_army)
+
+    def accept(self, visitor) -> None:
+        visitor.visit_paladin(self)
 
 
 class Zombie(BaseUnit):
@@ -112,12 +124,15 @@ class Zombie(BaseUnit):
         self.magical_damage = 0
         self.physical_resist = 0
         self.magical_resist = 0
-        self.move_speed = 6
+        self.move_speed = 60
         if self.sprite is not None:
             self.sprite.move_speed = self.move_speed
 
-    def attack(self, target: BaseUnit):
-        super().attack(target)
+    def attack(self, target, target_army=None):
+        super().attack(target, target_army)
+
+    def accept(self, visitor) -> None:
+        visitor.visit_zombie(self)
 
 
 def get_decription(UnitClass: BaseUnit) -> str:
@@ -136,3 +151,166 @@ def get_decription(UnitClass: BaseUnit) -> str:
     """.format(u=UnitClass())
 
     return full_dectiption
+
+
+class Visitor(ABC):
+    @abstractmethod
+    def visit_knight(self, element) -> None:
+        pass
+
+    @abstractmethod
+    def visit_zombie(self, element) -> None:
+        pass
+
+    @abstractmethod
+    def visit_paladin(self, element) -> None:
+        pass
+
+
+class LeftArmyVisitor(Visitor):
+    def __init__(self, armies):
+        self.armies = armies
+        self.other_army_sprite_list = list()
+        for unit in armies[1].units.get_leaves():
+            spritelist = arcade.SpriteList()
+            for part in unit.sprite.object_parts:
+                spritelist.append(part.sprite)
+            self.other_army_sprite_list.append([unit, spritelist])
+
+    def visit_knight(self, element) -> None:
+        flag = 0
+        for part in element.sprite.object_parts:
+            for enemy in self.other_army_sprite_list:
+                k = len(arcade.check_for_collision_with_list(part.sprite, enemy[1]))
+                if k > 0:
+                    flag = 1
+                    element.attack(enemy[0], self.armies[1])
+        if flag != 0:
+            element.sprite.move_left = False
+            element.sprite.move_right = False
+            if not element.sprite.start_attack:
+                element.sprite.attack = True
+        else:
+            element.sprite.move_right = True
+        if flag == 0:
+            assert element.sprite.move_right
+            print("GO")
+        else:
+            print("Fuck")
+
+    def visit_zombie(self, element) -> None:
+        flag = 0
+        for part in element.sprite.object_parts:
+            for enemy in self.other_army_sprite_list:
+                k = len(arcade.check_for_collision_with_list(part.sprite, enemy[1]))
+                if k > 0:
+                    flag = 1
+                    element.attack(enemy[0], self.armies[1])
+        if flag > 0:
+            element.sprite.move_left = False
+            element.sprite.move_right = False
+            if not element.sprite.start_attack:
+                element.sprite.attack = True
+        else:
+            element.sprite.move_right = True
+        if flag == 0:
+            assert element.sprite.move_right
+            print("GO")
+        else:
+            print("Fuck")
+
+    def visit_paladin(self, element) -> None:
+        flag = 0
+        for part in element.sprite.object_parts:
+            for enemy in self.other_army_sprite_list:
+                k = len(arcade.check_for_collision_with_list(part.sprite, enemy[1]))
+                if k > 0:
+                    flag = 1
+                    element.attack(enemy[0], self.armies[1])
+        if flag > 0:
+            element.sprite.move_left = False
+            element.sprite.move_right = False
+            if not element.sprite.start_attack:
+                element.sprite.attack = True
+        else:
+            element.sprite.move_right = True
+        if flag == 0:
+            assert element.sprite.move_right
+            print("GO")
+        else:
+            print("Fuck")
+
+
+class RightArmyVisitor(Visitor):
+    def __init__(self, armies):
+        self.armies = armies
+        self.other_army_sprite_list = list()
+        for unit in armies[0].units.get_leaves():
+            spritelist = arcade.SpriteList()
+            for part in unit.sprite.object_parts:
+                spritelist.append(part.sprite)
+            self.other_army_sprite_list.append([unit, spritelist])
+
+    def visit_knight(self, element) -> None:
+        flag = 0
+        for part in element.sprite.object_parts:
+            for enemy in self.other_army_sprite_list:
+                k = len(arcade.check_for_collision_with_list(part.sprite, enemy[1]))
+                if k > 0:
+                    flag = 1
+                    element.attack(enemy[0], self.armies[0])
+        if flag > 0:
+            element.sprite.move_left = False
+            element.sprite.move_right = False
+            if not element.sprite.start_attack:
+                element.sprite.attack = True
+        else:
+            element.sprite.move_left = True
+
+        if flag == 0:
+            assert element.sprite.move_left
+            print("GO")
+        else:
+            print("Fuck")
+
+    def visit_zombie(self, element) -> None:
+        flag = 0
+        for part in element.sprite.object_parts:
+            for enemy in self.other_army_sprite_list:
+                k = len(arcade.check_for_collision_with_list(part.sprite, enemy[1]))
+                if k > 0:
+                    flag = 1
+                    element.attack(enemy[0], self.armies[0])
+        if flag > 0:
+            element.sprite.move_left = False
+            element.sprite.move_right = False
+            if not element.sprite.start_attack:
+                element.sprite.attack = True
+        else:
+            element.sprite.move_left = True
+        if flag == 0:
+            assert element.sprite.move_left
+            print("GO")
+        else:
+            print("Fuck")
+
+    def visit_paladin(self, element) -> None:
+        flag = 0
+        for part in element.sprite.object_parts:
+            for enemy in self.other_army_sprite_list:
+                k = len(arcade.check_for_collision_with_list(part.sprite, enemy[1]))
+                if k > 0:
+                    flag = 1
+                    element.attack(enemy[0], self.armies[0])
+        if flag > 0:
+            element.sprite.move_left = False
+            element.sprite.move_right = False
+            if not element.sprite.start_attack:
+                element.sprite.attack = True
+        else:
+            element.sprite.move_left = True
+        if flag == 0:
+            assert element.sprite.move_left
+            print("GO")
+        else:
+            print("Fuck")
