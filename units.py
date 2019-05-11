@@ -35,6 +35,23 @@ class Knight(BaseUnit):
         super().attack(target)
 
 
+class Paladin(BaseUnit):
+    def __init__(self):
+        super().__init__()
+
+        self.job = "Paladin"
+        self.hp = 100
+        self.physical_damage = 5
+        self.magical_damage = 0
+        self.physical_resist = 1
+        self.magical_resist = 0
+        self.move_speed = 4
+        self.attack_speed = 1
+
+    def attack(self, target: BaseUnit):
+        super().attack(target)
+
+
 class Bandit(BaseUnit):
     def __init__(self):
         super().__init__()
