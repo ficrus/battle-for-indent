@@ -2,6 +2,7 @@ from math import *
 from abc import ABC, abstractmethod
 import arcade
 
+
 class Part:
     def __init__(self, sprite, scale, mirrored=False):
         if mirrored:
@@ -118,9 +119,9 @@ def change_angle(angle: int, obj: Part, relobj=None):
 
 class UnitSprite(ObjectSprite):
     @abstractmethod
-    def __init__(self, scale=1, move_speed=0):
+    def __init__(self, scale=1):
         super().__init__(scale=scale)
-        self.move_speed = move_speed
+        self.move_speed = 0
         self.player_body = None
         self.player_left_leg = None
         self.player_right_leg = None

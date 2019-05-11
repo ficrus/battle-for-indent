@@ -3,10 +3,10 @@ from interface import Leaf
 
 
 class BaseUnit(Leaf):
-    def __init__(self, sprite=None, x=0, y=0, scale=1, move_speed=0):
+    def __init__(self, sprite=None, x=0, y=0, scale=1):
         self.sprite = None
         if sprite is not None:
-            self.sprite = sprite(scale=scale, move_speed=move_speed)
+            self.sprite = sprite(scale=scale)
         self.fraction = ""
         self.job = ""
         self.decription = ""
@@ -17,10 +17,12 @@ class BaseUnit(Leaf):
         self.physical_resist = 0
         self.magical_resist = 0
         self.setup(x, y)
+        self.move_speed = 0
 
     def setup(self, x, y):
         if self.sprite is not None:
             self.sprite.setup(x, y)
+            self.sprite.move_speed = self.move_speed
 
     def draw(self):
         if self.sprite is not None:
@@ -39,8 +41,8 @@ class BaseUnit(Leaf):
 
 class Knight(BaseUnit):
 
-    def __init__(self, sprite=None, x=0, y=0, scale=0.16, move_speed=4):
-        super().__init__(sprite=sprite, x=x, y=y, scale=scale, move_speed=move_speed)
+    def __init__(self, sprite=None, x=0, y=0, scale=0.16):
+        super().__init__(sprite=sprite, x=x, y=y, scale=scale)
         self.job = "Knight"
         self.decription = "Strong and self-confident knight"
         self.power = 10
@@ -49,6 +51,7 @@ class Knight(BaseUnit):
         self.magical_damage = 0
         self.physical_resist = 1
         self.magical_resist = 0
+        self.move_speed = 4
 
     def attack(self, target: BaseUnit):
         super().attack(target)
@@ -56,7 +59,7 @@ class Knight(BaseUnit):
 
 class Paladin(BaseUnit):
     def __init__(self, sprite=None, x=0, y=0, scale=1, move_speed=6):
-        super().__init__(sprite=sprite, x=x, y=y, scale=scale, move_speed=move_speed)
+        super().__init__(sprite=sprite, x=x, y=y, scale=scale)
 
         self.job = "Paladin"
         self.decription = "Master of spear and base magic"
@@ -66,13 +69,15 @@ class Paladin(BaseUnit):
         self.magical_damage = 0
         self.physical_resist = 1
         self.magical_resist = 0
+        self.move_speed = 5
 
     def attack(self, target: BaseUnit):
         super().attack(target)
 
-class Bandit(BaseUnit):
-    def __init__(self, sprite=None, x=0, y=0, scale=0.15, move_speed=5):
-        super().__init__(sprite=sprite, x=x, y=y, scale=scale, move_speed=move_speed)
+
+class Zombie(BaseUnit):
+    def __init__(self, sprite=None, x=0, y=0, scale=0.15):
+        super().__init__(sprite=sprite, x=x, y=y, scale=scale)
 
         self.job = "Zombie"
         self.decription = "It's not a bandit at all"
@@ -82,6 +87,7 @@ class Bandit(BaseUnit):
         self.magical_damage = 0
         self.physical_resist = 0
         self.magical_resist = 0
+        self.move_speed = 6
 
     def attack(self, target: BaseUnit):
         super().attack(target)
