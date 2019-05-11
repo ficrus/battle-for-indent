@@ -54,10 +54,6 @@ class Game:
         zombie_factory = ZombieFactory()
 
         """Временное решение"""
-
-        self.armies[0].add_unit(knight_factory.create(x=300, y=300))
-        self.armies[1].add_unit(zombie_factory.create(x=1290, y=300))
-
         for army in self.armies:
             for unit in army.units.get_leaves():
                 unit.sprite.set_speed_decorator(70)
