@@ -51,7 +51,7 @@ class PressChecker:
         assert self.state.count == self.count
 
 
-class TestState(MainMenuState):
+class TesState(MainMenuState):
     def __init__(self, window):
         super().__init__(window)
         self.count = 0
@@ -79,23 +79,11 @@ class TestState(MainMenuState):
         self.count += 1
 
 
-def test_presses_and_releases_on_buttons():
-    window = Window(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE)
-    window.set_state(TestState(window))
-    window.test(60 * RUN_TIME)
-
-
 def test_presses_and_releases_everywere():
     window = Window(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE)
-    state = TestState(window)
+    state = TesState(window)
     state.set_press_checker(PressChecker(state, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, COUNT))
     window.set_state(state)
     window.test(60 * RUN_TIME)
+    window.close()
 
-
-def test_presses_and_releases_on_one_button():
-    window = Window(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE)
-    state = TestState(window)
-    state.set_press_checker(PressChecker(state, 35, 465, 150, 50, COUNT))
-    window.set_state(state)
-    window.test(60 * RUN_TIME)
