@@ -1,6 +1,7 @@
 from game import *
 from interface import RoadSelection
 FACTORY = {"KnightFactory": KnightFactory(), "ZombieFactory": ZombieFactory()}
+KEYS = {113: 1, 119: 2, 101: 3}
 
 
 class Event:
@@ -75,20 +76,21 @@ class KeyListener(Listener):
         if self.road_selection.selected_road == 0:
             if key_press_event.symbol == 49 or key_press_event.symbol == 50 or key_press_event.symbol == 51:
                 self.road_selection.selected_road = key_press_event.symbol - 48
-                print(self.road_selection.selected_road)
         else:
-            if key_press_event.symbol == 65307:
-                self.road_selection.selected_road = 0
-
-            if self.road_selection.selected_road != 0:
-                for i in self.indicators_list:
-                    if i.key == key_press_event.symbol - 48:
-                        if i.on_choose():
-                            factory = FACTORY[i.unit_type + "Factory"]
-                            self.game.armies[0].add_unit(
-                                factory.create(x=300, y=SCREEN_HEIGHT *
-                                                        (self.road_selection.selected_road-1)/3 + SCREEN_HEIGHT*2/10))
-                            self.road_selection.selected_road = 0
+            if key_press_event.symbol == 49 or key_press_event.symbol == 50 or key_press_event.symbol == 51:
+                if key_press_event.symbol - 48 == self.road_selection.selected_road:
+                    self.road_selection.selected_road = 0
+                else:
+                    self.road_selection.selected_road = key_press_event.symbol - 48
+            elif key_press_event.symbol in KEYS:
+                    for i in self.indicators_list:
+                        if i.key == KEYS[key_press_event.symbol]:
+                            if i.on_choose():
+                                factory = FACTORY[i.unit_type + "Factory"]
+                                self.game.armies[0].add_unit(
+                                    factory.create(x=300, y=SCREEN_HEIGHT *
+                                                   (3 - self.road_selection.selected_road)/3 + SCREEN_HEIGHT*2/10))
+                                self.road_selection.selected_road = 0
 
 
 class ListenersSupport:
