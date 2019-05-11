@@ -188,13 +188,18 @@ class Button(Leaf):
 
 
 class MenuButton(Button):
-    def __init__(self, center_x, center_y, width, height, text, action_function):
+    def __init__(self, center_x, center_y, width, height, text, action_function, argument=None):
         self.action_function = action_function
+        self.argument = argument
         super().__init__(center_x, center_y, width, height, text)
 
     def on_release(self):
         super().on_release()
-        self.action_function()
+
+        if self.argument is None:
+            self.action_function()
+        else:
+            self.action_function(self.argument)
 
 
 if __name__ == "__main__":
