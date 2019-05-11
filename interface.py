@@ -1,5 +1,8 @@
 from abc import ABC, abstractmethod
 import arcade
+SCREEN_WIDTH = 1920
+SCREEN_HEIGHT = 1080
+IMAGE_NAMES = {"Zombie": "images/zombie/zhead.png", "Knight": "images/knight/head.png", "Paladin": "images/knight/head.png"}
 
 
 class Component(ABC):
@@ -73,7 +76,7 @@ class Composite(Component):
     def draw(self):
         for child in self._children:
             child.draw()
-    
+
     def update(self, delta_time: float) -> None:
         for child in self._children:
             child.update(delta_time)
@@ -185,6 +188,109 @@ class Button(Leaf):
 
     def on_release(self):
         self.pressed = False
+
+
+class CooldownIndicator(Leaf):
+    def __init__(self,
+                 center_x, center_y,
+                 width, height,
+                 unit_type,
+                 unit_num,
+                 cool_down,
+                 key,
+                 font_size=16,
+                 font_face="Arial",
+                 ready_color=arcade.color.BABY_BLUE,
+                 unready_color=arcade.color.PASTEL_GRAY,
+                 line_color=arcade.color.GRAY,
+                 line_height=2,
+                 circle_color=arcade.color.WHITE):
+        self.center_x = center_x
+        self.center_y = center_y
+        self.width = width
+        self.height = height
+        self.font_size = font_size
+        self.font_face = font_face
+        self.ready_color = ready_color
+        self.unready_color = unready_color
+        self.line_height = line_height
+        self.TIME = 0
+        self.cool_down = cool_down
+        self.unit_type = unit_type
+        self.unit_num = unit_num
+        self.is_ready = True
+        self.line_color = line_color
+        self.circle_color = circle_color
+        self.key = key
+
+    def update(self, delta_time: float):
+        if self.is_ready is False:
+            self.TIME += delta_time
+            if self.TIME > self.cool_down:
+                self.is_ready = True
+                self.TIME = 0
+
+    def draw(self):
+        if not self.is_ready:
+            color = self.unready_color
+        else:
+            color = self.ready_color
+        arcade.draw_rectangle_filled(self.center_x, self.center_y, self.width,
+                                     self.height, color)
+
+        if not self.is_ready:
+            height = self.TIME * self.height / self.cool_down
+            arcade.draw_rectangle_filled(self.center_x, self.center_y - self.height / 2 + height / 2, self.width,
+                                         height,
+                                         self.ready_color)
+
+        color = self.line_color
+
+        sprite = arcade.Sprite(IMAGE_NAMES[self.unit_type], center_x=self.center_x, center_y=self.center_y, scale=0.25)
+        sprite.draw()
+
+        arcade.draw_line(self.center_x - self.width / 2, self.center_y - self.height / 2,
+                         self.center_x + self.width / 2, self.center_y - self.height / 2,
+                         color, self.line_height)
+
+        arcade.draw_line(self.center_x + self.width / 2, self.center_y - self.height / 2,
+                         self.center_x + self.width / 2, self.center_y + self.height / 2,
+                         color, self.line_height)
+
+        arcade.draw_line(self.center_x - self.width / 2, self.center_y + self.height / 2,
+                         self.center_x + self.width / 2, self.center_y + self.height / 2,
+                         color, self.line_height)
+
+        arcade.draw_line(self.center_x - self.width / 2, self.center_y - self.height / 2,
+                         self.center_x - self.width / 2, self.center_y + self.height / 2,
+                         color, self.line_height)
+
+        x = self.center_x + 0.65 * self.width / 2
+        y = self.center_y - self.height / 2 + 0.7 * self.width / 4
+        arcade.draw_circle_filled(x, y, self.width / 4, self.circle_color)
+        arcade.draw_text(str(self.unit_num), x, y,
+                         arcade.color.BLACK, font_size=self.font_size,
+                         width=self.width, align="center",
+                         anchor_x="center", anchor_y="center")
+
+    def on_choose(self):
+        if self.unit_num > 0 and self.is_ready is True:
+            self.unit_num -= 1
+            self.is_ready = False
+            return True
+        else:
+            return False
+
+
+class RoadSelection(Leaf):
+    def __init__(self):
+        self.selected_road = 0
+
+    def draw(self):
+        if self.selected_road > 0:
+            y = SCREEN_HEIGHT*(self.selected_road-1)/3 + SCREEN_HEIGHT/10
+            sprite = arcade.Sprite("images/stage/road.png", center_x=SCREEN_WIDTH/2, center_y=y, scale=0.5)
+            sprite.draw()
 
 
 class MenuButton(Button):

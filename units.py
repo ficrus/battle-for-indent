@@ -75,7 +75,8 @@ class Paladin(BaseUnit):
     def attack(self, target: BaseUnit):
         super().attack(target)
 
-class Bandit(BaseUnit):
+
+class Zombie(BaseUnit):
     def __init__(self, sprite=None, x=0, y=0, scale=0.15):
         super().__init__(sprite=sprite, x=x, y=y, scale=scale)
 
