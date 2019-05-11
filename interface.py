@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 import arcade
+from options_manager import OptionsManager
 SCREEN_WIDTH = 1920
 SCREEN_HEIGHT = 1080
 IMAGE_NAMES = {"Zombie": "images/zombie/zhead.png", "Knight": "images/knight/head.png", "Paladin": "images/knight/head.png"}
@@ -80,6 +81,15 @@ class Composite(Component):
     def update(self, delta_time: float) -> None:
         for child in self._children:
             child.update(delta_time)
+
+
+class Stage(Leaf):
+    def __init__(self, image):
+        self.image = image
+
+    def draw(self):
+        sprite = arcade.Sprite(self.image, center_x=SCREEN_WIDTH / 2, center_y=SCREEN_HEIGHT/2, scale=0.5)
+        sprite.draw()
 
 
 class UnitButton(Leaf):
@@ -288,7 +298,7 @@ class RoadSelection(Leaf):
 
     def draw(self):
         if self.selected_road > 0:
-            y = SCREEN_HEIGHT*(self.selected_road-1)/3 + SCREEN_HEIGHT/10
+            y = SCREEN_HEIGHT*(3 - self.selected_road)/3 + SCREEN_HEIGHT/10
             sprite = arcade.Sprite("images/stage/road.png", center_x=SCREEN_WIDTH/2, center_y=y, scale=0.5)
             sprite.draw()
 
@@ -302,8 +312,9 @@ class MenuButton(Button):
     def on_release(self):
         super().on_release()
 
-        click_sound = arcade.load_sound("./sounds/click-sound.wav")
-        arcade.play_sound(click_sound)
+        if OptionsManager().is_sounds_enabled:
+            click_sound = arcade.load_sound("./sounds/click-sound.wav")
+            arcade.play_sound(click_sound)
 
         if self.argument is None:
             self.action_function()

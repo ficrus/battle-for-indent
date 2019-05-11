@@ -139,7 +139,6 @@ def get_decription(UnitClass: BaseUnit) -> str:
     full_dectiption = """
     This is {u.job}
     {u.description}
-
     Stats:
         Power Cost: {u.power}
         HP: {u.hp}

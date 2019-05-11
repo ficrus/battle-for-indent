@@ -4,10 +4,10 @@ from interface import *
 from event_handling import *
 import os
 from sprite import KnightSprite, ZombieSprite
+import units
 import pickle
 import memento
-import units
-
+from options_manager import OptionsManager
 
 SCREEN_TITLE = "Battle for Indent"
 TUTORIAL_TEXT = """
@@ -56,8 +56,7 @@ class Game:
         """Временное решение"""
 
         self.armies[0].add_unit(knight_factory.create(x=300, y=300))
-        self.armies[1].add_unit(zombie_factory.create(x=690, y=300))
-        self.armies[1].add_unit(zombie_factory.create(x=1090, y=300))
+        self.armies[1].add_unit(zombie_factory.create(x=1290, y=300))
 
         for army in self.armies:
             for unit in army.units.get_leaves():
@@ -173,6 +172,11 @@ class MainMenuState(State):
     def on_draw(self):
         self.gui.draw()
 
+        arcade.draw_text("Start new game (with tutorial)\n", 200, 455, arcade.color.BLACK, 15)
+        arcade.draw_text("Continue your game (if you have one)\n", 200, 395, arcade.color.BLACK, 15)
+        arcade.draw_text("Change game options\n", 200, 335, arcade.color.BLACK, 15)
+        arcade.draw_text("Exit game (please, no)\n", 200, 275, arcade.color.BLACK, 15)
+
     def on_mouse_press(self, x, y, button, key_modifiers):
         self.listeners.on_event(PressEvent(x, y))
 
@@ -211,32 +215,33 @@ class OptionsState(State):
         self.listeners = None
         self.gui = None
         self.parent = None
-        self._state = None
-
-        with open("./save_data/options", "rb") as options:
-            self.restore(pickle.load(options))
 
         self.setup()
 
     def setup(self):
+        om = OptionsManager()
+
         self.gui = Composite()
         self.listeners = ListenersSupport()
 
         option_buttons = Composite()
         self.gui.add(option_buttons)
 
-        option1_button = MenuButton(110, 480, 150, 50, "Option 1 {0}".format(self._state[0]), self.option1)
+        option1_button = MenuButton(110, 480, 150, 50, "{}".format(["Off", "On"][om.is_music_enabled]),
+                                    self.change_music)
         option_buttons.add(option1_button)
 
-        option2_button = MenuButton(110, 420, 150, 50, "Option 2 {0}".format(self._state[1]), self.option2)
+        option2_button = MenuButton(110, 420, 150, 50, "{}".format(["Off", "On"][om.is_sounds_enabled]),
+                                    self.change_sound)
         option_buttons.add(option2_button)
 
-        option3_button = MenuButton(110, 360, 150, 50, "Option 3 {0}".format(self._state[2]), self.option3)
+        option3_button = MenuButton(110, 360, 150, 50, "{}".format(["Off", "!!!PARTY!!!"][om.is_easter_egg_enabled]),
+                                    self.change_egg)
         option_buttons.add(option3_button)
 
         service_buttons = Composite()
         self.gui.add(service_buttons)
-    
+
         return_button = MenuButton(110, 300, 150, 50, "Return", self.return_to_menu)
         service_buttons.add(return_button)
 
@@ -244,6 +249,12 @@ class OptionsState(State):
         self.gui.draw()
         button_list = [button for button in self.gui.get_leaves() if isinstance(button, Button)]
         self.listeners.add_listener(ButtonListener(button_list))
+
+        arcade.draw_text("Background music (It may take some time to apply changes)\n", 200, 455, arcade.color.BLACK,
+                         15)
+        arcade.draw_text("Game sounds\n", 200, 395, arcade.color.BLACK, 15)
+        arcade.draw_text("Use it if you aren't very serious\n", 200, 335, arcade.color.BLACK, 15)
+        arcade.draw_text("Back to Main Menu\n", 200, 275, arcade.color.BLACK, 15)
 
     def on_mouse_press(self, x, y, button, key_modifiers):
         self.listeners.on_event(PressEvent(x, y))
@@ -257,35 +268,29 @@ class OptionsState(State):
     def do_nothing(self):
         pass
 
-    def option1(self):
-        self._state[0] = not self._state[0]
+    def update_options(self):
+        self.window.change_state(OptionsState(self.window))
+
+    def change_music(self):
+        om = OptionsManager()
+        om.change_music()
+
         self.update_options()
 
-    def option2(self):
-        self._state[1] = not self._state[1]
+    def change_sound(self):
+        om = OptionsManager()
+        om.change_sounds()
+
         self.update_options()
 
-    def option3(self):
-        self._state[2] = not self._state[2]
+    def change_egg(self):
+        om = OptionsManager()
+        om.change_egg()
+
         self.update_options()
 
     def return_to_menu(self) -> None:
         self.window.change_state(MainMenuState(self.window))
-
-    def update_options(self) -> None:
-        self.save_on_disk(self.save())
-
-        self.window.change_state(OptionsState(self.window))
-
-    def save(self) -> memento.OptionsMemento:
-        return memento.OptionsMemento(self._state)
-
-    def save_on_disk(self, memento: memento.OptionsMemento) -> None:
-        with open("./save_data/options", "wb") as options:
-            pickle.dump(memento, options)
-
-    def restore(self, memento: memento.OptionsMemento) -> None:
-        self._state = memento.get_state()
 
 
 class TutorialState(State):
@@ -309,7 +314,7 @@ class TutorialState(State):
 
         service_buttons = Composite()
         self.gui.add(service_buttons)
-    
+
         return_button = MenuButton(110, 420, 150, 50, "I'm not ready", self.return_to_menu)
         service_buttons.add(return_button)
 
@@ -384,7 +389,8 @@ class UnitSelectState(State):
         add_knight_button = MenuButton(260, 480, 50, 50, "-", self.remove_unit, units.Knight)
         knight_buttons.add(add_knight_button)
 
-        knight_count_button = MenuButton(320, 480, 50, 50, "{}".format(self._info.unit_count[units.Knight]), self.clear_unit, units.Knight)
+        knight_count_button = MenuButton(320, 480, 50, 50, "{}".format(self._info.unit_count[units.Knight]),
+                                         self.clear_unit, units.Knight)
         knight_buttons.add(knight_count_button)
 
         remove_knight_button = MenuButton(380, 480, 50, 50, "+", self.add_unit, units.Knight)
@@ -399,7 +405,8 @@ class UnitSelectState(State):
         add_zombie_button = MenuButton(260, 420, 50, 50, "-", self.remove_unit, units.Zombie)
         zombie_buttons.add(add_zombie_button)
 
-        zombie_count_button = MenuButton(320, 420, 50, 50, "{}".format(self._info.unit_count[units.Zombie]), self.clear_unit, units.Zombie)
+        zombie_count_button = MenuButton(320, 420, 50, 50, "{}".format(self._info.unit_count[units.Zombie]),
+                                         self.clear_unit, units.Zombie)
         zombie_buttons.add(zombie_count_button)
 
         remove_zombie_button = MenuButton(380, 420, 50, 50, "+", self.add_unit, units.Zombie)
@@ -421,9 +428,16 @@ class UnitSelectState(State):
         self.gui.draw()
 
         if (self._info.described_unit) is not None:
-            arcade.draw_text(units.get_decription(self._info.described_unit), 450, 275, arcade.color.BLACK, 15)
+            sprite = arcade.Sprite("./lib/textures/{}.png".format(self._info.described_unit.__name__.lower()),
+                                   center_x=550, center_y=375)
+            sprite.draw()
+            arcade.draw_text(units.get_decription(self._info.described_unit), 700, 275, arcade.color.BLACK, 15)
 
-        arcade.draw_text(UNIT_SELECT_TEXT.format(self._info.current_power, self._info.max_power), 200, 600, arcade.color.BLACK, 15)
+        arcade.draw_text(UNIT_SELECT_TEXT.format(self._info.current_power, self._info.max_power), 200, 600,
+                         arcade.color.BLACK, 15)
+
+        arcade.draw_text("Start game with these units\n", 200, 335, arcade.color.BLACK, 15)
+        arcade.draw_text("Back to Main Menu\n", 200, 275, arcade.color.BLACK, 15)
 
     def on_mouse_press(self, x, y, button, key_modifiers):
         self.listeners.on_event(PressEvent(x, y))
@@ -442,15 +456,15 @@ class UnitSelectState(State):
 
     def do_nothing(self) -> None:
         pass
-    
+
     def update_unit_select(self):
         self.window.change_state(UnitSelectState(self.window, self._info))
-    
+
     def show_unit_description(self, UnitClass: units.BaseUnit) -> None:
         self._info.described_unit = UnitClass
-        
+
         self.update_unit_select()
- 
+
     def clear_unit(self, UnitClass: units.BaseUnit) -> None:
         self._info.current_power -= UnitClass().power * self._info.unit_count[UnitClass]
         self._info.unit_count[UnitClass] = 0
@@ -492,7 +506,9 @@ class BattlefieldState(State):
         self.unit_dict = unit_dict
         self.pause = False
         self.listeners = None
+        self.second_listeners = None
         self.gui = None
+        self.pause_gui = None
         self.parent = None
         self.game = Game()
         self.setup()
@@ -500,16 +516,9 @@ class BattlefieldState(State):
     def setup(self):
         self.gui = Composite()
         self.listeners = ListenersSupport()
-
-        self.gui.add(self.game.gui)
-
-        buttons = Composite()
-        self.gui.add(buttons)
-
-        pause_button = MenuButton(110, 480, 150, 50, " || ", self.pause_game)
-        buttons.add(pause_button)
-        button_list = [button for button in self.gui.get_leaves() if isinstance(button, Button)]
-        self.listeners.add_listener(ButtonListener(button_list))
+        self.gui.add(Stage("images/stage/stage-back.png"))
+        road_selection = RoadSelection()
+        self.gui.add(road_selection)
         cooldown_indicators = Composite()
         self.gui.add(cooldown_indicators)
 
@@ -518,6 +527,7 @@ class BattlefieldState(State):
         width = 100
         height = 100
         key = 1
+
         cooldown_indicators_list = []
         for k, value in self.unit_dict.items():
             cooldown_indicator = CooldownIndicator(x, y, width, height, k, value, 10, key)
@@ -525,46 +535,25 @@ class BattlefieldState(State):
             x += width + 10
             key += 1
             cooldown_indicators_list.append(cooldown_indicator)
-        road_selection = RoadSelection()
-        self.gui.add(road_selection)
         key_listener = KeyListener(road_selection, cooldown_indicators_list, self.game)
         self.listeners.add_listener(key_listener)
+        self.pause_setup()
+        self.gui.add(self.game.gui)
+        self.gui.add(Stage("images/stage/stage-front.png"))
+        buttons = Composite()
+        self.gui.add(buttons)
 
-    def on_draw(self):
-        self.gui.draw()
+        pause_button = MenuButton(110, 480, 150, 50, " || ", self.pause_game)
+        buttons.add(pause_button)
+        button_list = [button for button in self.gui.get_leaves() if isinstance(button, Button)]
+        self.listeners.add_listener(ButtonListener(button_list))
 
-    def on_mouse_press(self, x, y, button, key_modifiers):
-        self.listeners.on_event(PressEvent(x, y))
-
-    def on_mouse_release(self, x, y, button, key_modifiers):
-        self.listeners.on_event(ReleaseEvent(x, y))
-
-    def on_key_press(self, symbol: int, modifiers: int):
-        self.listeners.on_event(KeyPressEvent(symbol))
-
-    def update(self, delta_time: float):
-        self.gui.update(delta_time)
-        self.game.update()
-
-    def pause_game(self):
-        self.window.change_state(PauseState(self.window))
-
-
-class PauseState(State):
-    def __init__(self, window):
-        super().__init__(window)
-        self.pause = False
-        self.listeners = None
-        self.gui = None
-        self.parent = None
-        self.setup()
-
-    def setup(self):
-        self.gui = Composite()
-        self.listeners = ListenersSupport()
+    def pause_setup(self):
+        self.pause_gui = Composite()
+        self.second_listeners = ListenersSupport()
 
         game_buttons = Composite()
-        self.gui.add(game_buttons)
+        self.pause_gui.add(game_buttons)
 
         continue_button = MenuButton(110, 480, 150, 50, "Continue", self.continue_game)
         game_buttons.add(continue_button)
@@ -573,15 +562,17 @@ class PauseState(State):
         game_buttons.add(restart_button)
 
         service_buttons = Composite()
-        self.gui.add(service_buttons)
-    
+        self.pause_gui.add(service_buttons)
+
         return_button = MenuButton(110, 360, 150, 50, "Return", self.return_to_menu)
         service_buttons.add(return_button)
+        button_list = [button for button in self.pause_gui.get_leaves() if isinstance(button, Button)]
+        self.second_listeners.add_listener(ButtonListener(button_list))
 
     def on_draw(self):
         self.gui.draw()
-        button_list = [button for button in self.gui.get_leaves() if isinstance(button, Button)]
-        self.listeners.add_listener(ButtonListener(button_list))
+        if self.pause is True:
+            self.pause_gui.draw()
 
     def on_mouse_press(self, x, y, button, key_modifiers):
         self.listeners.on_event(PressEvent(x, y))
@@ -589,14 +580,26 @@ class PauseState(State):
     def on_mouse_release(self, x, y, button, key_modifiers):
         self.listeners.on_event(ReleaseEvent(x, y))
 
-    def on_update(self, delta_time: float):
-        pass
+    def on_key_press(self, symbol: int, modifiers: int):
+        if self.pause is False:
+            self.listeners.on_event(KeyPressEvent(symbol))
 
-    def do_nothing(self):
-        pass
+    def update(self, delta_time: float):
+        if self.pause is False:
+            self.gui.update(delta_time)
+            self.game.update()
+
+    def pause_game(self):
+        self.pause = True
+        t = self.second_listeners
+        self.second_listeners = self.listeners
+        self.listeners = t
 
     def continue_game(self):
-        self.window.change_state(BattlefieldState(self.window, {"Zombie": 7, "Knight": 5, "Paladin": 3}))
+        self.pause = False
+        t = self.second_listeners
+        self.second_listeners = self.listeners
+        self.listeners = t
 
     def restart_game(self):
         self.window.change_state(UnitSelectState(self.window))
@@ -605,17 +608,22 @@ class PauseState(State):
         self.window.change_state(MainMenuState(self.window))
 
 
-def play_menu_music(*args):
-    music = arcade.load_sound("./sounds/main-menu-theme.wav")
-    arcade.play_sound(music)
+def play_music_once(*args):
+    if OptionsManager().is_music_enabled:
+        music = arcade.load_sound("./sounds/main-menu-theme.wav")
+        arcade.play_sound(music)
+
+
+def play_music():
+    play_music_once()
+    arcade.schedule(play_music_once, 22)
 
 
 def main():
     window = Window(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE)
     window.set_state(MainMenuState(window))
 
-    play_menu_music()
-    arcade.schedule(play_menu_music, 22)
+    play_music()
 
     arcade.run()
 
