@@ -288,7 +288,7 @@ class RoadSelection(Leaf):
 
     def draw(self):
         if self.selected_road > 0:
-            y = SCREEN_HEIGHT*(self.selected_road-1)/3 + SCREEN_HEIGHT/10
+            y = SCREEN_HEIGHT*(3 - self.selected_road)/3 + SCREEN_HEIGHT/10
             sprite = arcade.Sprite("images/stage/road.png", center_x=SCREEN_WIDTH/2, center_y=y, scale=0.5)
             sprite.draw()
 
