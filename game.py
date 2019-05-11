@@ -251,7 +251,40 @@ class UnitSelectState(State):
 
 
 class BattlefieldState(State):
-    pass
+    def __init__(self, window: Window):
+        super().__init__(window)
+        self.pause = False
+        self.listeners = None
+        self.gui = None
+        self.parent = None
+        self.setup()
+
+    def setup(self):
+        self.gui = Composite()
+        self.listeners = ListenersSupport()
+
+        buttons = Composite()
+        self.gui.add(buttons)
+
+        pause_button = MenuButton(110, 480, 150, 50, " || ", self.pause_game)
+        buttons.add(pause_button)
+
+    def on_draw(self):
+        self.gui.draw()
+        button_list = [button for button in self.gui.get_leaves() if isinstance(button, Button)]
+        self.listeners.add_listener(ButtonListener(button_list))
+
+    def on_mouse_press(self, x, y, button, key_modifiers):
+        self.listeners.on_event(PressEvent(x, y))
+
+    def on_mouse_release(self, x, y, button, key_modifiers):
+        self.listeners.on_event(ReleaseEvent(x, y))
+
+    def on_update(self, delta_time: float):
+        pass
+
+    def pause_game(self):
+        self.window.change_state(PauseState(self.window))
 
 
 class PauseState(State):
