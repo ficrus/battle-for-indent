@@ -6,11 +6,28 @@ import os
 from sprite import KnightSprite, ZombieSprite
 import pickle
 import memento
+import units
 
 
 SCREEN_WIDTH = 1920
 SCREEN_HEIGHT = 1080
 SCREEN_TITLE = "Battle for Indent"
+TUTORIAL_TEXT = """
+Welcome to Battle for Indent!
+I'm a strange voice inside your head that will teach you how to play.
+
+At first, you should select units for the coming battle.
+You can choose how much soldiers you will take.
+Note, that number of units depepends on their power.
+
+There are three roads on the battle map. Use 1, 2, 3 keys in order to choose suitable one.
+Spawn unit on the selected road by pressing Q, W, E.
+
+Good luck, King! Our victory is in your own hands.
+"""
+UNIT_SELECT_TEXT = """
+Aloha!
+"""
 
 
 class Game:
@@ -157,9 +174,7 @@ class MainMenuState(State):
 
     def start_new_game(self):
         print("New game started!")
-        self.window.change_state(PauseState(self.window))
-
-        # позже будет game.change_state(BattleFieldState())
+        self.window.change_state(TutorialState(self.window))
 
     def continue_game(self):
         print("Game continued!")
@@ -258,11 +273,159 @@ class OptionsState(State):
 
 
 class TutorialState(State):
-    pass
+    def __init__(self, window: Window):
+        super().__init__(window)
+        self.pause = False
+        self.listeners = None
+        self.gui = None
+        self.parent = None
+        self.setup()
+
+    def setup(self):
+        self.gui = Composite()
+        self.listeners = ListenersSupport()
+
+        game_buttons = Composite()
+        self.gui.add(game_buttons)
+
+        unit_select_button = MenuButton(110, 480, 150, 50, "Select Units", self.unit_select)
+        game_buttons.add(unit_select_button)
+
+        service_buttons = Composite()
+        self.gui.add(service_buttons)
+    
+        return_button = MenuButton(110, 420, 150, 50, "I'm not ready", self.return_to_menu)
+        service_buttons.add(return_button)
+
+        self.button_list = [button for button in self.gui.get_leaves() if isinstance(button, Button)]
+        self.listeners.add_listener(ButtonListener(self.button_list))
+
+    def on_draw(self):
+        self.gui.draw()
+
+        arcade.draw_text(TUTORIAL_TEXT, 200, 350, arcade.color.BLACK, 15)
+
+    def on_mouse_press(self, x, y, button, key_modifiers):
+        self.listeners.on_event(PressEvent(x, y))
+
+    def on_mouse_release(self, x, y, button, key_modifiers):
+        self.listeners.on_event(ReleaseEvent(x, y))
+
+    def on_update(self, delta_time: float):
+        pass
+
+    def on_key_press(self, symbol, modifiers):
+        pass
+
+    def on_key_release(self, symbol, modifiers):
+        pass
+
+    def unit_select(self) -> None:
+        self.window.change_state(UnitSelectState(self.window))
+
+    def return_to_menu(self) -> None:
+        self.window.change_state(MainMenuState(self.window))
+
+
+class UnitSelectInfo:
+    def __init__(self) -> None:
+        self.current_power = 0
+        self.max_power = 100
+        self.unit_info = {
+            units.Knight: 0,
+            units.Zombie: 0
+        }
 
 
 class UnitSelectState(State):
-    pass
+    def __init__(self, window: Window, info=None):
+        super().__init__(window)
+        self.pause = False
+        self.listeners = None
+        self.gui = None
+        self.parent = None
+
+        if info is None:
+            self._info = None
+        else:
+            self._state = info
+
+        self.setup()
+
+    def setup(self):
+        self.gui = Composite()
+        self.listeners = ListenersSupport()
+
+        knight_buttons = Composite()
+        self.gui.add(knight_buttons)
+
+        knight_button = MenuButton(110, 480, 150, 50, "Knight", self.do_nothing)
+        knight_buttons.add(knight_button)
+
+        add_knight_button = MenuButton(260, 480, 50, 50, "-", self.do_nothing)
+        knight_buttons.add(add_knight_button)
+
+        knight_count_button = MenuButton(320, 480, 50, 50, "0", self.do_nothing)
+        knight_buttons.add(knight_count_button)
+
+        remove_knight_button = MenuButton(380, 480, 50, 50, "+", self.do_nothing)
+        knight_buttons.add(remove_knight_button)
+
+        zombie_buttons = Composite()
+        self.gui.add(zombie_buttons)
+
+        zombie_button = MenuButton(110, 420, 150, 50, "Zombie", self.do_nothing)
+        zombie_buttons.add(zombie_button)
+
+        add_zombie_button = MenuButton(260, 420, 50, 50, "-", self.do_nothing)
+        zombie_buttons.add(add_zombie_button)
+
+        zombie_count_button = MenuButton(320, 420, 50, 50, "0", self.do_nothing)
+        zombie_buttons.add(zombie_count_button)
+
+        remove_zombie_button = MenuButton(380, 420, 50, 50, "+", self.do_nothing)
+        zombie_buttons.add(remove_zombie_button)
+
+        service_buttons = Composite()
+        self.gui.add(service_buttons)
+
+        start_game_button = MenuButton(110, 360, 150, 50, "Start Game", self.return_to_tutorial)
+        service_buttons.add(start_game_button)
+
+        return_button = MenuButton(110, 300, 150, 50, "Return", self.return_to_tutorial)
+        service_buttons.add(return_button)
+
+        self.button_list = [button for button in self.gui.get_leaves() if isinstance(button, Button)]
+        self.listeners.add_listener(ButtonListener(self.button_list))
+
+    def on_draw(self):
+        self.gui.draw()
+
+        # arcade.draw_text(UNIT_SELECT_TEXT, 200, 350, arcade.color.BLACK, 15)
+
+    def on_mouse_press(self, x, y, button, key_modifiers):
+        self.listeners.on_event(PressEvent(x, y))
+
+    def on_mouse_release(self, x, y, button, key_modifiers):
+        self.listeners.on_event(ReleaseEvent(x, y))
+
+    def on_update(self, delta_time: float):
+        pass
+
+    def on_key_press(self, symbol, modifiers):
+        pass
+
+    def on_key_release(self, symbol, modifiers):
+        pass
+
+    def do_nothing(self) -> None:
+        pass
+
+    def unit_select(self) -> None:
+        self.window.change_state(UnitSelectState(self.window))
+
+    def return_to_tutorial(self) -> None:
+        self.window.change_state(TutorialState(self.window))
 
 
 class BattlefieldState(State):
