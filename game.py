@@ -32,16 +32,31 @@ Aloha!
 
 class Game:
     def __init__(self):
-        self.state = None
-        print('Game is created')
+        self.gui = None
+        self.armies = []
+        self.setup()
 
-    def create_army(self):
-        army = Army()
+    def setup(self):
+        self.gui = Composite()
+        self.armies.append(Army())
+        self.armies.append(Army())
+
         knight_factory = KnightFactory()
-        bandit_factory = ZombieFactory()
-        army.add_unit(knight_factory.create())
-        army.add_unit(bandit_factory.create())
-        print('Game created Army ')
+        bandit_factory = BanditFactory()
+
+        """Временное решение"""
+
+        self.armies[0].add_unit(knight_factory.create(x=300, y=300))
+        self.armies[0].add_unit(knight_factory.create(x=330, y=300))
+        self.armies[0].add_unit(knight_factory.create(x=360, y=300))
+        self.armies[0].add_unit(knight_factory.create(x=390, y=300))
+        self.armies[1].add_unit(bandit_factory.create(x=500, y=300))
+        self.armies[1].add_unit(bandit_factory.create(x=530, y=300))
+        self.armies[1].add_unit(bandit_factory.create(x=560, y=300))
+        self.armies[1].add_unit(bandit_factory.create(x=590, y=300))
+
+        for army in self.armies:
+            self.gui.add(army.units)
 
 
 class Window(arcade.Window):
@@ -414,7 +429,44 @@ class UnitSelectState(State):
 
 
 class BattlefieldState(State):
-    pass
+    def __init__(self, window: Window):
+        super().__init__(window)
+        self.pause = False
+        self.listeners = None
+        self.gui = None
+        self.parent = None
+        self.game = Game()
+        self.setup()
+
+
+    def setup(self):
+        self.gui = Composite()
+        self.listeners = ListenersSupport()
+
+        self.gui.add(self.game.gui)
+
+        buttons = Composite()
+        self.gui.add(buttons)
+
+        pause_button = MenuButton(110, 480, 150, 50, " || ", self.pause_game)
+        buttons.add(pause_button)
+
+    def on_draw(self):
+        self.gui.draw()
+        button_list = [button for button in self.gui.get_leaves() if isinstance(button, Button)]
+        self.listeners.add_listener(ButtonListener(button_list))
+
+    def on_mouse_press(self, x, y, button, key_modifiers):
+        self.listeners.on_event(PressEvent(x, y))
+
+    def on_mouse_release(self, x, y, button, key_modifiers):
+        self.listeners.on_event(ReleaseEvent(x, y))
+
+    def on_update(self, delta_time: float):
+        pass
+
+    def pause_game(self):
+        self.window.change_state(PauseState(self.window))
 
 
 class PauseState(State):

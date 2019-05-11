@@ -2,7 +2,7 @@
 Тестируется способность отрисовать анимацию 100 рыцарей и 100 зомби (1600 объектов) одновременно
 """
 
-from base_animation import *
+from tests.animation_tests.base_animation import *
 from sprite import ZombieSprite
 RUN_TIME = 10
 

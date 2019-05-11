@@ -1,9 +1,7 @@
-import time
-import collections
 import random
 import arcade
 from sprite import KnightSprite
-from animation_of_character import SCREEN_WIDTH, SCREEN_HEIGHT
+from tests.animation_tests.animation_of_character import SCREEN_WIDTH, SCREEN_HEIGHT
 
 
 class AnimationTest(arcade.Window):

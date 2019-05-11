@@ -1,7 +1,7 @@
 """
 Тестируется способность отрисовать анимацию 2 рыцарей
 """
-from base_animation import *
+from tests.animation_tests.base_animation import *
 RUN_TIME = 4
 
 
