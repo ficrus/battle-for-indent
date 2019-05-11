@@ -20,18 +20,30 @@ class Game:
         self.setup()
 
     def setup(self):
+        self.gui = Composite()
         for army in self.armies:
             army = Army()
-
+            self.gui.add(army.units)
+        
         knight_factory = KnightFactory()
         bandit_factory = BanditFactory()
-
-        for army in self.armies:
-            army.add_unit(knight_factory.create())
-            army.add_unit(bandit_factory.create())
-
-
-
+        
+        """Временное решение"""
+        
+        self.armies[0].add_unit(knight_factory.create(x=300, y=300))
+        self.armies[0].add_unit(knight_factory.create(x=330, y=300))
+        self.armies[0].add_unit(knight_factory.create(x=360, y=300))
+        self.armies[0].add_unit(knight_factory.create(x=390, y=300))
+        self.armies[1].add_unit(bandit_factory.create(x=500, y=300))
+        self.armies[1].add_unit(bandit_factory.create(x=530, y=300))
+        self.armies[1].add_unit(bandit_factory.create(x=560, y=300))
+        self.armies[1].add_unit(bandit_factory.create(x=590, y=300))
+    
+    def on_draw(self):
+        self.gui.draw()
+        
+    def update(self, delta_time):
+        self.gui.update(delta_time)
 
 
 class Window(arcade.Window):

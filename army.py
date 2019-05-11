@@ -1,14 +1,15 @@
 from abc import ABC
 from units import BaseUnit
+from interface import *
 
 
 class Army(ABC):
     def __init__(self):
         print('Army is initialized')
-        self.units = []
+        self.units = Composite()
 
     def action(self):
-        pass
-
+        pass        
+    
     def add_unit(self, unit: BaseUnit):
-        self.units.append(unit)
+        self.units.add(unit)

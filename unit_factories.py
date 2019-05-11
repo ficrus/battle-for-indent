@@ -1,4 +1,5 @@
 from units import *
+from sprite import KnightSprite, ZombieSprite
 
 
 class Singleton(ABC, type):
@@ -12,17 +13,17 @@ class Singleton(ABC, type):
 
 class UnitFactory(metaclass=Singleton):
     @abstractmethod
-    def create(self):
+    def create(self, x=0, y=0):
         pass
 
 
 class KnightFactory(UnitFactory):
-    def create(self) -> BaseUnit:
+    def create(self, x=0, y=0) -> BaseUnit:
         print('KnightFactory creates knight')
-        return Knight()
+        return Knight(sprite=KnightSprite, x=x, y=y)
 
 
 class BanditFactory(UnitFactory):
-    def create(self) -> BaseUnit:
+    def create(self, x=0, y=0) -> BaseUnit:
         print('BanditFactory creates bandit')
-        return Bandit()
+        return Bandit(sprite=ZombieSprite, x=x, y=y)
