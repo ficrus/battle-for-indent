@@ -16,16 +16,19 @@ SCREEN_TITLE = "Battle for Indent"
 class Game:
     def __init__(self):
         self.gui = None
-        self.first_army = None
-        self.second_army = None
+        self.armies = []
+        self.setup()
 
+    def setup(self):
+        for army in self.armies:
+            army = Army()
 
-    def create_army(self):
-        army = Army()
         knight_factory = KnightFactory()
         bandit_factory = BanditFactory()
-        army.add_unit(knight_factory.create())
-        army.add_unit(bandit_factory.create())
+
+        for army in self.armies:
+            army.add_unit(knight_factory.create())
+            army.add_unit(bandit_factory.create())
 
 
 

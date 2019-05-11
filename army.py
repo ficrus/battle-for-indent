@@ -12,4 +12,3 @@ class Army(ABC):
 
     def add_unit(self, unit: BaseUnit):
         self.units.append(unit)
-        print('Unit is added to the Army')
