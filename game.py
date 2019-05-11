@@ -26,7 +26,18 @@ Spawn unit on the selected road by pressing Q, W, E.
 Good luck, King! Our victory is in your own hands.
 """
 UNIT_SELECT_TEXT = """
-Aloha!
+Choose units for the battle.
+
+Press
+    Unit Name to see description
+    - to remove unit
+    Unit Count to zeroise it
+    + to add unit
+
+It's highly recommended to use as much Power, as you can.
+
+Current Power: {0}
+Max Power: {1}
 """
 
 
@@ -42,7 +53,7 @@ class Game:
         self.armies.append(Army())
 
         knight_factory = KnightFactory()
-        bandit_factory = BanditFactory()
+        zombie_factory = ZombieFactory()
 
         """Временное решение"""
 
@@ -50,10 +61,10 @@ class Game:
         self.armies[0].add_unit(knight_factory.create(x=330, y=300))
         self.armies[0].add_unit(knight_factory.create(x=360, y=300))
         self.armies[0].add_unit(knight_factory.create(x=390, y=300))
-        self.armies[1].add_unit(bandit_factory.create(x=500, y=300))
-        self.armies[1].add_unit(bandit_factory.create(x=530, y=300))
-        self.armies[1].add_unit(bandit_factory.create(x=560, y=300))
-        self.armies[1].add_unit(bandit_factory.create(x=590, y=300))
+        self.armies[1].add_unit(zombie_factory.create(x=500, y=300))
+        self.armies[1].add_unit(zombie_factory.create(x=530, y=300))
+        self.armies[1].add_unit(zombie_factory.create(x=560, y=300))
+        self.armies[1].add_unit(zombie_factory.create(x=590, y=300))
 
         for army in self.armies:
             self.gui.add(army.units)
@@ -331,7 +342,10 @@ class UnitSelectInfo:
     def __init__(self) -> None:
         self.current_power = 0
         self.max_power = 100
-        self.unit_info = {
+
+        self.described_unit = None
+
+        self.unit_count = {
             units.Knight: 0,
             units.Zombie: 0
         }
@@ -346,9 +360,9 @@ class UnitSelectState(State):
         self.parent = None
 
         if info is None:
-            self._info = None
+            self._info = UnitSelectInfo()
         else:
-            self._state = info
+            self._info = info
 
         self.setup()
 
@@ -359,40 +373,40 @@ class UnitSelectState(State):
         knight_buttons = Composite()
         self.gui.add(knight_buttons)
 
-        knight_button = MenuButton(110, 480, 150, 50, "Knight", self.do_nothing)
+        knight_button = MenuButton(110, 480, 150, 50, "Knight", self.show_unit_description, units.Knight)
         knight_buttons.add(knight_button)
 
-        add_knight_button = MenuButton(260, 480, 50, 50, "-", self.do_nothing)
+        add_knight_button = MenuButton(260, 480, 50, 50, "-", self.remove_unit, units.Knight)
         knight_buttons.add(add_knight_button)
 
-        knight_count_button = MenuButton(320, 480, 50, 50, "0", self.do_nothing)
+        knight_count_button = MenuButton(320, 480, 50, 50, "{}".format(self._info.unit_count[units.Knight]), self.clear_unit, units.Knight)
         knight_buttons.add(knight_count_button)
 
-        remove_knight_button = MenuButton(380, 480, 50, 50, "+", self.do_nothing)
+        remove_knight_button = MenuButton(380, 480, 50, 50, "+", self.add_unit, units.Knight)
         knight_buttons.add(remove_knight_button)
 
         zombie_buttons = Composite()
         self.gui.add(zombie_buttons)
 
-        zombie_button = MenuButton(110, 420, 150, 50, "Zombie", self.do_nothing)
+        zombie_button = MenuButton(110, 420, 150, 50, "Zombie", self.show_unit_description, units.Zombie)
         zombie_buttons.add(zombie_button)
 
-        add_zombie_button = MenuButton(260, 420, 50, 50, "-", self.do_nothing)
+        add_zombie_button = MenuButton(260, 420, 50, 50, "-", self.remove_unit, units.Zombie)
         zombie_buttons.add(add_zombie_button)
 
-        zombie_count_button = MenuButton(320, 420, 50, 50, "0", self.do_nothing)
+        zombie_count_button = MenuButton(320, 420, 50, 50, "{}".format(self._info.unit_count[units.Zombie]), self.clear_unit, units.Zombie)
         zombie_buttons.add(zombie_count_button)
 
-        remove_zombie_button = MenuButton(380, 420, 50, 50, "+", self.do_nothing)
+        remove_zombie_button = MenuButton(380, 420, 50, 50, "+", self.add_unit, units.Zombie)
         zombie_buttons.add(remove_zombie_button)
 
         service_buttons = Composite()
         self.gui.add(service_buttons)
 
-        start_game_button = MenuButton(110, 360, 150, 50, "Start Game", self.return_to_tutorial)
+        start_game_button = MenuButton(110, 360, 150, 50, "Start Game", self.start_game)
         service_buttons.add(start_game_button)
 
-        return_button = MenuButton(110, 300, 150, 50, "Return", self.return_to_tutorial)
+        return_button = MenuButton(110, 300, 150, 50, "Return", self.return_to_menu)
         service_buttons.add(return_button)
 
         self.button_list = [button for button in self.gui.get_leaves() if isinstance(button, Button)]
@@ -401,7 +415,10 @@ class UnitSelectState(State):
     def on_draw(self):
         self.gui.draw()
 
-        # arcade.draw_text(UNIT_SELECT_TEXT, 200, 350, arcade.color.BLACK, 15)
+        if (self._info.described_unit) is not None:
+            arcade.draw_text(units.get_decription(self._info.described_unit), 450, 275, arcade.color.BLACK, 15)
+
+        arcade.draw_text(UNIT_SELECT_TEXT.format(self._info.current_power, self._info.max_power), 200, 600, arcade.color.BLACK, 15)
 
     def on_mouse_press(self, x, y, button, key_modifiers):
         self.listeners.on_event(PressEvent(x, y))
@@ -420,12 +437,47 @@ class UnitSelectState(State):
 
     def do_nothing(self) -> None:
         pass
+    
+    def update_unit_select(self):
+        self.window.change_state(UnitSelectState(self.window, self._info))
+    
+    def show_unit_description(self, UnitClass: units.BaseUnit) -> None:
+        self._info.described_unit = UnitClass
+        
+        self.update_unit_select()
+ 
+    def clear_unit(self, UnitClass: units.BaseUnit) -> None:
+        self._info.current_power -= UnitClass().power * self._info.unit_count[UnitClass]
+        self._info.unit_count[UnitClass] = 0
+
+        self.update_unit_select()
+
+    def add_unit(self, UnitClass: units.BaseUnit) -> None:
+        if (self._info.current_power + UnitClass().power <= self._info.max_power):
+            self._info.current_power += UnitClass().power
+            self._info.unit_count[UnitClass] += 1
+        else:
+            pass
+
+        self.update_unit_select()
+
+    def remove_unit(self, UnitClass: units.BaseUnit) -> None:
+        if (self._info.unit_count[UnitClass] > 0):
+            self._info.current_power -= UnitClass().power
+            self._info.unit_count[UnitClass] -= 1
+        else:
+            pass
+
+        self.update_unit_select()
+
+    def start_game(self) -> None:
+        self.window.change_state(BattlefieldState(self.window))
 
     def unit_select(self) -> None:
         self.window.change_state(UnitSelectState(self.window))
 
-    def return_to_tutorial(self) -> None:
-        self.window.change_state(TutorialState(self.window))
+    def return_to_menu(self) -> None:
+        self.window.change_state(MainMenuState(self.window))
 
 
 class BattlefieldState(State):
@@ -523,10 +575,17 @@ class PauseState(State):
     def return_to_menu(self) -> None:
         self.window.change_state(MainMenuState(self.window))
 
+def play_menu_music(*args):
+    music = arcade.load_sound("./sounds/main-menu-theme.wav")
+    arcade.play_sound(music)
 
 def main():
     window = Window(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE)
     window.set_state(MainMenuState(window))
+
+    play_menu_music()
+    arcade.schedule(play_menu_music, 22)
+
     arcade.run()
 
 
