@@ -106,7 +106,6 @@ def get_decription(UnitClass: BaseUnit) -> str:
         Physical Resist: {u.physical_resist}
         Magical Resist: {u.magical_resist}
         Move Speed: {u.move_speed}
-        Attack Speed: {u.attack_speed}
     """.format(u=UnitClass())
 
     return full_dectiption
