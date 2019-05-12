@@ -19,6 +19,7 @@ script:
   - cd battle-for-indent
   - export PYTHONPATH=${PYTHONPATH}:./engine 
   - pytest tests/interface_tests/useability/test_navigation.py
+  - cd ..
 
 deploy:
    provider: pypi
