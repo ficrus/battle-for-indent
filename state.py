@@ -586,8 +586,10 @@ class BattlefieldState(State):
         self.pause_gui = None
         self.end_gui = None
         self.parent = None
-        self.game = Game(max_cnt_1=40)
-        self.last_result = 0
+
+        print(sum(value for key, value in unit_dict.items()))
+        self.game = Game(max_cnt_1=sum(value for key, value in unit_dict.items()))
+
         self.setup()
 
     def setup(self):
@@ -638,8 +640,8 @@ class BattlefieldState(State):
         game_buttons = Composite()
         self.pause_gui.add(game_buttons)
 
-        continue_button = MenuButton(SCREEN_WIDTH/2, SCREEN_HEIGHT*7/8 + 85, 150, 50, "Continue", self.continue_game)
-        game_buttons.add(continue_button)
+        # continue_button = MenuButton(SCREEN_WIDTH/2, SCREEN_HEIGHT*7/8 + 85, 150, 50, "Continue", self.continue_game)
+        # game_buttons.add(continue_button)
 
         restart_button = MenuButton(SCREEN_WIDTH/2, SCREEN_HEIGHT*7/8 + 25, 150, 50, "Restart", self.restart_game)
         game_buttons.add(restart_button)
@@ -659,10 +661,10 @@ class BattlefieldState(State):
         game_buttons = Composite()
         self.end_gui.add(game_buttons)
 
-        restart_button = MenuButton(SCREEN_WIDTH/2, SCREEN_HEIGHT*7/8 + 55, 150, 50, "New battle", self.restart_game)
+        restart_button = MenuButton(SCREEN_WIDTH/2, SCREEN_HEIGHT*7/8 + 25, 150, 50, "New battle", self.restart_game)
         game_buttons.add(restart_button)
 
-        return_button = MenuButton(SCREEN_WIDTH/2,  SCREEN_HEIGHT*7/8 - 5, 150, 50, "Return to menu", self.return_to_menu)
+        return_button = MenuButton(SCREEN_WIDTH/2,  SCREEN_HEIGHT*7/8 - 35, 150, 50, "Return to menu", self.return_to_menu)
         game_buttons.add(return_button)
         button_list = [button for button in self.end_gui.get_leaves() if isinstance(button, Button)]
         self.end_listeners.add_listener(ButtonListener(button_list))
@@ -674,12 +676,6 @@ class BattlefieldState(State):
             self.pause_gui.draw()
         elif self.state == 'End':
             self.end_gui.draw()
-
-            end_text = ["King of {} brought army to victory!\n".format(ProgressManager().fraction),
-                    "Not the best day for {}, King...\n".format(ProgressManager().fraction),
-                    "Friendship won? No, never!\n"][self.last_result - 1]
-
-            arcade.draw_text(end_text, SCREEN_WIDTH / 2 - 125, SCREEN_HEIGHT*7/8 - 100, arcade.color.BLACK, 15)
 
     def on_mouse_press(self, x, y, button, key_modifiers):
         self.listeners.on_event(PressEvent(x, y))
@@ -694,6 +690,7 @@ class BattlefieldState(State):
     def update(self, delta_time: float):
         if self.state == 'Run':
             self.run_gui.update(delta_time)
+
             value = self.game.update()
             if value == 1:
                 self.win_game()
@@ -702,29 +699,31 @@ class BattlefieldState(State):
             elif value == 3:
                 self.draw_game()
 
-    def win_game(self):
+
+    def end_game(self, result):
+        r_dict = {1: "Victory", 2: "Lose", 3: "Draw"}
         self.state = 'End'
         self.listeners = self.end_listeners
+        self.end_gui.add(Text(r_dict[result], SCREEN_WIDTH/2 - 75, SCREEN_HEIGHT*7/8 + 75))
 
         ProgressManager().add_win()
 
         self.last_result = 1
+        
+    def win_game(self):
+        ProgressManager().add_win()
+
+        self.end_game(1)
 
     def lose_game(self):
-        self.state = 'End'
-        self.listeners = self.end_listeners
-
         ProgressManager().add_lose()
 
-        self.last_result = 2
+        self.end_game(2)
 
     def draw_game(self):
-        self.state = 'End'
-        self.listeners = self.end_listeners
-
         ProgressManager().add_draw()
 
-        self.last_result = 3
+        self.end_game(3)
 
     def pause_game(self):
         self.state = 'Pause'

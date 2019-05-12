@@ -12,45 +12,46 @@ class HP(Leaf):
         self.max_hp = hp
 
     def draw(self):
+        lag = 20
         if self.side == 1:
             if self.hp > self.max_hp * 0.5:
                 arcade.draw_rectangle_filled(SCREEN_WIDTH / 5,
-                                             SCREEN_HEIGHT - 100,
+                                             SCREEN_HEIGHT - lag,
                                              width=self.hp / self.max_hp * 600, height=self.max_hp / 50,
                                              color=arcade.color.LIGHT_GREEN)
             elif self.hp > self.max_hp * 0.25:
                 arcade.draw_rectangle_filled(SCREEN_WIDTH / 5,
-                                             SCREEN_HEIGHT - 100,
+                                             SCREEN_HEIGHT - lag,
                                              width=self.hp / self.max_hp * 600, height=self.max_hp / 50,
                                              color=arcade.color.LIGHT_YELLOW)
             elif self.hp > 0:
                 arcade.draw_rectangle_filled(SCREEN_WIDTH / 5,
-                                             SCREEN_HEIGHT - 100,
+                                             SCREEN_HEIGHT - lag,
                                              width=self.hp / self.max_hp * 600, height=self.max_hp / 50,
                                              color=arcade.color.LIGHT_CORAL)
 
             arcade.draw_rectangle_outline(SCREEN_WIDTH / 5,
-                                          SCREEN_HEIGHT - 100,
+                                          SCREEN_HEIGHT - lag,
                                           width=602, height=self.max_hp / 50 + 2, color=arcade.color.DARK_GREEN)
         else:
             if self.hp > self.max_hp * 0.5:
                 arcade.draw_rectangle_filled(SCREEN_WIDTH * 4 / 5,
-                                             SCREEN_HEIGHT - 100,
+                                             SCREEN_HEIGHT - lag,
                                              width=self.hp / self.max_hp * 600, height=self.max_hp / 50,
                                              color=arcade.color.LIGHT_GREEN)
             elif self.hp > self.max_hp * 0.25:
                 arcade.draw_rectangle_filled(SCREEN_WIDTH * 4 / 5,
-                                             SCREEN_HEIGHT - 100,
+                                             SCREEN_HEIGHT - lag,
                                              width=self.hp / self.max_hp * 600, height=self.max_hp / 50,
                                              color=arcade.color.LIGHT_YELLOW)
             elif self.hp > 0:
                 arcade.draw_rectangle_filled(SCREEN_WIDTH * 4 / 5,
-                                             SCREEN_HEIGHT - 100,
+                                             SCREEN_HEIGHT - lag,
                                              width=self.hp / self.max_hp * 600, height=self.max_hp / 50,
                                              color=arcade.color.LIGHT_CORAL)
 
             arcade.draw_rectangle_outline(SCREEN_WIDTH * 4 / 5,
-                                          SCREEN_HEIGHT - 100,
+                                          SCREEN_HEIGHT - lag,
                                           width=602, height=self.max_hp / 50 + 2, color=arcade.color.DARK_GREEN)
 
 
