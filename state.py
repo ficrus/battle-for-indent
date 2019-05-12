@@ -372,7 +372,6 @@ class FractionSelectState(State):
         self.window.change_state(MainMenuState(self.window))
 
 
-
 class UnitSelectInfo:
     def __init__(self) -> None:
         self.current_power = 0
@@ -386,6 +385,7 @@ class UnitSelectInfo:
             units.Zombie: 0,
             units.Walker: 0
         }
+
 
 class UnitSelectState(State):
     def __init__(self, window: Window, info=None):
