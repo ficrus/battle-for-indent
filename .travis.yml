@@ -15,6 +15,11 @@ install:
   - pip install --upgrade pytest
   - pip install -r ./battle-for-indent/requirements.txt
 
+script:
+  - cd battle-for-indent
+  - export PYTHONPATH=${PYTHONPATH}:./engine 
+  - pytest tests/interface_tests/useability/test_navigation.py
+
 deploy:
    provider: pypi
    user: eaglemango
