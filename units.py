@@ -4,10 +4,10 @@ import arcade
 
 
 class BaseUnit(Leaf):
-    def __init__(self, sprite=None, x=0, y=0, scale=1):
+    def __init__(self, sprite=None, x=0, y=0, scale=1, mirrored=False):
         self.sprite = None
         if sprite is not None:
-            self.sprite = sprite(scale=scale)
+            self.sprite = sprite(scale=scale, mirrored=mirrored)
         self.fraction = ""
         self.job = ""
         self.description = ""
@@ -67,8 +67,8 @@ class BaseUnit(Leaf):
 
 class Knight(BaseUnit):
 
-    def __init__(self, sprite=None, x=0, y=0, scale=0.16):
-        super().__init__(sprite=sprite, x=x, y=y, scale=scale)
+    def __init__(self, sprite=None, x=0, y=0, scale=0.16, mirrored=False):
+        super().__init__(sprite=sprite, x=x, y=y, scale=scale, mirrored=mirrored)
         self.job = "Knight"
         self.description = "Strong and self-confident knight"
         self.power = 10
@@ -90,8 +90,8 @@ class Knight(BaseUnit):
 
 
 class Paladin(BaseUnit):
-    def __init__(self, sprite=None, x=0, y=0, scale=1):
-        super().__init__(sprite=sprite, x=x, y=y, scale=scale)
+    def __init__(self, sprite=None, x=0, y=0, scale=1, mirrored=False):
+        super().__init__(sprite=sprite, x=x, y=y, scale=scale, mirrored=mirrored)
 
         self.job = "Paladin"
         self.description = "Master of spear and base magic"
@@ -114,8 +114,8 @@ class Paladin(BaseUnit):
 
 
 class Zombie(BaseUnit):
-    def __init__(self, sprite=None, x=0, y=0, scale=0.15):
-        super().__init__(sprite=sprite, x=x, y=y, scale=scale)
+    def __init__(self, sprite=None, x=0, y=0, scale=0.15, mirrored=False):
+        super().__init__(sprite=sprite, x=x, y=y, scale=scale, mirrored=mirrored)
 
         self.job = "Zombie"
         self.description = "It's not a bandit at all"
