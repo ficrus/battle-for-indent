@@ -382,7 +382,7 @@ class FractionSelectState(State):
 class UnitSelectInfo:
     def __init__(self) -> None:
         self.current_power = 0
-        self.max_power = 400
+        self.max_power = 300 + ProgressManager().wins * 75 + ProgressManager().loses
 
         self.described_unit = None
 
@@ -589,6 +589,7 @@ class BattlefieldState(State):
 
         print(sum(value for key, value in unit_dict.items()))
         self.game = Game(max_cnt_1=sum(value for key, value in unit_dict.items()))
+        self.game.player_max_units = sum([unit_dict[u] for u in unit_dict])
 
         self.setup()
 
