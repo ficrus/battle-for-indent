@@ -18,7 +18,7 @@ install:
 script:
   - cd battle-for-indent
   - export PYTHONPATH=${PYTHONPATH}:./engine 
-  - sudo pytest tests/save_data_tests
+  - pytest tests/interface_tests/useability/test_navigation.py
 
 deploy:
    provider: pypi
