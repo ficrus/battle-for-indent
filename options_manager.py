@@ -2,9 +2,10 @@ import memento
 import pickle
 
 class OptionsManager:
-    def __init__(self):
+    def __init__(self, options_file="./save_data/options"):
+        self.options_file = options_file
         try:
-            with open("./save_data/options", "rb") as options:
+            with open(self.options_file, "rb") as options:
                 self.restore(pickle.load(options))
         except FileNotFoundError:
             self.is_music_enabled = True
@@ -17,7 +18,7 @@ class OptionsManager:
                                        self.is_easter_egg_enabled])
 
     def save_on_disk(self, memento: memento.OptionsMemento) -> None:
-        with open("./save_data/options", "wb") as options:
+        with open(self.options_file, "wb") as options:
             pickle.dump(memento, options)
 
     def restore(self, memento: memento.OptionsMemento) -> None:
