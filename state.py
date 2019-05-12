@@ -661,10 +661,10 @@ class BattlefieldState(State):
         game_buttons = Composite()
         self.end_gui.add(game_buttons)
 
-        restart_button = MenuButton(SCREEN_WIDTH/2, SCREEN_HEIGHT*7/8 + 25, 150, 50, "New battle", self.restart_game)
+        restart_button = MenuButton(SCREEN_WIDTH/2, SCREEN_HEIGHT*7/8 + 25, 175, 50, "New battle", self.restart_game)
         game_buttons.add(restart_button)
 
-        return_button = MenuButton(SCREEN_WIDTH/2,  SCREEN_HEIGHT*7/8 - 35, 150, 50, "Return to menu", self.return_to_menu)
+        return_button = MenuButton(SCREEN_WIDTH/2,  SCREEN_HEIGHT*7/8 - 35, 175, 50, "Return to menu", self.return_to_menu)
         game_buttons.add(return_button)
         button_list = [button for button in self.end_gui.get_leaves() if isinstance(button, Button)]
         self.end_listeners.add_listener(ButtonListener(button_list))
@@ -705,6 +705,12 @@ class BattlefieldState(State):
         self.state = 'End'
         self.listeners = self.end_listeners
         self.end_gui.add(Text(r_dict[result], SCREEN_WIDTH/2 - 75, SCREEN_HEIGHT*7/8 + 75))
+
+        end_text = ["King of {} brought army to victory!\n".format(ProgressManager().fraction),
+                    "Not the best day for {}, King...\n".format(ProgressManager().fraction),
+                    "Friendship won? No, never!\n"][result - 1]
+
+        self.end_gui.add(Text(end_text, SCREEN_WIDTH / 2 - 125, SCREEN_HEIGHT*7/8 - 100, arcade.color.BLACK, 15))
         
     def win_game(self):
         ProgressManager().add_win()
