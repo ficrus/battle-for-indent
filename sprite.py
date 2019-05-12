@@ -150,6 +150,7 @@ class UnitSprite(ObjectSprite):
         self.player_right_leg.clockwise_rotation = True
 
     def update(self, delta_time):
+        delta_time *= 60
         if self.move_left or self.move_right:
             self.movement_class.act(delta_time=delta_time)
         if not self.move_right or self.move_left:

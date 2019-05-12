@@ -553,6 +553,7 @@ class UnitSelectState(State):
             pass
 
         self.update_unit_select()
+
     def start_game(self) -> None:
         unit_dict = {UnitClass().job: self._info.unit_count[UnitClass] for UnitClass in self._info.unit_count}
 
@@ -563,7 +564,6 @@ class UnitSelectState(State):
 
     def return_to_menu(self) -> None:
         self.window.change_state(MainMenuState(self.window))
-
 class BattlefieldState(State):
     def __init__(self, window: Window, unit_dict):
         super().__init__(window)
