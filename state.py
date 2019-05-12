@@ -625,42 +625,44 @@ class BattlefieldState(State):
         buttons = Composite()
         self.run_gui.add(buttons)
 
-        pause_button = MenuButton(110, 480, 150, 50, " || ", self.pause_game)
+        pause_button = MenuButton(SCREEN_WIDTH/2, SCREEN_HEIGHT - 50, 50, 50, " || ", self.pause_game)
         buttons.add(pause_button)
         button_list = [button for button in self.run_gui.get_leaves() if isinstance(button, Button)]
         self.run_listeners.add_listener(ButtonListener(button_list))
 
     def pause_setup(self):
         self.pause_gui = Composite()
+        self.pause_gui.add(Image(SCREEN_WIDTH / 2, SCREEN_HEIGHT * 7 / 8, 0.25, "images/textures/gray.png"))
         self.pause_listeners = ListenersSupport()
 
         game_buttons = Composite()
         self.pause_gui.add(game_buttons)
 
-        continue_button = MenuButton(110, 480, 150, 50, "Continue", self.continue_game)
+        continue_button = MenuButton(SCREEN_WIDTH/2, SCREEN_HEIGHT*7/8 + 85, 150, 50, "Continue", self.continue_game)
         game_buttons.add(continue_button)
 
-        restart_button = MenuButton(110, 420, 150, 50, "Restart", self.restart_game)
+        restart_button = MenuButton(SCREEN_WIDTH/2, SCREEN_HEIGHT*7/8 + 25, 150, 50, "Restart", self.restart_game)
         game_buttons.add(restart_button)
 
         service_buttons = Composite()
         self.pause_gui.add(service_buttons)
 
-        return_button = MenuButton(110, 360, 150, 50, "Return", self.return_to_menu)
+        return_button = MenuButton(SCREEN_WIDTH/2, SCREEN_HEIGHT*7/8 - 35, 150, 50, "Return", self.return_to_menu)
         service_buttons.add(return_button)
         button_list = [button for button in self.pause_gui.get_leaves() if isinstance(button, Button)]
         self.pause_listeners.add_listener(ButtonListener(button_list))
 
     def victory_setup(self):
         self.end_gui = Composite()
+        self.end_gui.add(Image(SCREEN_WIDTH / 2, SCREEN_HEIGHT * 7 / 8, 0.25, "images/textures/gray.png"))
         self.end_listeners = ListenersSupport()
         game_buttons = Composite()
         self.end_gui.add(game_buttons)
 
-        restart_button = MenuButton(SCREEN_WIDTH/2, SCREEN_HEIGHT - 150, 150, 50, "New battle", self.restart_game)
+        restart_button = MenuButton(SCREEN_WIDTH/2, SCREEN_HEIGHT*7/8 + 55, 150, 50, "New battle", self.restart_game)
         game_buttons.add(restart_button)
 
-        return_button = MenuButton(SCREEN_WIDTH/2,  SCREEN_HEIGHT - 210, 150, 50, "Return to menu", self.return_to_menu)
+        return_button = MenuButton(SCREEN_WIDTH/2,  SCREEN_HEIGHT*7/8 - 5, 150, 50, "Return to menu", self.return_to_menu)
         game_buttons.add(return_button)
         button_list = [button for button in self.end_gui.get_leaves() if isinstance(button, Button)]
         self.end_listeners.add_listener(ButtonListener(button_list))
