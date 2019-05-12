@@ -382,9 +382,10 @@ class UnitSelectInfo:
 
         self.unit_count = {
             units.Knight: 0,
-            units.Zombie: 0
+            units.Paladin: 0,
+            units.Zombie: 0,
+            units.Walker: 0
         }
-
 
 class UnitSelectState(State):
     def __init__(self, window: Window, info=None):
@@ -408,34 +409,68 @@ class UnitSelectState(State):
         knight_buttons = Composite()
         self.gui.add(knight_buttons)
 
-        knight_button = MenuButton(110, 480, 150, 50, "Knight", self.show_unit_description, units.Knight)
+        knight_button = MenuButton(110, 600, 150, 50, "Knight", self.show_unit_description, units.Knight)
         knight_buttons.add(knight_button)
 
-        add_knight_button = MenuButton(260, 480, 50, 50, "-", self.remove_unit, units.Knight)
+        add_knight_button = MenuButton(260, 600, 50, 50, "-", self.remove_unit, units.Knight)
         knight_buttons.add(add_knight_button)
 
-        knight_count_button = MenuButton(320, 480, 50, 50, "{}".format(self._info.unit_count[units.Knight]),
+        knight_count_button = MenuButton(320, 600, 50, 50, "{}".format(self._info.unit_count[units.Knight]),
                                          self.clear_unit, units.Knight)
         knight_buttons.add(knight_count_button)
 
-        remove_knight_button = MenuButton(380, 480, 50, 50, "+", self.add_unit, units.Knight)
+        remove_knight_button = MenuButton(380, 600, 50, 50, "+", self.add_unit, units.Knight)
         knight_buttons.add(remove_knight_button)
 
         zombie_buttons = Composite()
         self.gui.add(zombie_buttons)
 
-        zombie_button = MenuButton(110, 420, 150, 50, "Zombie", self.show_unit_description, units.Zombie)
+        zombie_button = MenuButton(110, 540, 150, 50, "Zombie", self.show_unit_description, units.Zombie)
         zombie_buttons.add(zombie_button)
 
-        add_zombie_button = MenuButton(260, 420, 50, 50, "-", self.remove_unit, units.Zombie)
+        add_zombie_button = MenuButton(260, 540, 50, 50, "-", self.remove_unit, units.Zombie)
         zombie_buttons.add(add_zombie_button)
 
-        zombie_count_button = MenuButton(320, 420, 50, 50, "{}".format(self._info.unit_count[units.Zombie]),
+        zombie_count_button = MenuButton(320, 540, 50, 50, "{}".format(self._info.unit_count[units.Zombie]),
                                          self.clear_unit, units.Zombie)
         zombie_buttons.add(zombie_count_button)
 
-        remove_zombie_button = MenuButton(380, 420, 50, 50, "+", self.add_unit, units.Zombie)
+        remove_zombie_button = MenuButton(380, 540, 50, 50, "+", self.add_unit, units.Zombie)
         zombie_buttons.add(remove_zombie_button)
+
+        paladin_buttons = Composite()
+        self.gui.add(paladin_buttons)
+
+        paladin_button = MenuButton(110, 480, 150, 50, "Paladin", self.show_unit_description, units.Paladin)
+        paladin_buttons.add(paladin_button)
+
+        if ProgressManager().wins > 0:
+            add_paladin_button = MenuButton(260, 480, 50, 50, "-", self.remove_unit, units.Paladin)
+            paladin_buttons.add(add_paladin_button)
+
+            paladin_count_button = MenuButton(320, 480, 50, 50, "{}".format(self._info.unit_count[units.Paladin]),
+                                                    self.clear_unit, units.Paladin)
+            paladin_buttons.add(paladin_count_button)
+
+            remove_paladin_button = MenuButton(380, 480, 50, 50, "+", self.add_unit, units.Paladin)
+            paladin_buttons.add(remove_paladin_button)
+
+        walker_buttons = Composite()
+        self.gui.add(walker_buttons)
+
+        walker_button = MenuButton(110, 420, 150, 50, "Walker", self.show_unit_description, units.Walker)
+        walker_buttons.add(walker_button)
+
+        if ProgressManager().wins > 1:
+            add_walker_button = MenuButton(260, 420, 50, 50, "-", self.remove_unit, units.Walker)
+            walker_buttons.add(add_walker_button)
+
+            walker_count_button = MenuButton(320, 420, 50, 50, "{}".format(self._info.unit_count[units.Walker]),
+                                                            self.clear_unit, units.Walker)
+            walker_buttons.add(walker_count_button)
+
+            remove_walker_button = MenuButton(380, 420, 50, 50, "+", self.add_unit, units.Walker)
+            walker_buttons.add(remove_walker_button)
 
         service_buttons = Composite()
         self.gui.add(service_buttons)
@@ -446,7 +481,7 @@ class UnitSelectState(State):
         return_button = MenuButton(110, 300, 150, 50, "Return", self.return_to_menu)
         service_buttons.add(return_button)
 
-        self.button_list = [button for button in self.gui.get_leaves() if isinstance(button, Button)]
+        self.button_list = self.gui.get_leaves()
         self.listeners.add_listener(ButtonListener(self.button_list))
 
     def on_draw(self):
@@ -458,8 +493,14 @@ class UnitSelectState(State):
             sprite.draw()
             arcade.draw_text(units.get_decription(self._info.described_unit), 700, 275, arcade.color.BLACK, 15)
 
-        arcade.draw_text(UNIT_SELECT_TEXT.format(self._info.current_power, self._info.max_power), 200, 600,
+        arcade.draw_text(UNIT_SELECT_TEXT.format(self._info.current_power, self._info.max_power), 200, 650,
                          arcade.color.BLACK, 15)
+
+        if ProgressManager().wins < 1:
+            arcade.draw_text("Requires 1 win to hire\n", 200, 455, arcade.color.BLACK, 15)
+
+        if ProgressManager().wins < 2:
+            arcade.draw_text("Requires 2 wins to hire\n", 200, 395, arcade.color.BLACK, 15)
 
         arcade.draw_text("Start game with these units\n", 200, 335, arcade.color.BLACK, 15)
         arcade.draw_text("Back to Main Menu\n", 200, 275, arcade.color.BLACK, 15)
@@ -504,7 +545,6 @@ class UnitSelectState(State):
             pass
 
         self.update_unit_select()
-
     def remove_unit(self, UnitClass: units.BaseUnit) -> None:
         if (self._info.unit_count[UnitClass] > 0):
             self._info.current_power -= UnitClass().power
@@ -513,9 +553,9 @@ class UnitSelectState(State):
             pass
 
         self.update_unit_select()
-
     def start_game(self) -> None:
         unit_dict = {UnitClass().job: self._info.unit_count[UnitClass] for UnitClass in self._info.unit_count}
+
         self.window.change_state(BattlefieldState(self.window, unit_dict))
 
     def unit_select(self) -> None:
@@ -523,7 +563,6 @@ class UnitSelectState(State):
 
     def return_to_menu(self) -> None:
         self.window.change_state(MainMenuState(self.window))
-
 
 class BattlefieldState(State):
     def __init__(self, window: Window, unit_dict):
