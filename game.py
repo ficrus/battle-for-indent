@@ -4,6 +4,7 @@ from interface import *
 import random
 import numpy as np
 
+
 class Game:
     def __init__(self):
         self.gui = None

@@ -36,22 +36,22 @@ class BaseUnit(Leaf):
             if self.hp > self.max_hp * 0.5:
                 arcade.draw_rectangle_filled(self.sprite.center_x,
                                              self.sprite.center_y + 100,
-                                             width=self.hp / self.max_hp * 50, height=self.max_hp / 10,
+                                             width=self.hp / self.max_hp * 50, height=self.max_hp / 50,
                                              color=arcade.color.LIGHT_GREEN)
             elif self.hp > self.max_hp * 0.25:
                 arcade.draw_rectangle_filled(self.sprite.center_x,
                                              self.sprite.center_y + 100,
-                                             width=self.hp / self.max_hp * 50, height=self.max_hp / 10,
+                                             width=self.hp / self.max_hp * 50, height=self.max_hp / 50,
                                              color=arcade.color.LIGHT_YELLOW)
             elif self.hp > 0:
                 arcade.draw_rectangle_filled(self.sprite.center_x,
                                              self.sprite.center_y + 100,
-                                             width=self.hp / self.max_hp * 50, height=self.max_hp / 10,
+                                             width=self.hp / self.max_hp * 50, height=self.max_hp / 50,
                                              color=arcade.color.DARK_RED)
 
             arcade.draw_rectangle_outline(self.sprite.center_x,
                                           self.sprite.center_y + 100,
-                                          width=52, height=self.max_hp / 10 + 2, color=arcade.color.DARK_GREEN)
+                                          width=52, height=self.max_hp / 50 + 2, color=arcade.color.DARK_GREEN)
 
     def update(self, delta_time):
         if self.sprite is not None:
@@ -145,17 +145,17 @@ class Walker(BaseUnit):
         self.job = "Walker"
         self.description = "Freezing death incarnate"
         self.power = 20
-        self.hp = 30
+        self.hp = 6000
         self.max_hp = self.hp
         self.physical_damage = 2
         self.magical_damage = 0
-        self.physical_resist = 0
+        self.physical_resist = 0.5
         self.magical_resist = 0
-        self.move_speed = 60
+        self.move_speed = 0.3
         if self.sprite is not None:
             self.sprite.move_speed = self.move_speed
 
-    def attack(self, target, target_army=None):
+    def attack(self, target, target_army=None, damage=0):
         super().attack(target, target_army)
 
     def accept(self, visitor) -> None:
@@ -239,12 +239,9 @@ class LeftArmyVisitor(Visitor):
             if not element.sprite.start_attack:
                 element.sprite.attack = True
         else:
+            element.sprite.start_attack = False
+            element.sprite.attack = False
             element.sprite.move_right = True
-        if flag == 0:
-            assert element.sprite.move_right
-            print("GO")
-        else:
-            print("Fuck")
 
     def visit_zombie(self, element) -> None:
         """Тут, вообще говоря, может быть другая логика атаки и движения"""
@@ -279,12 +276,9 @@ class LeftArmyVisitor(Visitor):
             if not element.sprite.start_attack:
                 element.sprite.attack = True
         else:
+            element.sprite.start_attack = False
+            element.sprite.attack = False
             element.sprite.move_right = True
-        if flag == 0:
-            assert element.sprite.move_right
-            print("GO")
-        else:
-            print("Fuck")
 
 
 class RightArmyVisitor(Visitor):
@@ -315,12 +309,6 @@ class RightArmyVisitor(Visitor):
             element.sprite.attack = False
             element.sprite.move_left = True
 
-        if flag == 0:
-            assert element.sprite.move_left
-            print("GO")
-        else:
-            print("Fuck")
-
     def visit_paladin(self, element) -> None:
         flag = 0
         for part in element.sprite.object_parts:
@@ -335,12 +323,9 @@ class RightArmyVisitor(Visitor):
             if not element.sprite.start_attack:
                 element.sprite.attack = True
         else:
+            element.sprite.start_attack = False
+            element.sprite.attack = False
             element.sprite.move_left = True
-        if flag == 0:
-            assert element.sprite.move_left
-            print("GO")
-        else:
-            print("Fuck")
 
     def visit_zombie(self, element) -> None:
         flag = 0
@@ -374,10 +359,7 @@ class RightArmyVisitor(Visitor):
             if not element.sprite.start_attack:
                 element.sprite.attack = True
         else:
+            element.sprite.start_attack = False
+            element.sprite.attack = False
             element.sprite.move_left = True
-        if flag == 0:
-            assert element.sprite.move_left
-            print("GO")
-        else:
-            print("Fuck")
 

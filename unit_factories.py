@@ -1,5 +1,5 @@
 from units import *
-from sprite import KnightSprite, ZombieSprite
+from sprite import KnightSprite, ZombieSprite, WalkerSprite, PaladinSprite
 
 
 class Singleton(ABC, type):
@@ -41,3 +41,27 @@ class ZombieFactory(UnitFactory):
         if road == 3:
             zombie.sprite.set_speed_decorator(0.7)
         return zombie
+
+
+class PaladinFactory(UnitFactory):
+    def create(self, x=0, y=0, scale=0.20, road=0, mirrored=False) -> BaseUnit:
+        print('ZombieFactory creates  zombie')
+        paladin = Paladin(sprite=PaladinSprite, x=x, y=y, scale=scale, mirrored=mirrored)
+        paladin.sprite.set_speed_decorator(70)
+        if road == 1:
+            paladin.sprite.set_speed_decorator(1.4)
+        if road == 3:
+            paladin.sprite.set_speed_decorator(0.7)
+        return paladin
+
+
+class WalkerFactory(UnitFactory):
+    def create(self, x=0, y=0, scale=0.20, road=0, mirrored=False) -> BaseUnit:
+        print('ZombieFactory creates  zombie')
+        walker = Paladin(sprite=WalkerSprite, x=x, y=y, scale=scale, mirrored=mirrored)
+        walker.sprite.set_speed_decorator(70)
+        if road == 1:
+            walker.sprite.set_speed_decorator(1.4)
+        if road == 3:
+            walker.sprite.set_speed_decorator(0.7)
+        return walker
