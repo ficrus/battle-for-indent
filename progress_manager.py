@@ -25,9 +25,10 @@ class ProgressManager:
             pickle.dump(memento, progress)
 
     def restore(self, memento: memento.ProgressMemento) -> None:
-        (self.is_music_enabled,
-        self.is_sounds_enabled,
-        self.is_easter_egg_enabled) = memento.get_state()
+        (self.wins,
+        self.draws,
+        self.loses,
+        self.fraction) = memento.get_state()
 
     def add_win(self):
         self.wins += 1
