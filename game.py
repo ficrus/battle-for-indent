@@ -27,7 +27,6 @@ class Game:
             self.gui.add(army.units)
 
     def update(self):
-
         visitor1 = LeftArmyVisitor(self.armies)
         for unit in self.armies[0].units.get_leaves():
             unit.accept(visitor1)
