@@ -2,7 +2,6 @@ from army import Army
 from unit_factories import *
 from interface import *
 
-
 class Game:
     def __init__(self):
         self.gui = None
