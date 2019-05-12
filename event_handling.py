@@ -1,4 +1,3 @@
-from __future__ import annotations
 from game import *
 from interface import RoadSelection
 import numpy as np
