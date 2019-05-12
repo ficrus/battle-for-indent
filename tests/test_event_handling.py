@@ -1,5 +1,4 @@
-import numpy as np
-from game import *
+from state import *
 
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 600

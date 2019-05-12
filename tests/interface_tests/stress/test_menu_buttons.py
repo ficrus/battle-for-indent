@@ -1,9 +1,7 @@
 """
 Тестируется реакция нескольких объектов на нажатия одновременно
 """
-
-import numpy as np
-from game import *
+from state import *
 
 
 COUNT = 10
@@ -78,6 +76,9 @@ class TesState(MainMenuState):
 
     def exit_game(self):
         self.count += 1
+
+    def on_draw(self):
+        self.gui.draw()
 
 
 class StressTestState(TesState):

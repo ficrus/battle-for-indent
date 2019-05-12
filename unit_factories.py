@@ -18,12 +18,28 @@ class UnitFactory(metaclass=Singleton):
 
 
 class KnightFactory(UnitFactory):
-    def create(self, x=0, y=0, scale=0.20) -> BaseUnit:
+    def create(self, x=0, y=0, scale=0.20, road=0, mirrored=False) -> BaseUnit:
         print('KnightFactory creates knight')
-        return Knight(sprite=KnightSprite, x=x, y=y, scale=scale)
+        knight = Knight(sprite=KnightSprite, x=x, y=y, scale=scale, mirrored=mirrored)
+        knight.sprite.set_speed_decorator(70)
+        if road == 1:
+            knight.sprite.set_speed_decorator(1.5)
+            knight.sprite.move_speed *= 1.5
+        if road == 3:
+            knight.sprite.set_speed_decorator(0.6)
+            knight.sprite.move_speed *= 0.8
+        return knight
 
-  
+
 class ZombieFactory(UnitFactory):
-    def create(self, x=0, y=0, scale=0.20) -> BaseUnit:
+    def create(self, x=0, y=0, scale=0.20, road=0, mirrored=False) -> BaseUnit:
         print('ZombieFactory creates  zombie')
-        return Zombie(sprite=ZombieSprite, x=x, y=y, scale=scale)
+        zombie = Zombie(sprite=ZombieSprite, x=x, y=y, scale=scale, mirrored=mirrored)
+        zombie.sprite.set_speed_decorator(70)
+        if road == 1:
+            zombie.sprite.set_speed_decorator(1.4)
+            zombie.sprite.move_speed *= 1.4
+        if road == 3:
+            zombie.sprite.set_speed_decorator(0.7)
+            zombie.sprite.move_speed *= 0.7
+        return zombie

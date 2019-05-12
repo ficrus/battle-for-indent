@@ -1,9 +1,7 @@
 """
 Тестируется реакция кнопок меню на нажатия в их области и вне их области
 """
-
-import numpy as np
-from game import *
+from state import *
 
 
 COUNT = 200
@@ -77,6 +75,9 @@ class TesState(MainMenuState):
 
     def exit_game(self):
         self.count += 1
+
+    def on_draw(self):
+        self.gui.draw()
 
 
 def test_presses_and_releases_everywere():
