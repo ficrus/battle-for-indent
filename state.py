@@ -16,7 +16,7 @@ You can choose how much soldiers you will take.
 Note, that number of units depepends on their power.
 
 There are three roads on the battle map. Use 1, 2, 3 keys in order to choose suitable one.
-Spawn unit on the selected road by pressing Q, W, E.
+Spawn unit on the selected road by pressing Q, W, E, R.
 
 Good luck, King! Our victory is in your own hands.
 
@@ -35,7 +35,6 @@ It's highly recommended to use as much Power, as you can.
 
 Current Power: {0}
 Max Power: {1}
-Power: {1}
 """
 
 
@@ -588,6 +587,7 @@ class BattlefieldState(State):
         self.end_gui = None
         self.parent = None
         self.game = Game(max_cnt_1=40)
+        self.last_result = 0
         self.setup()
 
     def setup(self):
@@ -667,12 +667,19 @@ class BattlefieldState(State):
         button_list = [button for button in self.end_gui.get_leaves() if isinstance(button, Button)]
         self.end_listeners.add_listener(ButtonListener(button_list))
 
+
     def on_draw(self):
         self.run_gui.draw()
         if self.state == 'Pause':
             self.pause_gui.draw()
         elif self.state == 'End':
             self.end_gui.draw()
+
+            end_text = ["King of {} brought army to victory!\n".format(ProgressManager().fraction),
+                    "Not the best day for {}, King...\n".format(ProgressManager().fraction),
+                    "Friendship won? No, never!\n"][self.last_result - 1]
+
+            arcade.draw_text(end_text, SCREEN_WIDTH / 2 - 125, SCREEN_HEIGHT*7/8 - 100, arcade.color.BLACK, 15)
 
     def on_mouse_press(self, x, y, button, key_modifiers):
         self.listeners.on_event(PressEvent(x, y))
@@ -687,12 +694,37 @@ class BattlefieldState(State):
     def update(self, delta_time: float):
         if self.state == 'Run':
             self.run_gui.update(delta_time)
-            if self.game.update() != 0:
+            value = self.game.update()
+            if value == 1:
                 self.win_game()
+            elif value == 2:
+                self.lose_game()
+            elif value == 3:
+                self.draw_game()
 
     def win_game(self):
         self.state = 'End'
         self.listeners = self.end_listeners
+
+        ProgressManager().add_win()
+
+        self.last_result = 1
+
+    def lose_game(self):
+        self.state = 'End'
+        self.listeners = self.end_listeners
+
+        ProgressManager().add_lose()
+
+        self.last_result = 2
+
+    def draw_game(self):
+        self.state = 'End'
+        self.listeners = self.end_listeners
+
+        ProgressManager().add_draw()
+
+        self.last_result = 3
 
     def pause_game(self):
         self.state = 'Pause'
