@@ -8,6 +8,7 @@ import units
 import pickle
 import memento
 from options_manager import OptionsManager
+from progress_manager import ProgressManager
 
 SCREEN_TITLE = "Battle for Indent"
 TUTORIAL_TEXT = """
@@ -416,15 +417,17 @@ class UnitSelectState(State):
         paladin_button = MenuButton(110, 480, 150, 50, "Paladin", self.show_unit_description, units.Paladin)
         paladin_buttons.add(paladin_button)
 
-        add_paladin_button = MenuButton(260, 480, 50, 50, "-", self.remove_unit, units.Paladin)
-        paladin_buttons.add(add_paladin_button)
+        if ProgressManager().wins > 0:
 
-        paladin_count_button = MenuButton(320, 480, 50, 50, "{}".format(self._info.unit_count[units.Paladin]),
-                                                self.clear_unit, units.Paladin)
-        paladin_buttons.add(paladin_count_button)
+            add_paladin_button = MenuButton(260, 480, 50, 50, "-", self.remove_unit, units.Paladin)
+            paladin_buttons.add(add_paladin_button)
 
-        remove_paladin_button = MenuButton(380, 480, 50, 50, "+", self.add_unit, units.Paladin)
-        paladin_buttons.add(remove_paladin_button)
+            paladin_count_button = MenuButton(320, 480, 50, 50, "{}".format(self._info.unit_count[units.Paladin]),
+                                                    self.clear_unit, units.Paladin)
+            paladin_buttons.add(paladin_count_button)
+
+            remove_paladin_button = MenuButton(380, 480, 50, 50, "+", self.add_unit, units.Paladin)
+            paladin_buttons.add(remove_paladin_button)
 
         walker_buttons = Composite()
         self.gui.add(walker_buttons)
@@ -432,15 +435,17 @@ class UnitSelectState(State):
         walker_button = MenuButton(110, 420, 150, 50, "Walker", self.show_unit_description, units.Walker)
         walker_buttons.add(walker_button)
 
-        add_walker_button = MenuButton(260, 420, 50, 50, "-", self.remove_unit, units.Walker)
-        walker_buttons.add(add_walker_button)
+        if ProgressManager().wins > 1:
 
-        walker_count_button = MenuButton(320, 420, 50, 50, "{}".format(self._info.unit_count[units.Walker]),
-                                                        self.clear_unit, units.Walker)
-        walker_buttons.add(walker_count_button)
+            add_walker_button = MenuButton(260, 420, 50, 50, "-", self.remove_unit, units.Walker)
+            walker_buttons.add(add_walker_button)
 
-        remove_walker_button = MenuButton(380, 420, 50, 50, "+", self.add_unit, units.Walker)
-        walker_buttons.add(remove_walker_button)
+            walker_count_button = MenuButton(320, 420, 50, 50, "{}".format(self._info.unit_count[units.Walker]),
+                                                            self.clear_unit, units.Walker)
+            walker_buttons.add(walker_count_button)
+
+            remove_walker_button = MenuButton(380, 420, 50, 50, "+", self.add_unit, units.Walker)
+            walker_buttons.add(remove_walker_button)
 
         service_buttons = Composite()
         self.gui.add(service_buttons)
@@ -463,8 +468,14 @@ class UnitSelectState(State):
             sprite.draw()
             arcade.draw_text(units.get_decription(self._info.described_unit), 700, 275, arcade.color.BLACK, 15)
 
-        arcade.draw_text(UNIT_SELECT_TEXT.format(self._info.current_power, self._info.max_power), 200, 600,
+        arcade.draw_text(UNIT_SELECT_TEXT.format(self._info.current_power, self._info.max_power), 200, 650,
                          arcade.color.BLACK, 15)
+
+        if ProgressManager().wins < 1:
+            arcade.draw_text("Requires 1 win to hire\n", 200, 455, arcade.color.BLACK, 15)
+
+        if ProgressManager().wins < 2:
+            arcade.draw_text("Requires 2 wins to hire\n", 200, 395, arcade.color.BLACK, 15)
 
         arcade.draw_text("Start game with these units\n", 200, 335, arcade.color.BLACK, 15)
         arcade.draw_text("Back to Main Menu\n", 200, 275, arcade.color.BLACK, 15)
