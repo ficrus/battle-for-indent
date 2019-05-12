@@ -57,9 +57,11 @@ class Game:
                     self.cnt += 1
                     knight_factory = KnightFactory()
                     zombie_factory = ZombieFactory()
-                    factories = [knight_factory, zombie_factory]
+                    paladinfactory = PaladinFactory()
+                    walkerfactory = WalkerFactory()
+                    factories = [knight_factory, zombie_factory, paladinfactory, walkerfactory]
                     selected_road = random.randint(1, 3)
                     y = int(SCREEN_HEIGHT *
                             (3 - selected_road)) / 3 + SCREEN_HEIGHT / 10 + np.random.sample() * SCREEN_HEIGHT / 10
-                    self.armies[1].add_unit(factories[int(np.random.sample()*2)].create(x=SCREEN_WIDTH - 20*np.random.sample(), y=y, mirrored=True, road=selected_road))
+                    self.armies[1].add_unit(factories[random.randint(1, 4)].create(x=SCREEN_WIDTH - 20*np.random.sample(), y=y, mirrored=True, road=selected_road))
         return True
