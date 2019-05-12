@@ -25,6 +25,10 @@ class Component(ABC):
         return False
 
     @abstractmethod
+    def get_all_elements(self) -> list:
+        pass
+
+    @abstractmethod
     def get_leaves(self) -> list:
         pass
 
@@ -38,6 +42,9 @@ class Component(ABC):
 
 
 class Leaf(Component):
+    def get_all_elements(self) -> list:
+        return []
+
     def get_leaves(self) -> list:
         return []
 
@@ -51,22 +58,41 @@ class Leaf(Component):
 class Composite(Component):
     def __init__(self) -> None:
         self._children = []
+        self.modified = False
+        self.chache = []
 
     def add(self, component: Component) -> None:
         self._children.append(component)
 
         component.parent = self
 
+        self.modified = True
+
     def remove(self, component: Component):
         self._children.remove(component)
 
         component.parent = None
 
+        self.modified = True
+
     def is_composite(self) -> bool:
         return True
 
+    def get_all_elements(self) -> list:
+        return self._children + sum([child.get_all_elements() for child in self._children], [])
+
     def get_leaves(self) -> list:
-        return self._children + sum([child.get_leaves() for child in self._children], [])
+        if self.modified or len(self.chache) == 0:
+            self.modified = False
+            self.chache = []
+
+            all_elements = self.get_all_elements()
+
+            leaves = [leaf for leaf in all_elements if isinstance(leaf, Leaf)]
+
+            chache = leaves
+        
+        return chache
 
     def demonstrate(self) -> None:
         for i in self._children:

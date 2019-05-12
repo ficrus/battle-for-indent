@@ -5,8 +5,9 @@ from event_handling import *
 import os
 from sprite import KnightSprite, ZombieSprite
 import units
+import pickle
+import memento
 from options_manager import OptionsManager
-
 
 SCREEN_TITLE = "Battle for Indent"
 TUTORIAL_TEXT = """
@@ -53,18 +54,20 @@ class Game:
         zombie_factory = ZombieFactory()
 
         """Временное решение"""
-
-        self.armies[0].add_unit(knight_factory.create(x=300, y=300))
-        self.armies[0].add_unit(knight_factory.create(x=330, y=300))
-        self.armies[0].add_unit(knight_factory.create(x=360, y=300))
-        self.armies[0].add_unit(knight_factory.create(x=390, y=300))
-        self.armies[1].add_unit(zombie_factory.create(x=500, y=300))
-        self.armies[1].add_unit(zombie_factory.create(x=530, y=300))
-        self.armies[1].add_unit(zombie_factory.create(x=560, y=300))
-        self.armies[1].add_unit(zombie_factory.create(x=590, y=300))
-
         for army in self.armies:
+            for unit in army.units.get_leaves():
+                unit.sprite.set_speed_decorator(70)
             self.gui.add(army.units)
+
+    def update(self):
+
+        visitor1 = LeftArmyVisitor(self.armies)
+        for unit in self.armies[0].units.get_leaves():
+            unit.accept(visitor1)
+
+        visitor2 = RightArmyVisitor(self.armies)
+        for unit in self.armies[1].units.get_leaves():
+            unit.accept(visitor2)
 
 
 class Window(arcade.Window):
@@ -220,18 +223,21 @@ class OptionsState(State):
         option_buttons = Composite()
         self.gui.add(option_buttons)
 
-        option1_button = MenuButton(110, 480, 150, 50, "{}".format(["Off", "On"][om.is_music_enabled]), self.change_music)
+        option1_button = MenuButton(110, 480, 150, 50, "{}".format(["Off", "On"][om.is_music_enabled]),
+                                    self.change_music)
         option_buttons.add(option1_button)
 
-        option2_button = MenuButton(110, 420, 150, 50, "{}".format(["Off", "On"][om.is_sounds_enabled]), self.change_sound)
+        option2_button = MenuButton(110, 420, 150, 50, "{}".format(["Off", "On"][om.is_sounds_enabled]),
+                                    self.change_sound)
         option_buttons.add(option2_button)
 
-        option3_button = MenuButton(110, 360, 150, 50, "{}".format(["Off", "!!!PARTY!!!"][om.is_easter_egg_enabled]), self.change_egg)
+        option3_button = MenuButton(110, 360, 150, 50, "{}".format(["Off", "!!!PARTY!!!"][om.is_easter_egg_enabled]),
+                                    self.change_egg)
         option_buttons.add(option3_button)
 
         service_buttons = Composite()
         self.gui.add(service_buttons)
-    
+
         return_button = MenuButton(110, 300, 150, 50, "Return", self.return_to_menu)
         service_buttons.add(return_button)
 
@@ -240,7 +246,8 @@ class OptionsState(State):
         button_list = [button for button in self.gui.get_leaves() if isinstance(button, Button)]
         self.listeners.add_listener(ButtonListener(button_list))
 
-        arcade.draw_text("Background music (It may take some time to apply changes)\n", 200, 455, arcade.color.BLACK, 15)
+        arcade.draw_text("Background music (It may take some time to apply changes)\n", 200, 455, arcade.color.BLACK,
+                         15)
         arcade.draw_text("Game sounds\n", 200, 395, arcade.color.BLACK, 15)
         arcade.draw_text("Use it if you aren't very serious\n", 200, 335, arcade.color.BLACK, 15)
         arcade.draw_text("Back to Main Menu\n", 200, 275, arcade.color.BLACK, 15)
@@ -303,7 +310,7 @@ class TutorialState(State):
 
         service_buttons = Composite()
         self.gui.add(service_buttons)
-    
+
         return_button = MenuButton(110, 420, 150, 50, "I'm not ready", self.return_to_menu)
         service_buttons.add(return_button)
 
@@ -378,7 +385,8 @@ class UnitSelectState(State):
         add_knight_button = MenuButton(260, 480, 50, 50, "-", self.remove_unit, units.Knight)
         knight_buttons.add(add_knight_button)
 
-        knight_count_button = MenuButton(320, 480, 50, 50, "{}".format(self._info.unit_count[units.Knight]), self.clear_unit, units.Knight)
+        knight_count_button = MenuButton(320, 480, 50, 50, "{}".format(self._info.unit_count[units.Knight]),
+                                         self.clear_unit, units.Knight)
         knight_buttons.add(knight_count_button)
 
         remove_knight_button = MenuButton(380, 480, 50, 50, "+", self.add_unit, units.Knight)
@@ -393,7 +401,8 @@ class UnitSelectState(State):
         add_zombie_button = MenuButton(260, 420, 50, 50, "-", self.remove_unit, units.Zombie)
         zombie_buttons.add(add_zombie_button)
 
-        zombie_count_button = MenuButton(320, 420, 50, 50, "{}".format(self._info.unit_count[units.Zombie]), self.clear_unit, units.Zombie)
+        zombie_count_button = MenuButton(320, 420, 50, 50, "{}".format(self._info.unit_count[units.Zombie]),
+                                         self.clear_unit, units.Zombie)
         zombie_buttons.add(zombie_count_button)
 
         remove_zombie_button = MenuButton(380, 420, 50, 50, "+", self.add_unit, units.Zombie)
@@ -415,12 +424,13 @@ class UnitSelectState(State):
         self.gui.draw()
 
         if (self._info.described_unit) is not None:
-            sprite = arcade.Sprite("./lib/textures/{}.png".format(self._info.described_unit.__name__.lower()), center_x=550, center_y=375)
+            sprite = arcade.Sprite("./lib/textures/{}.png".format(self._info.described_unit.__name__.lower()),
+                                   center_x=550, center_y=375)
             sprite.draw()
             arcade.draw_text(units.get_decription(self._info.described_unit), 700, 275, arcade.color.BLACK, 15)
 
-
-        arcade.draw_text(UNIT_SELECT_TEXT.format(self._info.current_power, self._info.max_power), 200, 600, arcade.color.BLACK, 15)
+        arcade.draw_text(UNIT_SELECT_TEXT.format(self._info.current_power, self._info.max_power), 200, 600,
+                         arcade.color.BLACK, 15)
 
         arcade.draw_text("Start game with these units\n", 200, 335, arcade.color.BLACK, 15)
         arcade.draw_text("Back to Main Menu\n", 200, 275, arcade.color.BLACK, 15)
@@ -442,15 +452,15 @@ class UnitSelectState(State):
 
     def do_nothing(self) -> None:
         pass
-    
+
     def update_unit_select(self):
         self.window.change_state(UnitSelectState(self.window, self._info))
-    
+
     def show_unit_description(self, UnitClass: units.BaseUnit) -> None:
         self._info.described_unit = UnitClass
-        
+
         self.update_unit_select()
- 
+
     def clear_unit(self, UnitClass: units.BaseUnit) -> None:
         self._info.current_power -= UnitClass().power * self._info.unit_count[UnitClass]
         self._info.unit_count[UnitClass] = 0
@@ -573,6 +583,7 @@ class BattlefieldState(State):
     def update(self, delta_time: float):
         if self.pause is False:
             self.gui.update(delta_time)
+            self.game.update()
 
     def pause_game(self):
         self.pause = True
@@ -593,15 +604,16 @@ class BattlefieldState(State):
         self.window.change_state(MainMenuState(self.window))
 
 
-
 def play_music_once(*args):
     if OptionsManager().is_music_enabled:
         music = arcade.load_sound("./sounds/main-menu-theme.wav")
         arcade.play_sound(music)
 
+
 def play_music():
     play_music_once()
     arcade.schedule(play_music_once, 22)
+
 
 def main():
     window = Window(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE)
