@@ -110,6 +110,19 @@ class Composite(Component):
             child.update(delta_time)
 
 
+class Text(Leaf):
+    def __init__(self, text, center_x, center_y, color=arcade.color.BLACK, font_size=50):
+        self.center_x = center_x
+        self.center_y = center_y
+        self.color = color
+        self.font_size = font_size
+        self.text = text
+
+    def draw(self):
+        arcade.draw_text(self.text,
+                         self.center_x, self.center_y, self.color, self.font_size)
+
+
 class Image(Leaf):
     def __init__(self, center_x, center_y, scale, image):
         self.center_x = center_x

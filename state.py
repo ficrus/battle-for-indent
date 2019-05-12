@@ -587,7 +587,8 @@ class BattlefieldState(State):
         self.pause_gui = None
         self.end_gui = None
         self.parent = None
-        self.game = Game(max_cnt_1=40)
+        print(sum(value for key, value in unit_dict.items()))
+        self.game = Game(max_cnt_1=sum(value for key, value in unit_dict.items()))
         self.setup()
 
     def setup(self):
@@ -638,8 +639,8 @@ class BattlefieldState(State):
         game_buttons = Composite()
         self.pause_gui.add(game_buttons)
 
-        continue_button = MenuButton(SCREEN_WIDTH/2, SCREEN_HEIGHT*7/8 + 85, 150, 50, "Continue", self.continue_game)
-        game_buttons.add(continue_button)
+        # continue_button = MenuButton(SCREEN_WIDTH/2, SCREEN_HEIGHT*7/8 + 85, 150, 50, "Continue", self.continue_game)
+        # game_buttons.add(continue_button)
 
         restart_button = MenuButton(SCREEN_WIDTH/2, SCREEN_HEIGHT*7/8 + 25, 150, 50, "Restart", self.restart_game)
         game_buttons.add(restart_button)
@@ -659,10 +660,10 @@ class BattlefieldState(State):
         game_buttons = Composite()
         self.end_gui.add(game_buttons)
 
-        restart_button = MenuButton(SCREEN_WIDTH/2, SCREEN_HEIGHT*7/8 + 55, 150, 50, "New battle", self.restart_game)
+        restart_button = MenuButton(SCREEN_WIDTH/2, SCREEN_HEIGHT*7/8 + 25, 150, 50, "New battle", self.restart_game)
         game_buttons.add(restart_button)
 
-        return_button = MenuButton(SCREEN_WIDTH/2,  SCREEN_HEIGHT*7/8 - 5, 150, 50, "Return to menu", self.return_to_menu)
+        return_button = MenuButton(SCREEN_WIDTH/2,  SCREEN_HEIGHT*7/8 - 35, 150, 50, "Return to menu", self.return_to_menu)
         game_buttons.add(return_button)
         button_list = [button for button in self.end_gui.get_leaves() if isinstance(button, Button)]
         self.end_listeners.add_listener(ButtonListener(button_list))
@@ -687,12 +688,15 @@ class BattlefieldState(State):
     def update(self, delta_time: float):
         if self.state == 'Run':
             self.run_gui.update(delta_time)
-            if self.game.update() != 0:
-                self.win_game()
+            result = self.game.update()
+            if result != 0:
+                self.end_game(result)
 
-    def win_game(self):
+    def end_game(self, result):
+        r_dict = {1: "Victory", 2: "Lose", 3: "Draw"}
         self.state = 'End'
         self.listeners = self.end_listeners
+        self.end_gui.add(Text(r_dict[result], SCREEN_WIDTH/2 - 75, SCREEN_HEIGHT*7/8 + 75))
 
     def pause_game(self):
         self.state = 'Pause'
