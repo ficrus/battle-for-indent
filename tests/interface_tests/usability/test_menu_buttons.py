@@ -3,8 +3,7 @@
  в том числе и когда объекты пересекаются в момент нажатия
 """
 
-import numpy as np
-from game import *
+from state import *
 
 
 COUNT = 2000
@@ -82,6 +81,9 @@ class TesState(MainMenuState):
 
     def exit_game(self):
         self.count += 1
+
+    def on_draw(self):
+        self.gui.draw()
 
 
 class MovingButton(MenuButton):

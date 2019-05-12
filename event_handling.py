@@ -91,7 +91,8 @@ class KeyListener(Listener):
                                 self.game.armies[0].add_unit(
                                     factory.create(x=300, y=int(SCREEN_HEIGHT *
                                                    (3 - self.road_selection.selected_road)/3 + SCREEN_HEIGHT/10
-                                                   + np.random.sample()*SCREEN_HEIGHT/10)))
+                                                   + np.random.sample()*SCREEN_HEIGHT/10),
+                                                   road=self.road_selection.selected_road))
                                 self.road_selection.selected_road = 0
 
 
