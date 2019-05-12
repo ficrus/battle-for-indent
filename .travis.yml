@@ -24,6 +24,8 @@ deploy:
    provider: pypi
    user: eaglemango
    password: "lol kek cheburek"
+   on:
+    branch: dev
 
 after_success:
   - coveralls
