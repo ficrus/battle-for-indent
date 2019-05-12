@@ -640,8 +640,8 @@ class BattlefieldState(State):
         game_buttons = Composite()
         self.pause_gui.add(game_buttons)
 
-        # continue_button = MenuButton(SCREEN_WIDTH/2, SCREEN_HEIGHT*7/8 + 85, 150, 50, "Continue", self.continue_game)
-        # game_buttons.add(continue_button)
+        continue_button = MenuButton(SCREEN_WIDTH/2, SCREEN_HEIGHT*7/8 + 85, 150, 50, "Continue", self.continue_game)
+        game_buttons.add(continue_button)
 
         restart_button = MenuButton(SCREEN_WIDTH/2, SCREEN_HEIGHT*7/8 + 25, 150, 50, "Restart", self.restart_game)
         game_buttons.add(restart_button)
