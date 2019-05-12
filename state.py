@@ -564,27 +564,37 @@ class UnitSelectState(State):
     def return_to_menu(self) -> None:
         self.window.change_state(MainMenuState(self.window))
 
+
 class BattlefieldState(State):
     def __init__(self, window: Window, unit_dict):
         super().__init__(window)
         self.unit_dict = unit_dict
-        self.pause = False
+        self.state = "Run"
         self.listeners = None
-        self.second_listeners = None
-        self.gui = None
+        self.run_listeners = None
+        self.pause_listeners = None
+        self.end_listeners = None
+        self.run_gui = None
         self.pause_gui = None
+        self.end_gui = None
         self.parent = None
         self.game = Game()
         self.setup()
 
     def setup(self):
-        self.gui = Composite()
-        self.listeners = ListenersSupport()
-        self.gui.add(Stage("images/stage/stage-back.png"))
+        self.run_setup()
+        self.pause_setup()
+        self.victory_setup()
+        self.listeners = self.run_listeners
+
+    def run_setup(self):
+        self.run_gui = Composite()
+        self.run_listeners = ListenersSupport()
+        self.run_gui.add(Stage("images/stage/stage-back.png"))
         road_selection = RoadSelection()
-        self.gui.add(road_selection)
+        self.run_gui.add(road_selection)
         cooldown_indicators = Composite()
-        self.gui.add(cooldown_indicators)
+        self.run_gui.add(cooldown_indicators)
 
         x = 100
         y = 100
@@ -600,21 +610,20 @@ class BattlefieldState(State):
             key += 1
             cooldown_indicators_list.append(cooldown_indicator)
         key_listener = KeyListener(road_selection, cooldown_indicators_list, self.game)
-        self.listeners.add_listener(key_listener)
-        self.pause_setup()
-        self.gui.add(self.game.gui)
-        self.gui.add(Stage("images/stage/stage-front.png"))
+        self.run_listeners.add_listener(key_listener)
+        self.run_gui.add(self.game.gui)
+        self.run_gui.add(Stage("images/stage/stage-front.png"))
         buttons = Composite()
-        self.gui.add(buttons)
+        self.run_gui.add(buttons)
 
         pause_button = MenuButton(110, 480, 150, 50, " || ", self.pause_game)
         buttons.add(pause_button)
-        button_list = [button for button in self.gui.get_leaves() if isinstance(button, Button)]
-        self.listeners.add_listener(ButtonListener(button_list))
+        button_list = [button for button in self.run_gui.get_leaves() if isinstance(button, Button)]
+        self.run_listeners.add_listener(ButtonListener(button_list))
 
     def pause_setup(self):
         self.pause_gui = Composite()
-        self.second_listeners = ListenersSupport()
+        self.pause_listeners = ListenersSupport()
 
         game_buttons = Composite()
         self.pause_gui.add(game_buttons)
@@ -631,12 +640,28 @@ class BattlefieldState(State):
         return_button = MenuButton(110, 360, 150, 50, "Return", self.return_to_menu)
         service_buttons.add(return_button)
         button_list = [button for button in self.pause_gui.get_leaves() if isinstance(button, Button)]
-        self.second_listeners.add_listener(ButtonListener(button_list))
+        self.pause_listeners.add_listener(ButtonListener(button_list))
+
+    def victory_setup(self):
+        self.end_gui = Composite()
+        self.end_listeners = ListenersSupport()
+        game_buttons = Composite()
+        self.end_gui.add(game_buttons)
+
+        restart_button = MenuButton(SCREEN_WIDTH/2, SCREEN_HEIGHT - 150, 150, 50, "New battle", self.restart_game)
+        game_buttons.add(restart_button)
+
+        return_button = MenuButton(SCREEN_WIDTH/2,  SCREEN_HEIGHT - 210, 150, 50, "Return to menu", self.return_to_menu)
+        game_buttons.add(return_button)
+        button_list = [button for button in self.end_gui.get_leaves() if isinstance(button, Button)]
+        self.end_listeners.add_listener(ButtonListener(button_list))
 
     def on_draw(self):
-        self.gui.draw()
-        if self.pause is True:
+        self.run_gui.draw()
+        if self.state == 'Pause':
             self.pause_gui.draw()
+        elif self.state == 'End':
+            self.end_gui.draw()
 
     def on_mouse_press(self, x, y, button, key_modifiers):
         self.listeners.on_event(PressEvent(x, y))
@@ -645,26 +670,26 @@ class BattlefieldState(State):
         self.listeners.on_event(ReleaseEvent(x, y))
 
     def on_key_press(self, symbol: int, modifiers: int):
-        if self.pause is False:
+        if self.state == 'Run':
             self.listeners.on_event(KeyPressEvent(symbol))
 
     def update(self, delta_time: float):
-        if self.pause is False:
-            self.gui.update(delta_time)
+        if self.state == 'Run':
+            self.run_gui.update(delta_time)
             if not self.game.update():
-                self.pause = True
+                self.win_game()
+
+    def win_game(self):
+        self.state = 'End'
+        self.listeners = self.end_listeners
 
     def pause_game(self):
-        self.pause = True
-        t = self.second_listeners
-        self.second_listeners = self.listeners
-        self.listeners = t
+        self.state = 'Pause'
+        self.listeners = self.pause_listeners
 
     def continue_game(self):
-        self.pause = False
-        t = self.second_listeners
-        self.second_listeners = self.listeners
-        self.listeners = t
+        self.state = 'Run'
+        self.listeners = self.run_listeners
 
     def restart_game(self):
         self.window.change_state(UnitSelectState(self.window))
