@@ -162,17 +162,17 @@ class ZombieSprite(UnitSprite):
         super().__init__(scale=scale)
         self.mirrored = not mirrored
         if not self.mirrored:
-            self.player_body = Part("images/zombie/zbody.png", self.scale)
-            self.player_left_leg = TurningPart("images/zombie/zleftleg.png", self.scale, turning_speed=2,
+            self.player_body = Part("../images/zombie/zbody.png", self.scale)
+            self.player_left_leg = TurningPart("../images/zombie/zleftleg.png", self.scale, turning_speed=2,
                                                left_border_angle=-5, right_border_angle=35)
-            self.player_right_leg = TurningPart("images/zombie/zrightleg.png", self.scale, turning_speed=2,
+            self.player_right_leg = TurningPart("../images/zombie/zrightleg.png", self.scale, turning_speed=2,
                                                 left_border_angle=-35, right_border_angle=5)
-            self.player_left_arm = TurningPart("images/zombie/zleftarm.png", self.scale, turning_speed_during_attack=10,
+            self.player_left_arm = TurningPart("../images/zombie/zleftarm.png", self.scale, turning_speed_during_attack=10,
                                                turning_speed=1, left_border_angle=-10,
                                                right_border_angle=10)
-            self.player_right_arm = TurningPart("images/zombie/zrightarm.png", self.scale, turning_speed=1,
+            self.player_right_arm = TurningPart("../images/zombie/zrightarm.png", self.scale, turning_speed=1,
                                                 left_border_angle=-10, right_border_angle=10)
-            self.player_head = TurningPart("images/zombie/zhead.png", self.scale, turning_speed=0.5,
+            self.player_head = TurningPart("../images/zombie/zhead.png", self.scale, turning_speed=0.5,
                                            left_border_angle=-5, right_border_angle=5)
 
             # setting the initial coordinates of the points of joint
@@ -196,17 +196,17 @@ class ZombieSprite(UnitSprite):
             self.player_head.sprite.center_x = 2
             self.player_head.sprite.center_y = 223
         else:
-            self.player_body = Part("images/zombie/zbody.png", self.scale, mirrored=True)
-            self.player_left_leg = TurningPart("images/zombie/zleftleg.png", self.scale, turning_speed=2,
+            self.player_body = Part("../images/zombie/zbody.png", self.scale, mirrored=True)
+            self.player_left_leg = TurningPart("../images/zombie/zleftleg.png", self.scale, turning_speed=2,
                                                left_border_angle=-35, right_border_angle=5, mirrored=True)
-            self.player_right_leg = TurningPart("images/zombie/zrightleg.png", self.scale, turning_speed=2,
+            self.player_right_leg = TurningPart("../images/zombie/zrightleg.png", self.scale, turning_speed=2,
                                                 left_border_angle=-5, right_border_angle=35, mirrored=True)
-            self.player_left_arm = TurningPart("images/zombie/zleftarm.png", self.scale, turning_speed_during_attack=10,
+            self.player_left_arm = TurningPart("../images/zombie/zleftarm.png", self.scale, turning_speed_during_attack=10,
                                                turning_speed=1, left_border_angle=-10,
                                                right_border_angle=10, mirrored=True)
-            self.player_right_arm = TurningPart("images/zombie/zrightarm.png", self.scale, turning_speed=1,
+            self.player_right_arm = TurningPart("../images/zombie/zrightarm.png", self.scale, turning_speed=1,
                                                 left_border_angle=-10, right_border_angle=10, mirrored=True)
-            self.player_head = TurningPart("images/zombie/zhead.png", self.scale, turning_speed=0.5,
+            self.player_head = TurningPart("../images/zombie/zhead.png", self.scale, turning_speed=0.5,
                                            left_border_angle=-5, right_border_angle=5, mirrored=True)
 
             # setting the initial coordinates of the points of joint
@@ -252,17 +252,17 @@ class WalkerSprite(UnitSprite):
         super().__init__(scale=scale)
         self.mirrored = not mirrored
         if not self.mirrored:
-            self.player_body = Part("images/walker/zbody.png", self.scale)
-            self.player_left_leg = TurningPart("images/walker/zleftleg.png", self.scale, turning_speed=2,
+            self.player_body = Part("../images/walker/zbody.png", self.scale)
+            self.player_left_leg = TurningPart("../images/walker/zleftleg.png", self.scale, turning_speed=2,
                                                left_border_angle=-5, right_border_angle=35)
-            self.player_right_leg = TurningPart("images/walker/zrightleg.png", self.scale, turning_speed=2,
+            self.player_right_leg = TurningPart("../images/walker/zrightleg.png", self.scale, turning_speed=2,
                                                 left_border_angle=-35, right_border_angle=5)
-            self.player_left_arm = TurningPart("images/walker/zleftarm.png", self.scale, turning_speed_during_attack=10,
+            self.player_left_arm = TurningPart("../images/walker/zleftarm.png", self.scale, turning_speed_during_attack=10,
                                                turning_speed=1, left_border_angle=-10,
                                                right_border_angle=10)
-            self.player_right_arm = TurningPart("images/walker/zrightarm.png", self.scale, turning_speed=1,
+            self.player_right_arm = TurningPart("../images/walker/zrightarm.png", self.scale, turning_speed=1,
                                                 left_border_angle=-10, right_border_angle=10)
-            self.player_head = TurningPart("images/walker/zhead.png", self.scale, turning_speed=0.5,
+            self.player_head = TurningPart("../images/walker/zhead.png", self.scale, turning_speed=0.5,
                                            left_border_angle=-5, right_border_angle=5)
 
             # setting the initial coordinates of the points of joint
@@ -286,17 +286,17 @@ class WalkerSprite(UnitSprite):
             self.player_head.sprite.center_x = 2
             self.player_head.sprite.center_y = 223
         else:
-            self.player_body = Part("images/walker/zbody.png", self.scale, mirrored=True)
-            self.player_left_leg = TurningPart("images/walker/zleftleg.png", self.scale, turning_speed=2,
+            self.player_body = Part("../images/walker/zbody.png", self.scale, mirrored=True)
+            self.player_left_leg = TurningPart("../images/walker/zleftleg.png", self.scale, turning_speed=2,
                                                left_border_angle=-35, right_border_angle=5, mirrored=True)
-            self.player_right_leg = TurningPart("images/walker/zrightleg.png", self.scale, turning_speed=2,
+            self.player_right_leg = TurningPart("../images/walker/zrightleg.png", self.scale, turning_speed=2,
                                                 left_border_angle=-5, right_border_angle=35, mirrored=True)
-            self.player_left_arm = TurningPart("images/walker/zleftarm.png", self.scale, turning_speed_during_attack=10,
+            self.player_left_arm = TurningPart("../images/walker/zleftarm.png", self.scale, turning_speed_during_attack=10,
                                                turning_speed=1, left_border_angle=-10,
                                                right_border_angle=10, mirrored=True)
-            self.player_right_arm = TurningPart("images/walker/zrightarm.png", self.scale, turning_speed=1,
+            self.player_right_arm = TurningPart("../images/walker/zrightarm.png", self.scale, turning_speed=1,
                                                 left_border_angle=-10, right_border_angle=10, mirrored=True)
-            self.player_head = TurningPart("images/walker/zhead.png", self.scale, turning_speed=0.5,
+            self.player_head = TurningPart("../images/walker/zhead.png", self.scale, turning_speed=0.5,
                                            left_border_angle=-5, right_border_angle=5, mirrored=True)
 
             # setting the initial coordinates of the points of joint
@@ -342,24 +342,24 @@ class KnightSprite(UnitSprite):
         super().__init__(scale=scale)
         self.mirrored = mirrored
         if not mirrored:
-            self.player_body = Part("images/knight/body.png", self.scale)
-            self.player_left_leg = TurningPart("images/knight/right_leg_stand.png",
+            self.player_body = Part("../images/knight/body.png", self.scale)
+            self.player_left_leg = TurningPart("../images/knight/right_leg_stand.png",
                                                self.scale, turning_speed=4, left_border_angle=-50,
                                                right_border_angle=-10)
-            self.player_right_leg = TurningPart("images/knight/right_leg_stand.png",
+            self.player_right_leg = TurningPart("../images/knight/right_leg_stand.png",
                                                 self.scale, turning_speed=4, left_border_angle=-20,
                                                 right_border_angle=20)
-            self.player_left_arm = TurningPart("images/knight/left_arm.png",
+            self.player_left_arm = TurningPart("../images/knight/left_arm.png",
                                                self.scale, turning_speed_during_attack=8, turning_speed=2,
                                                left_border_angle=-10, right_border_angle=10)
-            self.player_right_arm = TurningPart("images/knight/right_arm.png",
+            self.player_right_arm = TurningPart("../images/knight/right_arm.png",
                                                 self.scale, turning_speed=2, left_border_angle=-10,
                                                 right_border_angle=10)
-            self.player_head = TurningPart("images/knight/head.png",
+            self.player_head = TurningPart("../images/knight/head.png",
                                            self.scale, turning_speed=1, left_border_angle=-5,
                                            right_border_angle=5)
-            self.player_shield = Part("images/knight/shield.png", self.scale)
-            self.player_spear = Part("images/knight/spear_with_arm.png", self.scale)
+            self.player_shield = Part("../images/knight/shield.png", self.scale)
+            self.player_spear = Part("../images/knight/spear_with_arm.png", self.scale)
 
             # setting the initial coordinates of the points of joint
             self.player_body.points_of_joint[self.player_left_leg] = [-18, -70]
@@ -388,24 +388,24 @@ class KnightSprite(UnitSprite):
             self.player_spear.sprite.center_x = 32
             self.player_spear.sprite.center_y = -2
         else:
-            self.player_body = Part("images/knight/body.png", self.scale, mirrored=True)
-            self.player_left_leg = TurningPart("images/knight/right_leg_stand.png",
+            self.player_body = Part("../images/knight/body.png", self.scale, mirrored=True)
+            self.player_left_leg = TurningPart("../images/knight/right_leg_stand.png",
                                                self.scale, turning_speed=4, left_border_angle=10,
                                                right_border_angle=50, mirrored=True)
-            self.player_right_leg = TurningPart("images/knight/right_leg_stand.png",
+            self.player_right_leg = TurningPart("../images/knight/right_leg_stand.png",
                                                 self.scale, turning_speed=4, left_border_angle=-20,
                                                 right_border_angle=20, mirrored=True)
-            self.player_left_arm = TurningPart("images/knight/left_arm.png",
+            self.player_left_arm = TurningPart("../images/knight/left_arm.png",
                                                self.scale, turning_speed_during_attack=8, turning_speed=2,
                                                left_border_angle=-10, right_border_angle=10, mirrored=True)
-            self.player_right_arm = TurningPart("images/knight/right_arm.png",
+            self.player_right_arm = TurningPart("../images/knight/right_arm.png",
                                                 self.scale, turning_speed=2, left_border_angle=-10,
                                                 right_border_angle=10, mirrored=True)
-            self.player_head = TurningPart("images/knight/head.png",
+            self.player_head = TurningPart("../images/knight/head.png",
                                            self.scale, turning_speed=1, left_border_angle=-5,
                                            right_border_angle=5, mirrored=True)
-            self.player_shield = Part("images/knight/shield.png", self.scale, mirrored=True)
-            self.player_spear = Part("images/knight/spear_with_arm.png", self.scale, mirrored=True)
+            self.player_shield = Part("../images/knight/shield.png", self.scale, mirrored=True)
+            self.player_spear = Part("../images/knight/spear_with_arm.png", self.scale, mirrored=True)
 
             # setting the initial coordinates of the points of joint
             self.player_body.points_of_joint[self.player_left_leg] = [18, -70]
@@ -456,24 +456,24 @@ class PaladinSprite(UnitSprite):
         super().__init__(scale=scale)
         self.mirrored = mirrored
         if not mirrored:
-            self.player_body = Part("images/paladin/body.png", self.scale)
-            self.player_left_leg = TurningPart("images/paladin/right_leg_stand.png",
+            self.player_body = Part("../images/paladin/body.png", self.scale)
+            self.player_left_leg = TurningPart("../images/paladin/right_leg_stand.png",
                                                self.scale, turning_speed=4, left_border_angle=-50,
                                                right_border_angle=-10)
-            self.player_right_leg = TurningPart("images/paladin/right_leg_stand.png",
+            self.player_right_leg = TurningPart("../images/paladin/right_leg_stand.png",
                                                 self.scale, turning_speed=4, left_border_angle=-20,
                                                 right_border_angle=20)
-            self.player_left_arm = TurningPart("images/paladin/left_arm.png",
+            self.player_left_arm = TurningPart("../images/paladin/left_arm.png",
                                                self.scale, turning_speed_during_attack=8, turning_speed=2,
                                                left_border_angle=-10, right_border_angle=10)
-            self.player_right_arm = TurningPart("images/paladin/right_arm.png",
+            self.player_right_arm = TurningPart("../images/paladin/right_arm.png",
                                                 self.scale, turning_speed=2, left_border_angle=-10,
                                                 right_border_angle=10)
-            self.player_head = TurningPart("images/paladin/head.png",
+            self.player_head = TurningPart("../images/paladin/head.png",
                                            self.scale, turning_speed=1, left_border_angle=-5,
                                            right_border_angle=5)
-            self.player_shield = Part("images/paladin/shield.png", self.scale)
-            self.player_spear = Part("images/paladin/spear_with_arm.png", self.scale)
+            self.player_shield = Part("../images/paladin/shield.png", self.scale)
+            self.player_spear = Part("../images/paladin/spear_with_arm.png", self.scale)
 
             # setting the initial coordinates of the points of joint
             self.player_body.points_of_joint[self.player_left_leg] = [-18, -70]
@@ -502,24 +502,24 @@ class PaladinSprite(UnitSprite):
             self.player_spear.sprite.center_x = 32
             self.player_spear.sprite.center_y = -2
         else:
-            self.player_body = Part("images/paladin/body.png", self.scale, mirrored=True)
-            self.player_left_leg = TurningPart("images/paladin/right_leg_stand.png",
+            self.player_body = Part("../images/paladin/body.png", self.scale, mirrored=True)
+            self.player_left_leg = TurningPart("../images/paladin/right_leg_stand.png",
                                                self.scale, turning_speed=4, left_border_angle=10,
                                                right_border_angle=50, mirrored=True)
-            self.player_right_leg = TurningPart("images/paladin/right_leg_stand.png",
+            self.player_right_leg = TurningPart("../images/paladin/right_leg_stand.png",
                                                 self.scale, turning_speed=4, left_border_angle=-20,
                                                 right_border_angle=20, mirrored=True)
-            self.player_left_arm = TurningPart("images/paladin/left_arm.png",
+            self.player_left_arm = TurningPart("../images/paladin/left_arm.png",
                                                self.scale, turning_speed_during_attack=8, turning_speed=2,
                                                left_border_angle=-10, right_border_angle=10, mirrored=True)
-            self.player_right_arm = TurningPart("images/paladin/right_arm.png",
+            self.player_right_arm = TurningPart("../images/paladin/right_arm.png",
                                                 self.scale, turning_speed=2, left_border_angle=-10,
                                                 right_border_angle=10, mirrored=True)
-            self.player_head = TurningPart("images/paladin/head.png",
+            self.player_head = TurningPart("../images/paladin/head.png",
                                            self.scale, turning_speed=1, left_border_angle=-5,
                                            right_border_angle=5, mirrored=True)
-            self.player_shield = Part("images/paladin/shield.png", self.scale, mirrored=True)
-            self.player_spear = Part("images/paladin/spear_with_arm.png", self.scale, mirrored=True)
+            self.player_shield = Part("../images/paladin/shield.png", self.scale, mirrored=True)
+            self.player_spear = Part("../images/paladin/spear_with_arm.png", self.scale, mirrored=True)
 
             # setting the initial coordinates of the points of joint
             self.player_body.points_of_joint[self.player_left_leg] = [18, -70]

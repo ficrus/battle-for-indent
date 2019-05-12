@@ -3,7 +3,7 @@ import pickle
 
 
 class ProgressManager:
-    def __init__(self, progress_file="./save_data/progress"):
+    def __init__(self, progress_file="../save_data/progress"):
         self.progress_file = progress_file
         try:
             with open(self.progress_file, "rb") as progress:

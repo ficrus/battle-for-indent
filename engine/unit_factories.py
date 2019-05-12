@@ -19,7 +19,6 @@ class UnitFactory(metaclass=Singleton):
 
 class KnightFactory(UnitFactory):
     def create(self, x=0, y=0, scale=0.20, road=0, mirrored=False) -> BaseUnit:
-        print('KnightFactory creates knight')
         knight = Knight(sprite=KnightSprite, x=x, y=y, scale=scale, mirrored=mirrored)
         if road == 1:
             knight.sprite.set_speed_decorator(1.5)
@@ -32,7 +31,6 @@ class KnightFactory(UnitFactory):
 
 class ZombieFactory(UnitFactory):
     def create(self, x=0, y=0, scale=0.20, road=0, mirrored=False) -> BaseUnit:
-        print('ZombieFactory creates  zombie')
         zombie = Zombie(sprite=ZombieSprite, x=x, y=y, scale=scale, mirrored=mirrored)
         if road == 1:
             zombie.sprite.set_speed_decorator(1.4)
@@ -43,7 +41,6 @@ class ZombieFactory(UnitFactory):
 
 class PaladinFactory(UnitFactory):
     def create(self, x=0, y=0, scale=0.20, road=0, mirrored=False) -> BaseUnit:
-        print('ZombieFactory creates  zombie')
         paladin = Paladin(sprite=PaladinSprite, x=x, y=y, scale=scale, mirrored=mirrored)
         if road == 1:
             paladin.sprite.set_speed_decorator(1.4)
@@ -54,7 +51,6 @@ class PaladinFactory(UnitFactory):
 
 class WalkerFactory(UnitFactory):
     def create(self, x=0, y=0, scale=0.20, road=0, mirrored=False) -> BaseUnit:
-        print('ZombieFactory creates  zombie')
         walker = Paladin(sprite=WalkerSprite, x=x, y=y, scale=scale, mirrored=mirrored)
         if road == 1:
             walker.sprite.set_speed_decorator(1.4)

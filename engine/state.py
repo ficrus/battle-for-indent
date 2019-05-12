@@ -1,8 +1,9 @@
-from event_handling import *
 import os
 import units
 from options_manager import OptionsManager
 from progress_manager import ProgressManager
+from event_handling import *
+
 
 SCREEN_TITLE = "Battle for Indent"
 TUTORIAL_TEXT = """
@@ -157,22 +158,18 @@ class MainMenuState(State):
         pass
 
     def start_new_game(self):
-        print("New game started!")
         self.window.change_state(TutorialState(self.window))
 
     def continue_game(self):
-        print("Game continued!")
         if ProgressManager().wins + ProgressManager().draws + ProgressManager().loses == 0:
             self.window.change_state(TutorialState(self.window))
         else:
             self.window.change_state(UnitSelectState(self.window))
 
     def open_options(self):
-        print("Options opened!")
         self.window.change_state(OptionsState(self.window))
 
     def exit_game(self):
-        print("Goodbye!")
         exit(0)
 
 
@@ -495,7 +492,7 @@ class UnitSelectState(State):
         self.gui.draw()
 
         if (self._info.described_unit) is not None:
-            sprite = arcade.Sprite("./images/textures/{}.png".format(self._info.described_unit.__name__.lower()),
+            sprite = arcade.Sprite("../images/textures/{}.png".format(self._info.described_unit.__name__.lower()),
                                    center_x=550, center_y=375)
             sprite.draw()
             arcade.draw_text(units.get_decription(self._info.described_unit), 700, 275, arcade.color.BLACK, 15)
@@ -602,7 +599,7 @@ class BattlefieldState(State):
     def run_setup(self):
         self.run_gui = Composite()
         self.run_listeners = ListenersSupport()
-        self.run_gui.add(Stage("images/stage/stage-back.png"))
+        self.run_gui.add(Stage("../images/stage/stage-back.png"))
         self.run_gui.add(self.game.gui)
         road_selection = RoadSelection()
         self.run_gui.add(road_selection)
@@ -624,7 +621,7 @@ class BattlefieldState(State):
             cooldown_indicators_list.append(cooldown_indicator)
         key_listener = KeyListener(road_selection, cooldown_indicators_list, self.game)
         self.run_listeners.add_listener(key_listener)
-        self.run_gui.add(Stage("images/stage/stage-front.png"))
+        self.run_gui.add(Stage("../images/stage/stage-front.png"))
         buttons = Composite()
         self.run_gui.add(buttons)
 
@@ -635,7 +632,7 @@ class BattlefieldState(State):
 
     def pause_setup(self):
         self.pause_gui = Composite()
-        self.pause_gui.add(Image(SCREEN_WIDTH / 2, SCREEN_HEIGHT * 7 / 8, 0.25, "images/textures/gray.png"))
+        self.pause_gui.add(Image(SCREEN_WIDTH / 2, SCREEN_HEIGHT * 7 / 8, 0.25, "../images/textures/gray.png"))
         self.pause_listeners = ListenersSupport()
 
         game_buttons = Composite()
@@ -657,7 +654,7 @@ class BattlefieldState(State):
 
     def victory_setup(self):
         self.end_gui = Composite()
-        self.end_gui.add(Image(SCREEN_WIDTH / 2, SCREEN_HEIGHT * 7 / 8, 0.25, "images/textures/gray.png"))
+        self.end_gui.add(Image(SCREEN_WIDTH / 2, SCREEN_HEIGHT * 7 / 8, 0.25, "../images/textures/gray.png"))
         self.end_listeners = ListenersSupport()
         game_buttons = Composite()
         self.end_gui.add(game_buttons)
@@ -745,7 +742,7 @@ class BattlefieldState(State):
 
 def play_music_once(*args):
     if OptionsManager().is_music_enabled:
-        music = arcade.load_sound("./sounds/main-menu-theme.wav")
+        music = arcade.load_sound("../sounds/main-menu-theme.wav")
         arcade.play_sound(music)
 
 
@@ -761,7 +758,3 @@ def main():
     play_music()
 
     arcade.run()
-
-
-if __name__ == "__main__":
-    main()
