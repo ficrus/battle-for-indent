@@ -553,6 +553,7 @@ class UnitSelectState(State):
             pass
 
         self.update_unit_select()
+
     def start_game(self) -> None:
         unit_dict = {UnitClass().job: self._info.unit_count[UnitClass] for UnitClass in self._info.unit_count}
 
