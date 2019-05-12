@@ -488,7 +488,7 @@ class UnitSelectState(State):
         self.gui.draw()
 
         if (self._info.described_unit) is not None:
-            sprite = arcade.Sprite("./lib/textures/{}.png".format(self._info.described_unit.__name__.lower()),
+            sprite = arcade.Sprite("./images/textures/{}.png".format(self._info.described_unit.__name__.lower()),
                                    center_x=550, center_y=375)
             sprite.draw()
             arcade.draw_text(units.get_decription(self._info.described_unit), 700, 275, arcade.color.BLACK, 15)
