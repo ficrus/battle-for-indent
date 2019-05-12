@@ -22,6 +22,10 @@ class KnightFactory(UnitFactory):
         print('KnightFactory creates knight')
         knight = Knight(sprite=KnightSprite, x=x, y=y, scale=scale)
         knight.sprite.set_speed_decorator(70)
+        if road == 1:
+            knight.sprite.set_speed_decorator(1.5)
+        if road == 3:
+            knight.sprite.set_speed_decorator(0.6)
         return knight
 
 
@@ -30,4 +34,8 @@ class ZombieFactory(UnitFactory):
         print('ZombieFactory creates  zombie')
         zombie = Zombie(sprite=ZombieSprite, x=x, y=y, scale=scale)
         zombie.sprite.set_speed_decorator(70)
+        if road == 1:
+            zombie.sprite.set_speed_decorator(1.4)
+        if road == 3:
+            zombie.sprite.set_speed_decorator(0.7)
         return zombie

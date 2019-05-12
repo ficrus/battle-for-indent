@@ -58,8 +58,6 @@ class Game:
         self.armies[1].add_unit(zombie_factory.create(x=1290, y=300))
 
         for army in self.armies:
-            '''for unit in army.units.get_leaves():
-                unit.sprite.set_speed_decorator(70)'''
             self.gui.add(army.units)
 
     def update(self):
@@ -75,7 +73,7 @@ class Game:
 
 class Window(arcade.Window):
     def __init__(self, width, height, title):
-        super().__init__(width, height, title, fullscreen=True, update_rate=1/60)
+        super().__init__(width, height, title, fullscreen=False, update_rate=1/60)
         file_path = os.path.dirname(os.path.abspath(__file__))
         os.chdir(file_path)
 

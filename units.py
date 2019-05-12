@@ -47,7 +47,7 @@ class BaseUnit(Leaf):
                 arcade.draw_rectangle_filled(self.sprite.center_x,
                                              self.sprite.center_y + 100,
                                              width=self.hp / self.max_hp * 50, height=self.max_hp / 10,
-                                             color=arcade.color.LIGHT_RED_OCHRE)
+                                             color=arcade.color.DARK_RED)
 
             arcade.draw_rectangle_outline(self.sprite.center_x,
                                           self.sprite.center_y + 100,
@@ -78,7 +78,7 @@ class Knight(BaseUnit):
         self.magical_damage = 0
         self.physical_resist = 0.5
         self.magical_resist = 0
-        self.move_speed = 40
+        self.move_speed = 30
         if self.sprite is not None:
             self.sprite.move_speed = self.move_speed
 
@@ -122,7 +122,7 @@ class Zombie(BaseUnit):
         self.power = 10
         self.hp = 30
         self.max_hp = self.hp
-        self.physical_damage = 2
+        self.physical_damage = 6
         self.magical_damage = 0
         self.physical_resist = 0.2
         self.magical_resist = 0
