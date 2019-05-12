@@ -4,7 +4,7 @@ from options_manager import OptionsManager
 SCREEN_WIDTH = 1920
 SCREEN_HEIGHT = 1080
 IMAGE_NAMES = {"Zombie": "images/zombie/zhead.png", "Knight": "images/knight/head.png",
-               "Paladin": "images/knight/head.png", "Walker": "images/zombie/zhead.png"}
+               "Paladin": "images/paladin/head.png", "Walker": "images/walker/zhead.png"}
 
 
 class Component(ABC):

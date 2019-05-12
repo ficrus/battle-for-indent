@@ -1,7 +1,7 @@
 from game import *
 from interface import RoadSelection
 import numpy as np
-FACTORY = {"KnightFactory": KnightFactory(), "ZombieFactory": ZombieFactory(), "PaladinFactory": PaladinFactory(), "WalkerFactory": WalkerSprite()}
+FACTORY = {"KnightFactory": KnightFactory(), "ZombieFactory": ZombieFactory(), "PaladinFactory": PaladinFactory(), "WalkerFactory": WalkerFactory()}
 KEYS = {113: 1, 119: 2, 101: 3}
 
 
