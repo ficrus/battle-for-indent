@@ -66,8 +66,9 @@ class BaseUnit(Leaf):
 
 
 class Knight(BaseUnit):
-    def __init__(self, sprite=None, x=0, y=0, scale=0.16):
-        super().__init__(sprite=sprite, x=x, y=y, scale=scale)
+    def __init__(self, sprite=None, x=0, y=0, scale=0.16, mirrored=False):
+        super().__init__(sprite=sprite, x=x, y=y, scale=scale, mirrored=mirrored)
+
         self.job = "Knight"
         self.description = "Strong and self-confident knight"
         self.power = 10
@@ -378,3 +379,4 @@ class RightArmyVisitor(Visitor):
             print("GO")
         else:
             print("Fuck")
+
