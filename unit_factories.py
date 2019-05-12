@@ -38,8 +38,6 @@ class ZombieFactory(UnitFactory):
         zombie.sprite.set_speed_decorator(70)
         if road == 1:
             zombie.sprite.set_speed_decorator(1.4)
-            zombie.sprite.move_speed *= 1.4
         if road == 3:
             zombie.sprite.set_speed_decorator(0.7)
-            zombie.sprite.move_speed *= 0.7
         return zombie

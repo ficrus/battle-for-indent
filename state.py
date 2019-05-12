@@ -310,7 +310,7 @@ class TutorialState(State):
 class UnitSelectInfo:
     def __init__(self) -> None:
         self.current_power = 0
-        self.max_power = 100
+        self.max_power = 400
 
         self.described_unit = None
 
@@ -546,7 +546,8 @@ class BattlefieldState(State):
     def update(self, delta_time: float):
         if self.pause is False:
             self.gui.update(delta_time)
-            self.game.update()
+            if not self.game.update():
+                self.pause = True
 
     def pause_game(self):
         self.pause = True

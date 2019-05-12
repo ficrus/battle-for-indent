@@ -159,8 +159,8 @@ class UnitSprite(ObjectSprite):
 class ZombieSprite(UnitSprite):
     def __init__(self, scale=1, mirrored=False):
         super().__init__(scale=scale)
-        self.mirrored = mirrored
-        if not mirrored:
+        self.mirrored = not mirrored
+        if not self.mirrored:
             self.player_body = Part("images/zombie/zbody.png", self.scale)
             self.player_left_leg = TurningPart("images/zombie/zleftleg.png", self.scale, turning_speed=2,
                                                left_border_angle=-5, right_border_angle=35)
@@ -445,6 +445,7 @@ class SpeedDecorator(AbstractBehaviourDecorator):
         self.alpha = alpha
 
     def act(self, delta_time):
+        self.unit.move_speed *= self.alpha
         self.unit.player_left_leg.turning_speed *= self.alpha
         self.unit.player_right_leg.turning_speed *= self.alpha
         self.unit.player_left_arm.turning_speed *= self.alpha
@@ -454,6 +455,7 @@ class SpeedDecorator(AbstractBehaviourDecorator):
 
         AbstractBehaviourDecorator.act(self, delta_time)
 
+        self.unit.move_speed /= self.alpha
         self.unit.player_left_leg.turning_speed /= self.alpha
         self.unit.player_right_leg.turning_speed /= self.alpha
         self.unit.player_left_arm.turning_speed /= self.alpha

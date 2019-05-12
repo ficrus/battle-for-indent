@@ -62,7 +62,8 @@ class BaseUnit(Leaf):
             damage = self.physical_damage
         target.hp -= damage
         if target.hp <= 0:
-            target_army.units.remove(target)
+            if target in target_army.units.get_leaves():
+                target_army.units.remove(target)
 
 
 class Knight(BaseUnit):
@@ -72,13 +73,13 @@ class Knight(BaseUnit):
         self.job = "Knight"
         self.description = "Strong and self-confident knight"
         self.power = 10
-        self.hp = 100
+        self.hp = 500
         self.max_hp = self.hp
         self.physical_damage = 5
         self.magical_damage = 0
         self.physical_resist = 0.5
         self.magical_resist = 0
-        self.move_speed = 30
+        self.move_speed = 0.8
         if self.sprite is not None:
             self.sprite.move_speed = self.move_speed
 
@@ -96,13 +97,13 @@ class Paladin(BaseUnit):
         self.job = "Paladin"
         self.description = "Master of spear and base magic"
         self.power = 20
-        self.hp = 100
+        self.hp = 1000
         self.max_hp = self.hp
         self.physical_damage = 5
         self.magical_damage = 0
         self.physical_resist = 0.2
         self.magical_resist = 0
-        self.move_speed = 50
+        self.move_speed = 1
         if self.sprite is not None:
             self.sprite.move_speed = self.move_speed
 
@@ -120,13 +121,13 @@ class Zombie(BaseUnit):
         self.job = "Zombie"
         self.description = "It's not a bandit at all"
         self.power = 10
-        self.hp = 30
+        self.hp = 300
         self.max_hp = self.hp
         self.physical_damage = 6
         self.magical_damage = 0
         self.physical_resist = 0.2
         self.magical_resist = 0
-        self.move_speed = 60
+        self.move_speed = 0.5
         if self.sprite is not None:
             self.sprite.move_speed = self.move_speed
 
