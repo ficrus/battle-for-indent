@@ -30,7 +30,7 @@ def test_build():
 
 
 def test_leaf_count():
-    assert len([leaf for leaf in composite.get_leaves() if isinstance(leaf, interface.Leaf)]) == 10 ** 7
+    assert len(composite.get_leaves()) == 10 ** 7
 
 
 def test_draw():

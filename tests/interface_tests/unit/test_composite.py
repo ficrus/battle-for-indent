@@ -33,10 +33,14 @@ def test_add_remove():
 
 def test_get_leaves():
     assert leaf.get_leaves() == []
+    assert leaf.get_all_elements() == []
     assert composite.get_leaves() == []
 
     composite.add(leaf)
+    father_composite =  interface.Composite()
+    father_composite.add(composite)
 
-    assert composite.get_leaves() == [leaf]
+    assert set(father_composite.get_all_elements()) == set([leaf, composite])
+    assert father_composite.get_leaves() == [leaf]
 
     composite.remove(leaf)
