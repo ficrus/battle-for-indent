@@ -64,7 +64,6 @@ class BaseUnit(Leaf):
 
 
 class Knight(BaseUnit):
-
     def __init__(self, sprite=None, x=0, y=0, scale=0.16):
         super().__init__(sprite=sprite, x=x, y=y, scale=scale)
         self.job = "Knight"
@@ -93,7 +92,7 @@ class Paladin(BaseUnit):
 
         self.job = "Paladin"
         self.description = "Master of spear and base magic"
-        self.power = 20
+        self.power = 25
         self.hp = 100
         self.max_hp = self.hp
         self.physical_damage = 5
@@ -135,6 +134,30 @@ class Zombie(BaseUnit):
         visitor.visit_zombie(self)
 
 
+class Walker(BaseUnit):
+    def __init__(self, sprite=None, x=0, y=0, scale=0.15):
+        super().__init__(sprite=sprite, x=x, y=y, scale=scale)
+
+        self.job = "Walker"
+        self.description = "Freezing death incarnate"
+        self.power = 20
+        self.hp = 30
+        self.max_hp = self.hp
+        self.physical_damage = 2
+        self.magical_damage = 0
+        self.physical_resist = 0
+        self.magical_resist = 0
+        self.move_speed = 60
+        if self.sprite is not None:
+            self.sprite.move_speed = self.move_speed
+
+    def attack(self, target, target_army=None):
+        super().attack(target, target_army)
+
+    def accept(self, visitor) -> None:
+        visitor.visit_walker(self)
+
+
 def get_decription(UnitClass: BaseUnit) -> str:
     full_dectiption = """
     This is {u.job}
@@ -158,11 +181,15 @@ class Visitor(ABC):
         pass
 
     @abstractmethod
+    def visit_paladin(self, element) -> None:
+        pass
+
+    @abstractmethod
     def visit_zombie(self, element) -> None:
         pass
 
     @abstractmethod
-    def visit_paladin(self, element) -> None:
+    def visit_walker(self, element) -> None:
         pass
 
 
@@ -197,6 +224,27 @@ class LeftArmyVisitor(Visitor):
         else:
             print("Fuck")
 
+    def visit_paladin(self, element) -> None:
+        flag = 0
+        for part in element.sprite.object_parts:
+            for enemy in self.other_army_sprite_list:
+                k = len(arcade.check_for_collision_with_list(part.sprite, enemy[1]))
+                if k > 0:
+                    flag = 1
+                    element.attack(enemy[0], self.armies[1])
+        if flag > 0:
+            element.sprite.move_left = False
+            element.sprite.move_right = False
+            if not element.sprite.start_attack:
+                element.sprite.attack = True
+        else:
+            element.sprite.move_right = True
+        if flag == 0:
+            assert element.sprite.move_right
+            print("GO")
+        else:
+            print("Fuck")
+
     def visit_zombie(self, element) -> None:
         flag = 0
         for part in element.sprite.object_parts:
@@ -218,7 +266,7 @@ class LeftArmyVisitor(Visitor):
         else:
             print("Fuck")
 
-    def visit_paladin(self, element) -> None:
+    def visit_walker(self, element) -> None:
         flag = 0
         for part in element.sprite.object_parts:
             for enemy in self.other_army_sprite_list:
@@ -272,6 +320,27 @@ class RightArmyVisitor(Visitor):
         else:
             print("Fuck")
 
+    def visit_paladin(self, element) -> None:
+        flag = 0
+        for part in element.sprite.object_parts:
+            for enemy in self.other_army_sprite_list:
+                k = len(arcade.check_for_collision_with_list(part.sprite, enemy[1]))
+                if k > 0:
+                    flag = 1
+                    element.attack(enemy[0], self.armies[0])
+        if flag > 0:
+            element.sprite.move_left = False
+            element.sprite.move_right = False
+            if not element.sprite.start_attack:
+                element.sprite.attack = True
+        else:
+            element.sprite.move_left = True
+        if flag == 0:
+            assert element.sprite.move_left
+            print("GO")
+        else:
+            print("Fuck")
+
     def visit_zombie(self, element) -> None:
         flag = 0
         for part in element.sprite.object_parts:
@@ -293,7 +362,7 @@ class RightArmyVisitor(Visitor):
         else:
             print("Fuck")
 
-    def visit_paladin(self, element) -> None:
+    def visit_walker(self, element) -> None:
         flag = 0
         for part in element.sprite.object_parts:
             for enemy in self.other_army_sprite_list:
