@@ -13,7 +13,7 @@ before_script:
 
 install:
   - pip install --upgrade pytest
-  - pip install -r requirements.txt
+  - pip install -r ./battle-for-indent/requirements.txt
 
 deploy:
    provider: pypi
