@@ -587,7 +587,7 @@ class BattlefieldState(State):
         self.pause_gui = None
         self.end_gui = None
         self.parent = None
-        self.game = Game()
+        self.game = Game(max_cnt_1=40)
         self.setup()
 
     def setup(self):
@@ -687,7 +687,7 @@ class BattlefieldState(State):
     def update(self, delta_time: float):
         if self.state == 'Run':
             self.run_gui.update(delta_time)
-            if not self.game.update():
+            if self.game.update() != 0:
                 self.win_game()
 
     def win_game(self):
