@@ -49,3 +49,11 @@ class ProgressManager:
         self.fraction = fraction
 
         self.save_on_disk(self.save())
+
+    def reset(self):
+        self.wins = 0
+        self.draws = 0
+        self.loses = 0
+        self.fraction = ""
+
+        self.save_on_disk(self.save())

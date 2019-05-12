@@ -19,6 +19,8 @@ There are three roads on the battle map. Use 1, 2, 3 keys in order to choose sui
 Spawn unit on the selected road by pressing Q, W, E.
 
 Good luck, King! Our victory is in your own hands.
+
+WARNING! If you already have a save game, "Select Fraction" will erase it
 """
 UNIT_SELECT_TEXT = """
 Choose units for the battle.
@@ -161,6 +163,10 @@ class MainMenuState(State):
 
     def continue_game(self):
         print("Game continued!")
+        if ProgressManager().wins + ProgressManager().draws + ProgressManager().loses == 0:
+            self.window.change_state(TutorialState(self.window))
+        else:
+            self.window.change_state(UnitSelectState(self.window))
 
     def open_options(self):
         print("Options opened!")
@@ -305,6 +311,8 @@ class TutorialState(State):
         pass
 
     def fraction_select(self) -> None:
+        ProgressManager().reset()
+
         self.window.change_state(FractionSelectState(self.window))
 
     def return_to_menu(self) -> None:
