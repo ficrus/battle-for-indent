@@ -16,8 +16,9 @@ install:
   - pip install -r ./battle-for-indent/requirements.txt
 
 script:
-  cd battle-for-indent
-  pytest tests/save_data_tests
+  - cd battle-for-indent
+  - export PYTHONPATH=${PYTHONPATH}:./engine 
+  - pytest tests/save_data_tests
 
 deploy:
    provider: pypi
