@@ -14,15 +14,15 @@ army3.add_unit(zombie)
 
 
 def test_empty():
-    assert (army1.units == []) is True
+    assert (army1.units.get_leaves() == []) is True
 
 
 def test_one():
-    assert (len(army2.units) == 1) is True
+    assert (len(army2.units.get_leaves()) == 1) is True
 
 
 def test_two():
-    assert (len(army3.units) == 2) is True
+    assert (len(army3.units.get_leaves()) == 2) is True
 
 
 def test_difference():
