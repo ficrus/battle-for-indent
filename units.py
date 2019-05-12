@@ -57,8 +57,10 @@ class BaseUnit(Leaf):
         if self.sprite is not None:
             self.sprite.update(delta_time)
 
-    def attack(self, target, target_army=None):
-        target.hp -= self.physical_damage
+    def attack(self, target, target_army=None, damage=0):
+        if damage == 0:
+            damage = self.physical_damage
+        target.hp -= damage
         if target.hp <= 0:
             target_army.units.remove(target)
 
@@ -74,13 +76,13 @@ class Knight(BaseUnit):
         self.max_hp = self.hp
         self.physical_damage = 5
         self.magical_damage = 0
-        self.physical_resist = 1
+        self.physical_resist = 0.5
         self.magical_resist = 0
         self.move_speed = 40
         if self.sprite is not None:
             self.sprite.move_speed = self.move_speed
 
-    def attack(self, target, target_army=None):
+    def attack(self, target, target_army=None, damage=0):
         super().attack(target, target_army)
 
     def accept(self, visitor) -> None:
@@ -98,13 +100,13 @@ class Paladin(BaseUnit):
         self.max_hp = self.hp
         self.physical_damage = 5
         self.magical_damage = 0
-        self.physical_resist = 1
+        self.physical_resist = 0.2
         self.magical_resist = 0
         self.move_speed = 50
         if self.sprite is not None:
             self.sprite.move_speed = self.move_speed
 
-    def attack(self, target, target_army=None):
+    def attack(self, target, target_army=None, damage=0):
         super().attack(target, target_army)
 
     def accept(self, visitor) -> None:
@@ -122,13 +124,13 @@ class Zombie(BaseUnit):
         self.max_hp = self.hp
         self.physical_damage = 2
         self.magical_damage = 0
-        self.physical_resist = 0
+        self.physical_resist = 0.2
         self.magical_resist = 0
         self.move_speed = 60
         if self.sprite is not None:
             self.sprite.move_speed = self.move_speed
 
-    def attack(self, target, target_army=None):
+    def attack(self, target, target_army=None, damage=0):
         super().attack(target, target_army)
 
     def accept(self, visitor) -> None:
@@ -183,61 +185,38 @@ class LeftArmyVisitor(Visitor):
                 k = len(arcade.check_for_collision_with_list(part.sprite, enemy[1]))
                 if k > 0:
                     flag = 1
-                    element.attack(enemy[0], self.armies[1])
+                    element.attack(enemy[0], self.armies[1], damage=element.physical_damage*enemy[0].physical_resist)
         if flag != 0:
             element.sprite.move_left = False
             element.sprite.move_right = False
             if not element.sprite.start_attack:
                 element.sprite.attack = True
         else:
+            element.sprite.start_attack = False
+            element.sprite.attack = False
             element.sprite.move_right = True
-        if flag == 0:
-            assert element.sprite.move_right
-            print("GO")
-        else:
-            print("Fuck")
 
     def visit_zombie(self, element) -> None:
+        """Тут, вообще говоря, может быть другая логика атаки и движения"""
         flag = 0
         for part in element.sprite.object_parts:
             for enemy in self.other_army_sprite_list:
                 k = len(arcade.check_for_collision_with_list(part.sprite, enemy[1]))
                 if k > 0:
                     flag = 1
-                    element.attack(enemy[0], self.armies[1])
+                    element.attack(enemy[0], self.armies[1], damage=element.physical_damage*enemy[0].physical_resist)
         if flag > 0:
             element.sprite.move_left = False
             element.sprite.move_right = False
             if not element.sprite.start_attack:
                 element.sprite.attack = True
         else:
+            element.sprite.start_attack = False
+            element.sprite.attack = False
             element.sprite.move_right = True
-        if flag == 0:
-            assert element.sprite.move_right
-            print("GO")
-        else:
-            print("Fuck")
 
     def visit_paladin(self, element) -> None:
-        flag = 0
-        for part in element.sprite.object_parts:
-            for enemy in self.other_army_sprite_list:
-                k = len(arcade.check_for_collision_with_list(part.sprite, enemy[1]))
-                if k > 0:
-                    flag = 1
-                    element.attack(enemy[0], self.armies[1])
-        if flag > 0:
-            element.sprite.move_left = False
-            element.sprite.move_right = False
-            if not element.sprite.start_attack:
-                element.sprite.attack = True
-        else:
-            element.sprite.move_right = True
-        if flag == 0:
-            assert element.sprite.move_right
-            print("GO")
-        else:
-            print("Fuck")
+        pass
 
 
 class RightArmyVisitor(Visitor):
@@ -257,20 +236,16 @@ class RightArmyVisitor(Visitor):
                 k = len(arcade.check_for_collision_with_list(part.sprite, enemy[1]))
                 if k > 0:
                     flag = 1
-                    element.attack(enemy[0], self.armies[0])
+                    element.attack(enemy[0], self.armies[0], damage=element.physical_damage*enemy[0].physical_resist)
         if flag > 0:
             element.sprite.move_left = False
             element.sprite.move_right = False
             if not element.sprite.start_attack:
                 element.sprite.attack = True
         else:
+            element.sprite.start_attack = False
+            element.sprite.attack = False
             element.sprite.move_left = True
-
-        if flag == 0:
-            assert element.sprite.move_left
-            print("GO")
-        else:
-            print("Fuck")
 
     def visit_zombie(self, element) -> None:
         flag = 0
@@ -279,37 +254,16 @@ class RightArmyVisitor(Visitor):
                 k = len(arcade.check_for_collision_with_list(part.sprite, enemy[1]))
                 if k > 0:
                     flag = 1
-                    element.attack(enemy[0], self.armies[0])
+                    element.attack(enemy[0], self.armies[0], damage=element.physical_damage*enemy[0].physical_resist)
         if flag > 0:
             element.sprite.move_left = False
             element.sprite.move_right = False
             if not element.sprite.start_attack:
                 element.sprite.attack = True
         else:
+            element.sprite.start_attack = False
+            element.sprite.attack = False
             element.sprite.move_left = True
-        if flag == 0:
-            assert element.sprite.move_left
-            print("GO")
-        else:
-            print("Fuck")
 
     def visit_paladin(self, element) -> None:
-        flag = 0
-        for part in element.sprite.object_parts:
-            for enemy in self.other_army_sprite_list:
-                k = len(arcade.check_for_collision_with_list(part.sprite, enemy[1]))
-                if k > 0:
-                    flag = 1
-                    element.attack(enemy[0], self.armies[0])
-        if flag > 0:
-            element.sprite.move_left = False
-            element.sprite.move_right = False
-            if not element.sprite.start_attack:
-                element.sprite.attack = True
-        else:
-            element.sprite.move_left = True
-        if flag == 0:
-            assert element.sprite.move_left
-            print("GO")
-        else:
-            print("Fuck")
+        pass
