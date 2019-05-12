@@ -15,7 +15,7 @@ class Memento(ABC):
 class OptionsMemento(Memento):
     def __init__(self, state: list) -> None:
         self._state = state
-        self._date = str(datetime.now())[:19]
+        self._date = str(datetime.now())
 
     def get_state(self) -> list:
         return self._state

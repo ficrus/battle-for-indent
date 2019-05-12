@@ -1,3 +1,4 @@
+from __future__ import annotations
 from game import *
 from interface import RoadSelection
 FACTORY = {"KnightFactory": KnightFactory(), "ZombieFactory": ZombieFactory()}
