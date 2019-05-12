@@ -2,13 +2,16 @@ from event_handling import *
 import os
 import units
 from options_manager import OptionsManager
+from progress_manager import ProgressManager
 
 SCREEN_TITLE = "Battle for Indent"
 TUTORIAL_TEXT = """
 Welcome to Battle for Indent!
 I'm a strange voice inside your head that will teach you how to play.
 
-At first, you should select units for the coming battle.
+At first, you need to choose your fraction to fight for.
+
+Then you should select units for the coming battle.
 You can choose how much soldiers you will take.
 Note, that number of units depepends on their power.
 
@@ -30,6 +33,7 @@ It's highly recommended to use as much Power, as you can.
 
 Current Power: {0}
 Max Power: {1}
+"""ower: {1}
 """
 
 
@@ -268,7 +272,7 @@ class TutorialState(State):
         game_buttons = Composite()
         self.gui.add(game_buttons)
 
-        unit_select_button = MenuButton(110, 480, 150, 50, "Select Units", self.unit_select)
+        unit_select_button = MenuButton(110, 480, 150, 50, "Select Fraction", self.fraction_select)
         game_buttons.add(unit_select_button)
 
         service_buttons = Composite()
@@ -277,7 +281,7 @@ class TutorialState(State):
         return_button = MenuButton(110, 420, 150, 50, "I'm not ready", self.return_to_menu)
         service_buttons.add(return_button)
 
-        self.button_list = [button for button in self.gui.get_leaves() if isinstance(button, Button)]
+        self.button_list = self.gui.get_leaves()
         self.listeners.add_listener(ButtonListener(self.button_list))
 
     def on_draw(self):
@@ -300,11 +304,73 @@ class TutorialState(State):
     def on_key_release(self, symbol, modifiers):
         pass
 
-    def unit_select(self) -> None:
+    def fraction_select(self) -> None:
+        self.window.change_state(FractionSelectState(self.window))
+
+    def return_to_menu(self) -> None:
+        self.window.change_state(MainMenuState(self.window))
+
+
+class FractionSelectState(State):
+    def __init__(self, window: Window):
+        super().__init__(window)
+        self.pause = False
+        self.listeners = None
+        self.gui = None
+        self.parent = None
+        self.setup()
+
+    def setup(self):
+        self.gui = Composite()
+        self.listeners = ListenersSupport()
+
+        fractions_buttons = Composite()
+        self.gui.add(fractions_buttons)
+
+        spacers_select_button = MenuButton(110, 540, 150, 50, "Spacers", self.select_fraction, "Spacers")
+        fractions_buttons.add(spacers_select_button)
+
+        tabbers_select_button = MenuButton(110, 480, 150, 50, "Tabbers", self.select_fraction, "Tabbers")
+        fractions_buttons.add(tabbers_select_button)
+
+        service_buttons = Composite()
+        self.gui.add(service_buttons)
+
+        return_button = MenuButton(110, 420, 150, 50, "I'm not ready", self.return_to_menu)
+        service_buttons.add(return_button)
+
+        self.button_list = self.gui.get_leaves()
+        self.listeners.add_listener(ButtonListener(self.button_list))
+
+    def on_draw(self):
+        self.gui.draw()
+
+        arcade.draw_text("Fond of spaces. They use spaces, because they believe, that spaces came from Space Gods.\n", 200, 520, arcade.color.BLACK, 15)
+        arcade.draw_text("Prefer using tabs everywhere, even in their everyday meals and speech.\n", 200, 460, arcade.color.BLACK, 15)
+
+    def on_mouse_press(self, x, y, button, key_modifiers):
+        self.listeners.on_event(PressEvent(x, y))
+
+    def on_mouse_release(self, x, y, button, key_modifiers):
+        self.listeners.on_event(ReleaseEvent(x, y))
+
+    def update(self, delta_time: float):
+        pass
+
+    def on_key_press(self, symbol, modifiers):
+        pass
+
+    def on_key_release(self, symbol, modifiers):
+        pass
+
+    def select_fraction(self, fraction: str) -> None:
+        ProgressManager().select_fraction(fraction)
+
         self.window.change_state(UnitSelectState(self.window))
 
     def return_to_menu(self) -> None:
         self.window.change_state(MainMenuState(self.window))
+
 
 
 class UnitSelectInfo:
