@@ -705,10 +705,6 @@ class BattlefieldState(State):
         self.state = 'End'
         self.listeners = self.end_listeners
         self.end_gui.add(Text(r_dict[result], SCREEN_WIDTH/2 - 75, SCREEN_HEIGHT*7/8 + 75))
-
-        ProgressManager().add_win()
-
-        self.last_result = 1
         
     def win_game(self):
         ProgressManager().add_win()
