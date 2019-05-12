@@ -492,7 +492,9 @@ class BattlefieldState(State):
         self.unit_dict = unit_dict
         self.pause = False
         self.listeners = None
+        self.second_listeners = None
         self.gui = None
+        self.pause_gui = None
         self.parent = None
         self.game = Game()
         self.setup()
@@ -500,16 +502,9 @@ class BattlefieldState(State):
     def setup(self):
         self.gui = Composite()
         self.listeners = ListenersSupport()
-
-        self.gui.add(self.game.gui)
-
-        buttons = Composite()
-        self.gui.add(buttons)
-
-        pause_button = MenuButton(110, 480, 150, 50, " || ", self.pause_game)
-        buttons.add(pause_button)
-        button_list = [button for button in self.gui.get_leaves() if isinstance(button, Button)]
-        self.listeners.add_listener(ButtonListener(button_list))
+        self.gui.add(Stage("images/stage/stage-back.png"))
+        road_selection = RoadSelection()
+        self.gui.add(road_selection)
         cooldown_indicators = Composite()
         self.gui.add(cooldown_indicators)
 
@@ -518,6 +513,7 @@ class BattlefieldState(State):
         width = 100
         height = 100
         key = 1
+
         cooldown_indicators_list = []
         for k, value in self.unit_dict.items():
             cooldown_indicator = CooldownIndicator(x, y, width, height, k, value, 10, key)
@@ -525,45 +521,25 @@ class BattlefieldState(State):
             x += width + 10
             key += 1
             cooldown_indicators_list.append(cooldown_indicator)
-        road_selection = RoadSelection()
-        self.gui.add(road_selection)
         key_listener = KeyListener(road_selection, cooldown_indicators_list, self.game)
         self.listeners.add_listener(key_listener)
+        self.pause_setup()
+        self.gui.add(self.game.gui)
+        self.gui.add(Stage("images/stage/stage-front.png"))
+        buttons = Composite()
+        self.gui.add(buttons)
 
-    def on_draw(self):
-        self.gui.draw()
+        pause_button = MenuButton(110, 480, 150, 50, " || ", self.pause_game)
+        buttons.add(pause_button)
+        button_list = [button for button in self.gui.get_leaves() if isinstance(button, Button)]
+        self.listeners.add_listener(ButtonListener(button_list))
 
-    def on_mouse_press(self, x, y, button, key_modifiers):
-        self.listeners.on_event(PressEvent(x, y))
-
-    def on_mouse_release(self, x, y, button, key_modifiers):
-        self.listeners.on_event(ReleaseEvent(x, y))
-
-    def on_key_press(self, symbol: int, modifiers: int):
-        self.listeners.on_event(KeyPressEvent(symbol))
-
-    def update(self, delta_time: float):
-        self.gui.update(delta_time)
-
-    def pause_game(self):
-        self.window.change_state(PauseState(self.window))
-
-
-class PauseState(State):
-    def __init__(self, window):
-        super().__init__(window)
-        self.pause = False
-        self.listeners = None
-        self.gui = None
-        self.parent = None
-        self.setup()
-
-    def setup(self):
-        self.gui = Composite()
-        self.listeners = ListenersSupport()
+    def pause_setup(self):
+        self.pause_gui = Composite()
+        self.second_listeners = ListenersSupport()
 
         game_buttons = Composite()
-        self.gui.add(game_buttons)
+        self.pause_gui.add(game_buttons)
 
         continue_button = MenuButton(110, 480, 150, 50, "Continue", self.continue_game)
         game_buttons.add(continue_button)
@@ -572,15 +548,17 @@ class PauseState(State):
         game_buttons.add(restart_button)
 
         service_buttons = Composite()
-        self.gui.add(service_buttons)
-    
+        self.pause_gui.add(service_buttons)
+
         return_button = MenuButton(110, 360, 150, 50, "Return", self.return_to_menu)
         service_buttons.add(return_button)
+        button_list = [button for button in self.pause_gui.get_leaves() if isinstance(button, Button)]
+        self.second_listeners.add_listener(ButtonListener(button_list))
 
     def on_draw(self):
         self.gui.draw()
-        button_list = [button for button in self.gui.get_leaves() if isinstance(button, Button)]
-        self.listeners.add_listener(ButtonListener(button_list))
+        if self.pause is True:
+            self.pause_gui.draw()
 
     def on_mouse_press(self, x, y, button, key_modifiers):
         self.listeners.on_event(PressEvent(x, y))
@@ -588,20 +566,32 @@ class PauseState(State):
     def on_mouse_release(self, x, y, button, key_modifiers):
         self.listeners.on_event(ReleaseEvent(x, y))
 
-    def on_update(self, delta_time: float):
-        pass
+    def on_key_press(self, symbol: int, modifiers: int):
+        if self.pause is False:
+            self.listeners.on_event(KeyPressEvent(symbol))
 
-    def do_nothing(self):
-        pass
+    def update(self, delta_time: float):
+        if self.pause is False:
+            self.gui.update(delta_time)
+
+    def pause_game(self):
+        self.pause = True
+        t = self.second_listeners
+        self.second_listeners = self.listeners
+        self.listeners = t
 
     def continue_game(self):
-        self.window.change_state(BattlefieldState(self.window, {"Zombie": 7, "Knight": 5, "Paladin": 3}))
+        self.pause = False
+        t = self.second_listeners
+        self.second_listeners = self.listeners
+        self.listeners = t
 
     def restart_game(self):
         self.window.change_state(UnitSelectState(self.window))
 
     def return_to_menu(self) -> None:
         self.window.change_state(MainMenuState(self.window))
+
 
 
 def play_music_once(*args):

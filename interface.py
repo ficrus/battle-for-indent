@@ -83,6 +83,15 @@ class Composite(Component):
             child.update(delta_time)
 
 
+class Stage(Leaf):
+    def __init__(self, image):
+        self.image = image
+
+    def draw(self):
+        sprite = arcade.Sprite(self.image, center_x=SCREEN_WIDTH / 2, center_y=SCREEN_HEIGHT/2, scale=0.5)
+        sprite.draw()
+
+
 class UnitButton(Leaf):
     def __init__(self, unit_job: str) -> None:
         self.unit_job = unit_job

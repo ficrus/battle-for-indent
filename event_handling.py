@@ -1,6 +1,7 @@
 from __future__ import annotations
 from game import *
 from interface import RoadSelection
+import numpy as np
 FACTORY = {"KnightFactory": KnightFactory(), "ZombieFactory": ZombieFactory()}
 KEYS = {113: 1, 119: 2, 101: 3}
 
@@ -89,8 +90,9 @@ class KeyListener(Listener):
                             if i.on_choose():
                                 factory = FACTORY[i.unit_type + "Factory"]
                                 self.game.armies[0].add_unit(
-                                    factory.create(x=300, y=SCREEN_HEIGHT *
-                                                   (3 - self.road_selection.selected_road)/3 + SCREEN_HEIGHT*2/10))
+                                    factory.create(x=300, y=int(SCREEN_HEIGHT *
+                                                   (3 - self.road_selection.selected_road)/3 + SCREEN_HEIGHT/10
+                                                   + np.random.sample()*SCREEN_HEIGHT/10)))
                                 self.road_selection.selected_road = 0
 
 
