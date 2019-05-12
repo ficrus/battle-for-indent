@@ -2,7 +2,7 @@ import memento
 import pickle
 
 class OptionsManager:
-    def __init__(self, options_file="./save_data/options"):
+    def __init__(self, options_file="../save_data/options"):
         self.options_file = options_file
         try:
             with open(self.options_file, "rb") as options:

@@ -3,8 +3,8 @@ import arcade
 from options_manager import OptionsManager
 SCREEN_WIDTH = 1920
 SCREEN_HEIGHT = 1080
-IMAGE_NAMES = {"Zombie": "images/zombie/zhead.png", "Knight": "images/knight/head.png",
-               "Paladin": "images/paladin/head.png", "Walker": "images/walker/zhead.png"}
+IMAGE_NAMES = {"Zombie": "../images/zombie/zhead.png", "Knight": "../images/knight/head.png",
+               "Paladin": "../images/paladin/head.png", "Walker": "../images/walker/zhead.png"}
 
 
 class Component(ABC):
@@ -146,7 +146,6 @@ class UnitButton(Leaf):
 
     def draw(self):
         self.portrait = "eeeee"
-        print("Draw unit button for {0}".format(self.unit_job))
 
 
 # Это желательно вынести в другой файл, так как реализует не наполнение state, а наполнение игры
@@ -156,7 +155,6 @@ class HealthBar(Leaf):
 
     def draw(self):
         self.hp = 100
-        print("Draw hp bar for {0}".format(self.fraction))
 
 
 class PauseButton(Leaf):
@@ -164,7 +162,7 @@ class PauseButton(Leaf):
         pass
 
     def draw(self):
-        print("Draw pause button")
+        pass
 
 
 # Это желательно вынести в другой файл, так как реализует не наполнение state, а наполнение игры
@@ -173,7 +171,7 @@ class Castle(Leaf):
         self.fraction = fraction
 
     def draw(self):
-        print("Draw Castle for {0}".format(self.fraction))
+        pass
 
 
 class Button(Leaf):
@@ -347,7 +345,7 @@ class RoadSelection(Leaf):
     def draw(self):
         if self.selected_road > 0:
             y = SCREEN_HEIGHT*(3 - self.selected_road)/3 + SCREEN_HEIGHT/10
-            sprite = arcade.Sprite("images/stage/road.png", center_x=SCREEN_WIDTH/2, center_y=y, scale=0.5)
+            sprite = arcade.Sprite("../images/stage/road.png", center_x=SCREEN_WIDTH/2, center_y=y, scale=0.5)
             sprite.draw()
 
 
@@ -361,34 +359,10 @@ class MenuButton(Button):
         super().on_release()
 
         if OptionsManager().is_sounds_enabled:
-            click_sound = arcade.load_sound("./sounds/click-sound.wav")
+            click_sound = arcade.load_sound("../sounds/click-sound.wav")
             arcade.play_sound(click_sound)
 
         if self.argument is None:
             self.action_function()
         else:
             self.action_function(self.argument)
-
-
-if __name__ == "__main__":
-    gui_ = Composite()
-
-    unit_bar = Composite()
-    unit_bar.add(UnitButton("knight"))
-    unit_bar.add(UnitButton("bandit"))
-
-    info_bar = Composite()
-    info_bar.add(PauseButton())
-    info_bar.add(HealthBar("tabbers"))
-    info_bar.add(HealthBar("spacers"))
-
-    game_map = Composite()
-    game_map.add(Castle("tabbers"))
-    game_map.add(Castle("spacers"))
-
-    gui_.add(unit_bar)
-    gui_.add(info_bar)
-    gui_.add(game_map)
-
-    # gui.demonstrate()
-    gui_.draw()

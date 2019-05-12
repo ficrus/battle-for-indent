@@ -5,7 +5,6 @@ from interface import *
 
 class Army(ABC):
     def __init__(self):
-        print('Army is initialized')
         self.units = Composite()
         self.cnt = 0
 
