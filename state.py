@@ -33,7 +33,7 @@ It's highly recommended to use as much Power, as you can.
 
 Current Power: {0}
 Max Power: {1}
-"""ower: {1}
+Power: {1}
 """
 
 
