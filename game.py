@@ -162,7 +162,7 @@ class MainMenuState(State):
         exit_button = MenuButton(110, 300, 150, 50, "Exit", self.exit_game)
         service_buttons.add(exit_button)
 
-        self.button_list = [button for button in self.gui.get_leaves() if isinstance(button, Button)]
+        self.button_list = self.gui.get_leaves()
         self.listeners.add_listener(ButtonListener(self.button_list))
 
     def on_draw(self):
@@ -243,7 +243,7 @@ class OptionsState(State):
 
     def on_draw(self):
         self.gui.draw()
-        button_list = [button for button in self.gui.get_leaves() if isinstance(button, Button)]
+        button_list = self.gui.get_leaves()
         self.listeners.add_listener(ButtonListener(button_list))
 
         arcade.draw_text("Background music (It may take some time to apply changes)\n", 200, 455, arcade.color.BLACK,
@@ -314,7 +314,7 @@ class TutorialState(State):
         return_button = MenuButton(110, 420, 150, 50, "I'm not ready", self.return_to_menu)
         service_buttons.add(return_button)
 
-        self.button_list = [button for button in self.gui.get_leaves() if isinstance(button, Button)]
+        self.button_list = self.gui.get_leaves()
         self.listeners.add_listener(ButtonListener(self.button_list))
 
     def on_draw(self):
@@ -417,7 +417,7 @@ class UnitSelectState(State):
         return_button = MenuButton(110, 300, 150, 50, "Return", self.return_to_menu)
         service_buttons.add(return_button)
 
-        self.button_list = [button for button in self.gui.get_leaves() if isinstance(button, Button)]
+        self.button_list = self.gui.get_leaves()
         self.listeners.add_listener(ButtonListener(self.button_list))
 
     def on_draw(self):
