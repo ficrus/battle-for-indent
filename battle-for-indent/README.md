@@ -162,3 +162,22 @@ $ python3 play.py
 2. Windows
 
 Если Ваша операционная система - Windows, то просто используйте аналогичные команды.
+
+## Известные проблемы
+
+1. Если при запуске игры на кнопках отсутствут надписи, то, судя по всему, у Вас отсутствует шрифт `Arial`.
+Для решения данной проблемы будет достаточно просто его установить.
+
+```
+! Debian-based (Debian, Ubuntu, Elementary OS)
+
+$ sudo apt-get install msttcorefonts
+```
+
+```
+! Arch-based (Arch Linux, Manjaro)
+
+$ git clone https://aur.archlinux.org/ttf-ms-fonts.git
+$ cd ttf-ms-fonts
+$ makepkg -si
+```
