@@ -1,0 +1,38 @@
+language: python
+
+python:
+  - "3.6"
+
+before_script:
+  - sudo apt-get update
+  - sudo apt-get install build-essential
+  - sudo apt-get install freeglut3-dev
+  - "Xvfb :1 -screen 0 1024x768x24 -ac +extension GLX +render -noreset &> xvfb.log &"
+  - "export DISPLAY=:1"
+  - pip install setuptools
+
+install:
+  - pip install --upgrade pytest
+  - pip install -r ./battle-for-indent/requirements.txt
+
+script:
+  - cd battle-for-indent
+  - export PYTHONPATH=${PYTHONPATH}:./engine 
+  - pytest tests/interface_tests/useability/test_navigation.py
+  - cd ..
+
+deploy:
+   provider: pypi
+   user: eaglemango
+   password: "lol kek cheburek"
+   on:
+    branch: dev
+
+after_success:
+  - coveralls
+
+notifications:
+  email:
+    on_success: always
+    on_failure: always
+
