@@ -1,7 +1,7 @@
 arcade==2.0.8
 future==0.18.3
 numpy==1.22.0
-Pillow==9.3.0
+Pillow==10.3.0
 pyglet==1.4.0b1
 pyglet-ffmpeg2==0.1.12
 pytest
